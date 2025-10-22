@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 모든 것</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyB_rWUBwq7NzMM-pNahNRRg5Urq8IY0BBA",
+        authDomain: "my-website-fb323.firebaseapp.com",
+        projectId: "my-website-fb323",
+        storageBucket: "my-website-fb323.firebasestorage.app",
+        messagingSenderId: "740018728175",
+        appId: "1:740018728175:web:ea0b67e6a8080b80c87f1a"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    </script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">MyEverything</div>
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link" data-target="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-target="portfolio">Portfolio</a></li>
+                <li><a href="#" class="nav-link" data-target="tools">AllTheTools</a></li>
+                <li><a href="#" class="nav-link" data-target="secretbox">SecretBox</a></li>
+            </ul>
+        </nav>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="home" class="page-section active">
+            <h2>환영합니다.</h2>
+            <p>이곳은 저의 모든 것을 모아둔 디지털 공간입니다.</p>
+        </section>
+
+        <section id="portfolio" class="page-section">
+            <h2>Portfolio</h2>
+            <div class="placeholder-section">
+                <h3>About Me</h3>
+                <p>자기소개 내용이 여기에 들어갑니다.</p>
+            </div>
+            <div class="placeholder-section">
+                <h3>My Projects</h3>
+                <p>프로젝트 목록이 여기에 들어갑니다.</p>
+            </div>
+            <div class="placeholder-section">
+                <h3>Contact</h3>
+                <p>연락처 정보가 여기에 들어갑니다.</p>
+            </div>
+        </section>
+
+        <section id="tools" class="page-section">
+            <h2>All The Tools</h2>
+            <div class="tool">
+                <h3>텍스트 뒤집기 (Text Reverser)</h3>
+                <input type="text" id="text-reverser-input" placeholder="뒤집을 텍스트를 입력하세요">
+                <button id="text-reverser-btn">뒤집기</button>
+                <p><strong>결과:</strong> <span id="text-reverser-output"></span></p>
+            </div>
+        </section>
+
+        <section id="secretbox" class="page-section">
+            <h2>Secret Box</h2>
+            <p>전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
+            <div class="secret-form">
+                <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..."></textarea>
+                <input type="password" id="secret-key" placeholder="해독암호 (비밀키)">
+                <button id="save-secret">저장하기</button>
+            </div>
+            <div class="secret-display">
+                <button id="load-secrets">모든 데이터 보기</button>
+                <ul id="secret-list"></ul>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
