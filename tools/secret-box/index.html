@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Box</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/firebase-config.js" type="module"></script>
+    <script src="../../assets/js/script.js" type="module" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">Secret Box</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="secret-box" class="page-section active">
+            <p>전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
+            <div class="secret-form">
+                <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..."></textarea>
+                <input type="password" id="secret-key" placeholder="해독암호 (비밀키)">
+                <button id="save-secret">저장하기</button>
+            </div>
+            <div class="secret-display">
+                <button id="load-secrets">모든 데이터 보기</button>
+                <ul id="secret-list"></ul>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

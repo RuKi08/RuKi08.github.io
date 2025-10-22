@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 모든 것 - Home</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="../assets/js/firebase-config.js" type="module"></script>
+    <script src="../assets/js/script.js" type="module" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">MyEverything</div>
+        <nav>
+            <ul>
+                <li><a href="/home" class="nav-link" data-target="home">Home</a></li>
+                <li><a href="/portfolio" class="nav-link" data-target="portfolio">Portfolio</a></li>
+                <li><a href="/tools" class="nav-link" data-target="tools">AllTheTools</a></li>
+            </ul>
+        </nav>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="home" class="page-section active">
+            <h2>환영합니다.</h2>
+            <p>이곳은 저의 모든 것을 모아둔 디지털 공간입니다.</p>
+        </section>
+    </main>
+</body>
+</html>

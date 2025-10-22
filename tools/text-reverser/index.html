@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>텍스트 뒤집기</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/firebase-config.js" type="module"></script>
+    <script src="../../assets/js/script.js" type="module" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">텍스트 뒤집기</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="text-reverser" class="page-section active">
+            <div class="tool">
+                <input type="text" id="text-reverser-input" placeholder="뒤집을 텍스트를 입력하세요">
+                <button id="text-reverser-btn">뒤집기</button>
+                <p><strong>결과:</strong> <span id="text-reverser-output"></span></p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

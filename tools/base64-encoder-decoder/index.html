@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 인코더/디코더</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="../../assets/js/firebase-config.js" type="module"></script>
+    <script src="../../assets/js/script.js" type="module" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">Base64 인코더/디코더</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="base64-encoder-decoder" class="page-section active">
+            <div class="tool">
+                <textarea id="base64-input" placeholder="인코딩 또는 디코딩할 문자열을 입력하세요" rows="5"></textarea>
+                <div class="button-group">
+                    <button id="encode-btn">인코딩</button>
+                    <button id="decode-btn">디코딩</button>
+                </div>
+                <textarea id="base64-output" placeholder="결과" rows="5" readonly></textarea>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('base64-input');
+            const output = document.getElementById('base64-output');
+            const encodeBtn = document.getElementById('encode-btn');
+            const decodeBtn = document.getElementById('decode-btn');
+
+            encodeBtn.addEventListener('click', () => {
+                try {
+                    // UTF-8 문자열을 Base64로 인코딩
+                    const utf8Bytes = new TextEncoder().encode(input.value);
+                    const base64String = btoa(String.fromCharCode.apply(null, utf8Bytes));
+                    output.value = base64String;
+                } catch (e) {
+                    output.value = '에러: 유효하지 않은 입력입니다.';
+                }
+            });
+
+            decodeBtn.addEventListener('click', () => {
+                try {
+                    // Base64 문자열을 UTF-8로 디코딩
+                    const binaryString = atob(input.value);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    output.value = new TextDecoder().decode(bytes);
+                } catch (e) {
+                    output.value = '에러: 유효하지 않은 입력입니다.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

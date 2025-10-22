@@ -1,0 +1,17 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --primary-color: #007bff;
+    --header-bg: rgba(255, 255, 255, 0.8);
+    --border-color: #dddddd;
+    --input-bg: #f8f9fa;
+}
+
+body.dark-mode {
+    --bg-color: #121212;
+    --text-color: #eeeeee;
+    --primary-color: #1e90ff;
+    --header-bg: rgba(18, 18, 18, 0.8);
+    --border-color: #444444;
+    --input-bg: #2c2c2c;
+}
