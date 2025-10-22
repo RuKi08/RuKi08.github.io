@@ -1,5 +1,6 @@
-export function initThemeToggle() {
+export function initTheme() {
     const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
 
     const applyTheme = (theme) => {
         if (theme === 'dark') {

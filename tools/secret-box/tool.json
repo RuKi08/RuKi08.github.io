@@ -1,0 +1,5 @@
+{
+  "name": "Secret Box",
+  "description": "전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.",
+  "icon": "fa-solid fa-box-archive"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "URL 인코더/디코더",
+  "description": "URL을 인코딩하거나 디코딩합니다.",
+  "icon": "fa-solid fa-link"
+}

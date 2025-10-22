@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>진수 변환기</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <script src="../../assets/js/firebase-config.js" type="module"></script>
-    <script src="../../assets/js/script.js" type="module" defer></script>
 </head>
 <body>
     <header>
@@ -42,34 +40,35 @@
         </section>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('number-input');
-            const fromBaseSelect = document.getElementById('from-base');
-            const toBaseSelect = document.getElementById('to-base');
-            const output = document.getElementById('number-output');
-            const convertBtn = document.getElementById('convert-btn');
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+        initTheme();
 
-            convertBtn.addEventListener('click', () => {
-                const fromBase = parseInt(fromBaseSelect.value, 10);
-                const toBase = parseInt(toBaseSelect.value, 10);
-                const number = input.value.trim();
+        const input = document.getElementById('number-input');
+        const fromBaseSelect = document.getElementById('from-base');
+        const toBaseSelect = document.getElementById('to-base');
+        const output = document.getElementById('number-output');
+        const convertBtn = document.getElementById('convert-btn');
 
-                if (number === '') {
-                    output.value = '';
-                    return;
+        convertBtn.addEventListener('click', () => {
+            const fromBase = parseInt(fromBaseSelect.value, 10);
+            const toBase = parseInt(toBaseSelect.value, 10);
+            const number = input.value.trim();
+
+            if (number === '') {
+                output.value = '';
+                return;
+            }
+
+            try {
+                const parsedNumber = parseInt(number, fromBase);
+                if (isNaN(parsedNumber)) {
+                    throw new Error('유효하지 않은 숫자입니다.');
                 }
-
-                try {
-                    const parsedNumber = parseInt(number, fromBase);
-                    if (isNaN(parsedNumber)) {
-                        throw new Error('유효하지 않은 숫자입니다.');
-                    }
-                    output.value = parsedNumber.toString(toBase).toUpperCase();
-                } catch (e) {
-                    output.value = `에러: ${e.message}`;
-                }
-            });
+                output.value = parsedNumber.toString(toBase).toUpperCase();
+            } catch (e) {
+                output.value = `에러: ${e.message}`;
+            }
         });
     </script>
 </body>

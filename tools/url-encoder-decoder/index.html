@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL 인코더/디코더</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <script src="../../assets/js/firebase-config.js" type="module"></script>
-    <script src="../../assets/js/script.js" type="module" defer></script>
 </head>
 <body>
     <header>
@@ -27,28 +25,29 @@
         </section>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('url-input');
-            const output = document.getElementById('url-output');
-            const encodeBtn = document.getElementById('encode-btn');
-            const decodeBtn = document.getElementById('decode-btn');
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+        initTheme();
 
-            encodeBtn.addEventListener('click', () => {
-                try {
-                    output.value = encodeURIComponent(input.value);
-                } catch (e) {
-                    output.value = '에러: 유효하지 않은 입력입니다.';
-                }
-            });
+        const input = document.getElementById('url-input');
+        const output = document.getElementById('url-output');
+        const encodeBtn = document.getElementById('encode-btn');
+        const decodeBtn = document.getElementById('decode-btn');
 
-            decodeBtn.addEventListener('click', () => {
-                try {
-                    output.value = decodeURIComponent(input.value);
-                } catch (e) {
-                    output.value = '에러: 유효하지 않은 입력입니다.';
-                }
-            });
+        encodeBtn.addEventListener('click', () => {
+            try {
+                output.value = encodeURIComponent(input.value);
+            } catch (e) {
+                output.value = '에러: 유효하지 않은 입력입니다.';
+            }
+        });
+
+        decodeBtn.addEventListener('click', () => {
+            try {
+                output.value = decodeURIComponent(input.value);
+            } catch (e) {
+                output.value = '에러: 유효하지 않은 입력입니다.';
+            }
         });
     </script>
 </body>

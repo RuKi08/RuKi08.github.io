@@ -6,7 +6,25 @@
     <title>텍스트 뒤집기</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
     <script src="../../assets/js/firebase-config.js" type="module"></script>
-    <script src="../../assets/js/script.js" type="module" defer></script>
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+
+        function initTextReverser() {
+            const textReverserBtn = document.getElementById('text-reverser-btn');
+            if (!textReverserBtn) return;
+
+            textReverserBtn.addEventListener('click', () => {
+                const input = document.getElementById('text-reverser-input');
+                const output = document.getElementById('text-reverser-output');
+                if (input && output) {
+                    output.textContent = input.value.split('').reverse().join('');
+                }
+            });
+        }
+
+        initTheme();
+        initTextReverser();
+    </script>
 </head>
 <body>
     <header>
