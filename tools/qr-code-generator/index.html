@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR 코드 생성기</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
+    <style>
+        .tool-card {
+            background-color: var(--background-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        #qrcode-display { width: 256px; height: 256px; margin: 1rem auto; border: 1px solid var(--border-color); padding: 10px; background: white; }
+        #qrcode-display img { width: 100% !important; height: 100% !important; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">QR 코드 생성기</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="qr-code-generator" class="page-section active">
+            <div class="tool-card">
+                <textarea id="qr-input" placeholder="QR 코드로 변환할 텍스트나 URL을 입력하세요..." rows="5"></textarea>
+                <button id="generate-qr-btn" style="width: 100%; margin: 1rem 0;">QR 코드 생성</button>
+                <div id="qrcode-display"><p>QR 코드가 여기에 표시됩니다.</p></div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+        initTheme();
+
+        const qrInput = document.getElementById('qr-input');
+        const generateBtn = document.getElementById('generate-qr-btn');
+        const qrDisplay = document.getElementById('qrcode-display');
+
+        generateBtn.addEventListener('click', () => {
+            const inputText = qrInput.value.trim();
+            if (!inputText) {
+                alert('텍스트나 URL을 입력해주세요.');
+                return;
+            }
+
+            try {
+                qrDisplay.innerHTML = '';
+                const qr = qrcode(0, 'M');
+                qr.addData(inputText);
+                qr.make();
+                const imgTag = qr.createImgTag(8, 16);
+                qrDisplay.innerHTML = imgTag;
+
+            } catch (e) {
+                qrDisplay.innerHTML = `<p>QR 코드 생성 중 오류 발생: ${e.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

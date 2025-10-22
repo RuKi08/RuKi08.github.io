@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>진수 변환기</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .tool-card {
+            background-color: var(--background-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -14,7 +25,7 @@
 
     <main>
         <section id="number-base-converter" class="page-section active">
-            <div class="tool">
+            <div class="tool-card">
                 <div class="input-group">
                     <input type="text" id="number-input" placeholder="숫자를 입력하세요">
                     <select id="from-base">
@@ -24,8 +35,8 @@
                         <option value="16">16진수</option>
                     </select>
                 </div>
-                <div class="button-group">
-                    <button id="convert-btn">변환</button>
+                <div class="button-group" style="margin: 1rem 0;">
+                    <button id="convert-btn">▼</button>
                 </div>
                 <div class="input-group">
                     <input type="text" id="number-output" placeholder="결과" readonly>

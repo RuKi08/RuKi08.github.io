@@ -5,15 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secret Box</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <script src="../../assets/js/firebase-config.js" type="module"></script>
+    <style>
+        .tool-card {
+            background-color: var(--background-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        #secret-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+        #secret-list li { padding: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        #secret-list li:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Secret Box</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="secret-box" class="page-section active">
+            <div class="tool-card">
+                <p style="text-align: center; margin-bottom: 1.5rem;">전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
+                <div class="secret-form">
+                    <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..." rows="4"></textarea>
+                    <input type="password" id="secret-key" placeholder="해독암호 (비밀키)" style="margin-top: 1rem;">
+                    <button id="save-secret" style="width: 100%; margin-top: 1rem;">저장하기</button>
+                </div>
+                <div class="secret-display" style="margin-top: 2rem;">
+                    <button id="load-secrets" style="width: 100%;">모든 데이터 보기</button>
+                    <ul id="secret-list"></ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <script type="module">
         import { db } from '../../assets/js/firebase-config.js';
         import { collection, addDoc, query, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+        import { initTheme } from '../../assets/js/modules/theme.js';
+        initTheme();
 
         function initSecretBox() {
             if (!db) {
                 console.error("Firestore DB 객체를 찾을 수 없습니다. firebase-config.js를 확인하세요.");
-                // Firebase가 초기화되지 않았다면 SecretBox 기능 비활성화
                 const saveBtn = document.getElementById('save-secret');
                 const loadBtn = document.getElementById('load-secrets');
                 if(saveBtn) saveBtn.disabled = true;
@@ -27,28 +65,24 @@
             const loadSecretsBtn = document.getElementById('load-secrets');
             const secretList = document.getElementById('secret-list');
 
-            if (!saveSecretBtn) return; // SecretBox 섹션이 없을 경우 중단
+            if (!saveSecretBtn) return;
 
             saveSecretBtn.addEventListener('click', async () => {
                 const data = secretDataInput.value;
                 const key = secretKeyInput.value;
 
-                if (!data) {
-                    alert('데이터를 입력해주세요.');
-                    return;
-                }
-                if (!key) {
-                    alert('비밀키를 입력해주세요.');
+                if (!data || !key) {
+                    alert('데이터와 비밀키를 모두 입력해주세요.');
                     return;
                 }
 
                 try {
-                    const docRef = await addDoc(collection(db, 'secrets'), {
+                    await addDoc(collection(db, 'secrets'), {
                         data: data,
                         key: key,
                         timestamp: serverTimestamp()
                     });
-                    alert('데이터가 성공적으로 저장되었습니다! 문서 ID: ' + docRef.id);
+                    alert('데이터가 성공적으로 저장되었습니다!');
                     secretDataInput.value = '';
                     secretKeyInput.value = '';
                     loadSecretsBtn.click();
@@ -59,12 +93,13 @@
             });
 
             loadSecretsBtn.addEventListener('click', async () => {
-                secretList.innerHTML = '';
+                secretList.innerHTML = '<li>로딩 중...</li>';
 
                 try {
                     const q = query(collection(db, 'secrets'), orderBy('timestamp', 'desc'));
                     const querySnapshot = await getDocs(q);
 
+                    secretList.innerHTML = '';
                     if (querySnapshot.empty) {
                         secretList.innerHTML = '<li>아직 저장된 비밀 데이터가 없습니다.</li>';
                         return;
@@ -76,39 +111,14 @@
                         listItem.textContent = secret.data;
                         secretList.appendChild(listItem);
                     });
-                    alert('데이터를 성공적으로 불러왔습니다.');
                 } catch (e) {
                     console.error("데이터 로드 중 오류 발생: ", e);
                     alert('데이터 로드에 실패했습니다. 콘솔을 확인하세요.');
                 }
             });
         }
-
-        // Initialize the theme toggle and the secret box functionality
-        import { initTheme } from '../../assets/js/modules/theme.js';
-        initTheme();
+        
         initSecretBox();
     </script>
-</head>
-<body>
-    <header>
-        <div class="logo">Secret Box</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
-
-    <main>
-        <section id="secret-box" class="page-section active">
-            <p>전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
-            <div class="secret-form">
-                <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..."></textarea>
-                <input type="password" id="secret-key" placeholder="해독암호 (비밀키)">
-                <button id="save-secret">저장하기</button>
-            </div>
-            <div class="secret-display">
-                <button id="load-secrets">모든 데이터 보기</button>
-                <ul id="secret-list"></ul>
-            </div>
-        </section>
-    </main>
 </body>
 </html>

@@ -5,9 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>텍스트 뒤집기</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <script src="../../assets/js/firebase-config.js" type="module"></script>
+    <style>
+        .tool-card {
+            background-color: var(--background-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 2rem auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">텍스트 뒤집기</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="text-reverser" class="page-section active">
+            <div class="tool-card">
+                <div class="input-group">
+                    <input type="text" id="text-reverser-input" placeholder="뒤집을 텍스트를 입력하세요">
+                    <button id="text-reverser-btn">뒤집기</button>
+                </div>
+                <p style="margin-top: 1rem;"><strong>결과:</strong> <span id="text-reverser-output"></span></p>
+            </div>
+        </section>
+    </main>
+
     <script type="module">
         import { initTheme } from '../../assets/js/modules/theme.js';
+        initTheme();
 
         function initTextReverser() {
             const textReverserBtn = document.getElementById('text-reverser-btn');
@@ -22,24 +52,7 @@
             });
         }
 
-        initTheme();
         initTextReverser();
     </script>
-</head>
-<body>
-    <header>
-        <div class="logo">텍스트 뒤집기</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
-
-    <main>
-        <section id="text-reverser" class="page-section active">
-            <div class="tool">
-                <input type="text" id="text-reverser-input" placeholder="뒤집을 텍스트를 입력하세요">
-                <button id="text-reverser-btn">뒤집기</button>
-                <p><strong>결과:</strong> <span id="text-reverser-output"></span></p>
-            </div>
-        </section>
-    </main>
 </body>
 </html>

@@ -5,6 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나의 모든 것 - Tools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        #tool-items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .tool-card {
+            background-color: var(--background-secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .tool-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        .tool-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .tool-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary-color);
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -32,28 +67,31 @@
 
         async function fetchTools() {
             const toolItemsContainer = document.getElementById('tool-items-container');
-            const toolDirs = ['base64-encoder-decoder', 'number-base-converter', 'secret-box', 'text-reverser', 'url-encoder-decoder'];
+            const toolDirs = ['ascii-unicode-converter', 'base64-encoder-decoder', 'color-code-converter', 'hash-generator', 'image-format-converter', 'number-base-converter', 'qr-code-generator', 'secret-box', 'text-reverser', 'url-encoder-decoder', 'unit-converter'];
 
             for (const dir of toolDirs) {
                 try {
                     const response = await fetch(`./${dir}/tool.json`);
                     const tool = await response.json();
 
-                    const toolItem = document.createElement('div');
-                    toolItem.className = 'tool-item';
+                    const cardLink = document.createElement('a');
+                    cardLink.href = `./${dir}`;
+                    cardLink.className = 'tool-card';
 
-                    const toolLink = document.createElement('h3');
-                    const link = document.createElement('a');
-                    link.href = `./${dir}`;
-                    link.textContent = tool.name;
-                    toolLink.appendChild(link);
+                    const icon = document.createElement('i');
+                    icon.className = tool.icon;
 
-                    const toolDescription = document.createElement('p');
-                    toolDescription.textContent = tool.description;
+                    const name = document.createElement('h3');
+                    name.textContent = tool.name;
 
-                    toolItem.appendChild(toolLink);
-                    toolItem.appendChild(toolDescription);
-                    toolItemsContainer.appendChild(toolItem);
+                    const description = document.createElement('p');
+                    description.textContent = tool.description;
+
+                    cardLink.appendChild(icon);
+                    cardLink.appendChild(name);
+                    cardLink.appendChild(description);
+                    toolItemsContainer.appendChild(cardLink);
+
                 } catch (error) {
                     console.error(`Error fetching tool data for ${dir}:`, error);
                 }
