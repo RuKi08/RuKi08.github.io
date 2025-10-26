@@ -31,6 +31,13 @@ Modern Minimalist Design System Variables
     --border-radius: 0.375rem; /* 6px */
     --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+    /* Game Theme */
+    --game-cell-bg: #cdc1b4;
+    --game-piece-color-x: var(--primary-color);
+    --game-accent-color: #fd7e14; /* Bootstrap Orange */
+    --game-overlay-bg: rgba(255, 255, 255, 0.7);
+    --game-overlay-bg-dark: rgba(0, 0, 0, 0.7);
 }
 
 body.dark-mode {

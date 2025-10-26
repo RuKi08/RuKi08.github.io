@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>틱택토</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- Common header/footer will be injected here -->
+    <main>
+        <section class="page-section active">
+            <div class="content-container">
+                <h2>틱택토</h2>
+                <div class="tool-card">
+                    <div id="game-container" class="game-container">
+                        <div id="status-text" class="game-status"></div>
+                        <div id="game-board" class="game-board mx-auto" style="--grid-size: 3; max-width: 400px;"></div>
+                        <div id="game-overlay" class="game-overlay">
+                            <div id="game-overlay-message" class="game-overlay-message"></div>
+                            <button id="reset-game-btn" class="button">다시하기</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="tool-description" class="tool-card" style="display: none;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { createHeader, createFooter } from '../../assets/js/common-components.js';
+        import { initTheme } from '../../assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
+        initTheme();
+
+        function initTicTacToe() {
+            const boardElement = document.getElementById('game-board');
+            const statusElement = document.getElementById('status-text');
+            const overlay = document.getElementById('game-overlay');
+            const overlayMessage = document.getElementById('game-overlay-message');
+            const resetButton = document.getElementById('reset-game-btn');
+
+            let board = Array(9).fill(null);
+            let currentPlayer = 'X';
+            let gameActive = true;
+
+            function handleBoardClick(e) {
+                if (!gameActive) return;
+                const rect = boardElement.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const col = Math.floor(x / (rect.width / 3));
+                const row = Math.floor(y / (rect.height / 3));
+                const index = row * 3 + col;
+
+                if (board[index]) return;
+
+                board[index] = currentPlayer;
+                createPiece(row, col, currentPlayer);
+
+                if (checkWinner()) {
+                    endGame(`${currentPlayer} Wins!`);
+                    return;
+                }
+                if (board.every(cell => cell)) {
+                    endGame('Draw!');
+                    return;
+                }
+
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                statusElement.textContent = `${currentPlayer}'s Turn`;
+            }
+
+            function createPiece(row, col, player) {
+                const piece = document.createElement('div');
+                piece.className = `game-piece ttt ${player.toLowerCase()}`;
+                piece.style.setProperty('--x', col);
+                piece.style.setProperty('--y', row);
+                piece.textContent = player;
+                boardElement.appendChild(piece);
+            }
+
+            function checkWinner() {
+                const winPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+                return winPatterns.some(p => p.every(i => board[i] === currentPlayer));
+            }
+
+            function endGame(message) {
+                gameActive = false;
+                overlayMessage.textContent = message;
+                overlay.classList.add('visible');
+            }
+
+            function resetGame() {
+                board.fill(null);
+                gameActive = true;
+                currentPlayer = 'X';
+                statusElement.textContent = `${currentPlayer}'s Turn`;
+                overlay.classList.remove('visible');
+                boardElement.querySelectorAll('.ttt-piece').forEach(p => p.remove());
+            }
+
+            function createBackgroundGrid() {
+                if (boardElement.querySelectorAll('.game-cell').length === 0) {
+                    for (let i = 0; i < 9; i++) {
+                        const cell = document.createElement('div');
+                        cell.classList.add('game-cell');
+                        boardElement.appendChild(cell);
+                    }
+                }
+            }
+
+            boardElement.addEventListener('click', handleBoardClick);
+            resetButton.addEventListener('click', resetGame);
+            createBackgroundGrid();
+            resetGame();
+        }
+
+        async function loadDescription() {
+            const descriptionEl = document.getElementById('tool-description');
+            try {
+                const response = await fetch('./description.md');
+                if (!response.ok) return;
+                const markdown = await response.text();
+                descriptionEl.innerHTML = marked.parse(markdown);
+                descriptionEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading description:', error);
+                descriptionEl.style.display = 'none';
+            }
+        }
+
+        initTicTacToe();
+        loadDescription();
+    </script>
+</body>
+</html>

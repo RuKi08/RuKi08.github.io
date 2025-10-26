@@ -1,0 +1,6 @@
+{
+  "name": "오목 (Gomoku)",
+  "description": "다섯 개의 돌을 먼저 나란히 놓아 승리하는 클래식 보드 게임입니다.",
+  "icon": "fa-solid fa-circle-dot",
+  "tags": ["board game", "classic", "2-player", "strategy"]
+}
