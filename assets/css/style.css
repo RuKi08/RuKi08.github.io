@@ -1,7 +1,12 @@
-@import url('variables.css');
-@import url('layout.css');
-@import url('components.css');
+/*
+========================================
+Modern Minimalist Design System
+========================================
+*/
 
+@import url('variables.css');
+
+/* --- Base & Typography --- */
 * {
     margin: 0;
     padding: 0;
@@ -9,19 +14,220 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family-sans);
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-h2 {
+h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 1.5rem 0;
+}
+
+/* --- Layout --- */
+header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+}
+
+main {
+    padding: 2rem;
+}
+
+/* --- Components --- */
+.logo a {
+    text-decoration: none;
+    color: inherit;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-secondary-color);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+nav a:hover, nav a.active {
+    color: var(--text-color);
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+/* --- Forms & Buttons --- */
+textarea, input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: var(--font-family-sans);
+    color: var(--text-color);
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+textarea:focus, input:focus, select:focus {
+    outline: 0;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(var(--primary-color-rgb, 13, 110, 253), 0.25);
+}
+
+button, .button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    color: #fff;
+    background-color: var(--primary-color);
+    transition: opacity 0.15s;
+}
+
+button:hover, .button:hover {
+    opacity: 0.85;
+}
+
+/* --- Tool Page Specific --- */
+.tool-card {
+    background-color: var(--background-secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    max-width: 800px;
+    margin: 2rem auto 0;
+    box-shadow: var(--box-shadow);
+}
+
+.tool-card + .tool-card {
+    margin-top: 2rem;
+}
+
+.tool-card > *:not(form):not(fieldset) + * {
+    margin-top: 1rem;
+}
+
+.tool-card form > * + *, .tool-card fieldset > * + * {
+    margin-top: 1rem;
+}
+
+.tool-card label {
+    font-weight: 500;
+}
+
+.form-section {
     margin-bottom: 1.5rem;
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
+}
+.form-section:last-child { margin-bottom: 0; }
+.form-section > label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
 }
 
-h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
 }
+
+legend {
+    padding: 0 0.5rem;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.input-group input, .input-group select { flex-grow: 1; }
+.input-group select { flex-grow: 0; width: auto; }
+
+.notice {
+    font-size: 0.9rem;
+    color: var(--text-secondary-color);
+}
+
+.preview-box {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+}
+
+.file-upload-label {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    color: #fff;
+    background-color: var(--primary-color);
+    transition: opacity 0.15s;
+}
+.file-upload-label:hover { opacity: 0.85; }
+input[type="file"].hidden-input { display: none; }
+
+/* Markdown Content */
+.tool-card h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+.tool-card h3:first-child { margin-top: 0; }
+.tool-card p, .tool-card ul, .tool-card ol { line-height: 1.7; margin-bottom: 1rem; }
+.tool-card ul, .tool-card ol { padding-left: 1.5rem; }
+.tool-card code { font-family: var(--font-family-mono); background-color: var(--bg-color); padding: 0.2em 0.4em; border-radius: 3px; }
+
+/* --- Utility Classes --- */
+.w-100 { width: 100%; }
+.mt-2 { margin-top: 2rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+/* --- Specific Tool Overrides --- */
+.color-input-group label { width: 40px; }
+#color-preview { width: 100px; height: 100px; }
+#qrcode-display { width: 256px; height: 256px; background: white; padding: 1rem; }
+.converter-layout { display: flex; gap: 2rem; }
+.converter-layout > div { flex: 1; }
+#preview { max-width: 100%; max-height: 300px; display: none; }
+@media (max-width: 768px) { .converter-layout { flex-direction: column; } }
+#secret-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+#secret-list li { padding: 0.5rem; border-bottom: 1px solid var(--border-color); }
+#secret-list li:last-child { border-bottom: none; }
+.unit-separator { text-align: center; border: 0; border-top: 1px solid var(--border-color); position: relative; }
+.unit-separator::after { content: '▼'; position: absolute; top: -0.8em; left: 50%; transform: translateX(-50%); background-color: var(--background-secondary-color); padding: 0 0.5rem; color: var(--text-secondary-color); }

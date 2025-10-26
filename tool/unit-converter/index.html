@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>단위 변환기</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">단위 변환기</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="unit-converter" class="page-section active">
+            <div class="tool-card">
+                <form id="converter-form">
+                    <div class="form-section">
+                        <label for="category-select">변환 종류</label>
+                        <select id="category-select">
+                            <option value="length">길이</option>
+                            <option value="weight">무게</option>
+                            <option value="temperature">온도</option>
+                            <option value="volume">부피</option>
+                        </select>
+                    </div>
+                    <fieldset>
+                        <legend>From</legend>
+                        <div class="input-group">
+                            <input type="text" id="from-value" value="1">
+                            <select id="from-unit"></select>
+                        </div>
+                    </fieldset>
+                    <div class="unit-separator"></div>
+                    <fieldset>
+                        <legend>To</legend>
+                        <div class="input-group">
+                            <input type="text" id="to-value" readonly>
+                            <select id="to-unit"></select>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="tool-description" class="tool-card" style="display: none;"></div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+
+        function initUnitConverter() {
+            // 1. DOM Elements
+            const categorySelect = document.getElementById('category-select');
+            const fromValueInput = document.getElementById('from-value');
+            const fromUnitSelect = document.getElementById('from-unit');
+            const toValueInput = document.getElementById('to-value');
+            const toUnitSelect = document.getElementById('to-unit');
+
+            // 2. Data
+            const units = {
+                length: {
+                    '미터 (m)': 1,
+                    '킬로미터 (km)': 1000,
+                    '센티미터 (cm)': 0.01,
+                    '밀리미터 (mm)': 0.001,
+                    '마일 (mi)': 1609.34,
+                    '야드 (yd)': 0.9144,
+                    '피트 (ft)': 0.3048,
+                    '인치 (in)': 0.0254
+                },
+                weight: {
+                    '그램 (g)': 1,
+                    '킬로그램 (kg)': 1000,
+                    '밀리그램 (mg)': 0.001,
+                    '톤 (t)': 1000000,
+                    '파운드 (lb)': 453.592,
+                    '온스 (oz)': 28.3495
+                },
+                temperature: {
+                    '섭씨 (°C)': { toBase: c => c + 273.15, fromBase: k => k - 273.15 },
+                    '화씨 (°F)': { toBase: f => (f - 32) * 5/9 + 273.15, fromBase: k => (k - 273.15) * 9/5 + 32 },
+                    '켈빈 (K)': { toBase: k => k, fromBase: k => k }
+                },
+                volume: {
+                    '리터 (L)': 1,
+                    '밀리리터 (mL)': 0.001,
+                    '세제곱미터 (m³)': 1000,
+                    '갤런 (gal)': 3.78541,
+                    '온스 (fl oz)': 0.0295735
+                }
+            };
+
+            // 3. Event Listeners
+            categorySelect.addEventListener('change', populateUnits);
+            fromValueInput.addEventListener('input', convert);
+            fromUnitSelect.addEventListener('change', convert);
+            toUnitSelect.addEventListener('change', convert);
+
+            // 4. Functions
+            function populateUnits() {
+                const category = categorySelect.value;
+                const unitKeys = Object.keys(units[category]);
+
+                fromUnitSelect.innerHTML = '';
+                toUnitSelect.innerHTML = '';
+
+                unitKeys.forEach(unit => {
+                    fromUnitSelect.add(new Option(unit, unit));
+                    toUnitSelect.add(new Option(unit, unit));
+                });
+
+                fromUnitSelect.selectedIndex = 0;
+                toUnitSelect.selectedIndex = 1;
+                convert();
+            }
+
+            function convert() {
+                const fromValue = parseFloat(fromValueInput.value);
+                const fromUnit = fromUnitSelect.value;
+                const toUnit = toUnitSelect.value;
+                const category = categorySelect.value;
+
+                if (isNaN(fromValue)) {
+                    toValueInput.value = '';
+                    return;
+                }
+
+                let baseValue;
+                if (category === 'temperature') {
+                    baseValue = units[category][fromUnit].toBase(fromValue);
+                } else {
+                    baseValue = fromValue * units[category][fromUnit];
+                }
+
+                let finalValue;
+                if (category === 'temperature') {
+                    finalValue = units[category][toUnit].fromBase(baseValue);
+                } else {
+                    finalValue = baseValue / units[category][toUnit];
+                }
+
+                toValueInput.value = finalValue.toFixed(5);
+            }
+
+            // Initial setup
+            populateUnits();
+        }
+
+        async function loadDescription() {
+            const descriptionEl = document.getElementById('tool-description');
+            try {
+                const response = await fetch('./description.md');
+                if (!response.ok) return;
+                const markdown = await response.text();
+                descriptionEl.innerHTML = marked.parse(markdown);
+                descriptionEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading description:', error);
+                descriptionEl.style.display = 'none';
+            }
+        }
+
+        initTheme();
+        initUnitConverter();
+        loadDescription();
+    </script>
+</body>
+</html>

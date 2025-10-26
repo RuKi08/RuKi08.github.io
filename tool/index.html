@@ -48,14 +48,14 @@
             <ul>
                 <li><a href="/home" class="nav-link" data-target="home">Home</a></li>
                 <li><a href="/portfolio" class="nav-link" data-target="portfolio">Portfolio</a></li>
-                <li><a href="/tools" class="nav-link" data-target="tools">AllTheTools</a></li>
+                <li><a href="/tool" class="nav-link" data-target="tool">AllTheTools</a></li>
             </ul>
         </nav>
         <button id="theme-toggle">☀️</button>
     </header>
 
     <main>
-        <section id="tools-list" class="page-section active">
+        <section id="tool-list" class="page-section active">
             <h2>All The Tools</h2>
             <div id="tool-items-container"></div>
         </section>
@@ -67,7 +67,7 @@
 
         async function fetchTools() {
             const toolItemsContainer = document.getElementById('tool-items-container');
-            const toolDirs = ['ascii-unicode-converter', 'base64-encoder-decoder', 'color-code-converter', 'hash-generator', 'image-format-converter', 'number-base-converter', 'qr-code-generator', 'secret-box', 'text-reverser', 'url-encoder-decoder', 'unit-converter'];
+            const toolDirs = ['ascii-unicode-converter', 'color-code-converter', 'image-format-converter', 'qr-code-generator', 'secret-box', 'unit-converter'];
 
             for (const dir of toolDirs) {
                 try {

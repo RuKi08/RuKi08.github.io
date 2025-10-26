@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아스키/유니코드 변환기</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">아스키/유니코드 변환기</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="ascii-unicode-converter" class="page-section active">
+            <div class="tool-card">
+                <form id="converter-form">
+                    <div class="form-section">
+                        <label for="char-input">문자 (Character)</label>
+                        <textarea id="char-input" placeholder="문자를 입력하세요..." rows="4"></textarea>
+                        <button type="button" id="to-code-btn" class="w-100">▼ 문자를 코드로</button>
+                    </div>
+                    <div class="form-section">
+                        <label for="code-output">코드 (Code)</label>
+                        <textarea id="code-output" placeholder="코드 결과 (쉼표로 구분) - 예: 72,101,108,108,111" rows="4"></textarea>
+                        <button type="button" id="to-char-btn" class="w-100">▲ 코드를 문자로</button>
+                    </div>
+                </form>
+            </div>
+            <div id="tool-description" class="tool-card" style="display: none;"></div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+        
+        function initAsciiUnicodeConverter() {
+            // 1. DOM Elements
+            const charInput = document.getElementById('char-input');
+            const codeOutput = document.getElementById('code-output');
+            const toCodeBtn = document.getElementById('to-code-btn');
+            const toCharBtn = document.getElementById('to-char-btn');
+
+            // 2. Event Listeners
+            toCodeBtn.addEventListener('click', convertToCode);
+            toCharBtn.addEventListener('click', convertToChar);
+
+            // 3. Functions
+            function convertToCode() {
+                const inputText = charInput.value;
+                if (!inputText) return;
+
+                try {
+                    const codes = [];
+                    for (let i = 0; i < inputText.length; i++) {
+                        codes.push(inputText.charCodeAt(i));
+                    }
+                    codeOutput.value = codes.join(', ');
+                } catch (e) {
+                    codeOutput.value = `에러: ${e.message}`;
+                }
+            }
+
+            function convertToChar() {
+                const inputCodes = codeOutput.value;
+                if (!inputCodes) return;
+                
+                try {
+                    const codes = inputCodes.split(',').map(s => parseInt(s.trim()));
+                    let chars = '';
+                    for(const code of codes) {
+                        if(isNaN(code)) throw new Error ('숫자가 아닌 값이 포함되어 있습니다.');
+                        chars += String.fromCharCode(code);
+                    }
+                    charInput.value = chars;
+                } catch (e) {
+                    charInput.value = `에러: ${e.message}`;
+                }
+            }
+        }
+
+        async function loadDescription() {
+            const descriptionEl = document.getElementById('tool-description');
+            try {
+                const response = await fetch('./description.md');
+                if (!response.ok) return; // 파일이 없으면 그냥 넘어감
+                
+                const markdown = await response.text();
+                descriptionEl.innerHTML = marked.parse(markdown);
+                descriptionEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading description:', error);
+                descriptionEl.style.display = 'none';
+            }
+        }
+
+        initTheme();
+        initAsciiUnicodeConverter();
+        loadDescription();
+    </script>
+</body>
+</html>

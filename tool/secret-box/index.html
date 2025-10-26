@@ -5,20 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secret Box</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <style>
-        .tool-card {
-            background-color: var(--background-secondary-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
-            max-width: 800px;
-            margin: 2rem auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        #secret-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-        #secret-list li { padding: 0.5rem; border-bottom: 1px solid var(--border-color); }
-        #secret-list li:last-child { border-bottom: none; }
-    </style>
+    <script src="https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <header>
@@ -28,18 +17,19 @@
 
     <main>
         <section id="secret-box" class="page-section active">
-            <div class="tool-card">
-                <p style="text-align: center; margin-bottom: 1.5rem;">전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
-                <div class="secret-form">
+            <div class="tool-card text-center">
+                <p>전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
+                <form id="secret-form">
                     <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..." rows="4"></textarea>
-                    <input type="password" id="secret-key" placeholder="해독암호 (비밀키)" style="margin-top: 1rem;">
-                    <button id="save-secret" style="width: 100%; margin-top: 1rem;">저장하기</button>
-                </div>
-                <div class="secret-display" style="margin-top: 2rem;">
-                    <button id="load-secrets" style="width: 100%;">모든 데이터 보기</button>
-                    <ul id="secret-list"></ul>
+                    <input type="password" id="secret-key" placeholder="해독암호 (비밀키)">
+                    <button type="submit" id="save-secret" class="w-100">저장하기</button>
+                </form>
+                <div class="secret-display mt-2">
+                    <button id="load-secrets" class="w-100">모든 데이터 보기</button>
+                    <ul id="secret-list" class="preview-box"></ul>
                 </div>
             </div>
+            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
@@ -47,27 +37,32 @@
         import { db } from '../../assets/js/firebase-config.js';
         import { collection, addDoc, query, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
         import { initTheme } from '../../assets/js/modules/theme.js';
-        initTheme();
 
         function initSecretBox() {
-            if (!db) {
-                console.error("Firestore DB 객체를 찾을 수 없습니다. firebase-config.js를 확인하세요.");
-                const saveBtn = document.getElementById('save-secret');
-                const loadBtn = document.getElementById('load-secrets');
-                if(saveBtn) saveBtn.disabled = true;
-                if(loadBtn) loadBtn.disabled = true;
-                return;
-            }
-
+            // 1. DOM Elements
+            const form = document.getElementById('secret-form');
             const secretDataInput = document.getElementById('secret-data');
             const secretKeyInput = document.getElementById('secret-key');
-            const saveSecretBtn = document.getElementById('save-secret');
             const loadSecretsBtn = document.getElementById('load-secrets');
             const secretList = document.getElementById('secret-list');
 
-            if (!saveSecretBtn) return;
+            // 2. Firebase Check
+            if (!db) {
+                console.error("Firestore DB 객체를 찾을 수 없습니다. firebase-config.js를 확인하세요.");
+                form.querySelector('button').disabled = true;
+                loadSecretsBtn.disabled = true;
+                return;
+            }
 
-            saveSecretBtn.addEventListener('click', async () => {
+            // 3. Event Listeners
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await saveSecret();
+            });
+            loadSecretsBtn.addEventListener('click', loadSecrets);
+
+            // 4. Functions
+            async function saveSecret() {
                 const data = secretDataInput.value;
                 const key = secretKeyInput.value;
 
@@ -85,14 +80,14 @@
                     alert('데이터가 성공적으로 저장되었습니다!');
                     secretDataInput.value = '';
                     secretKeyInput.value = '';
-                    loadSecretsBtn.click();
+                    loadSecrets(); // Refresh the list
                 } catch (e) {
                     console.error("데이터 저장 중 오류 발생: ", e);
                     alert('데이터 저장에 실패했습니다. 콘솔을 확인하세요.');
                 }
-            });
+            }
 
-            loadSecretsBtn.addEventListener('click', async () => {
+            async function loadSecrets() {
                 secretList.innerHTML = '<li>로딩 중...</li>';
 
                 try {
@@ -113,12 +108,28 @@
                     });
                 } catch (e) {
                     console.error("데이터 로드 중 오류 발생: ", e);
-                    alert('데이터 로드에 실패했습니다. 콘솔을 확인하세요.');
+                    secretList.innerHTML = '<li>데이터를 불러오는 데 실패했습니다.</li>';
                 }
-            });
+            }
+        }
+
+        async function loadDescription() {
+            const descriptionEl = document.getElementById('tool-description');
+            try {
+                const response = await fetch('./description.md');
+                if (!response.ok) return;
+                const markdown = await response.text();
+                descriptionEl.innerHTML = marked.parse(markdown);
+                descriptionEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading description:', error);
+                descriptionEl.style.display = 'none';
+            }
         }
         
+        initTheme();
         initSecretBox();
+        loadDescription();
     </script>
 </body>
 </html>

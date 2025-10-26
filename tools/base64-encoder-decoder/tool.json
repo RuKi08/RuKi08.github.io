@@ -1,5 +1,0 @@
-{
-  "name": "Base64 인코더/디코더",
-  "description": "문자열을 Base64로 인코딩하거나 디코딩합니다.",
-  "icon": "fa-solid fa-shield-halved"
-}

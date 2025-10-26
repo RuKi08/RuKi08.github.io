@@ -1,5 +1,0 @@
-{
-  "name": "진수 변환기",
-  "description": "다양한 진수(2, 8, 10, 16진수) 간에 숫자를 변환합니다.",
-  "icon": "fa-solid fa-calculator"
-}

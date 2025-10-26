@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 형식 변환기</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">이미지 형식 변환기</div>
+        <button id="theme-toggle">☀️</button>
+    </header>
+
+    <main>
+        <section id="image-format-converter" class="page-section active">
+            <div class="tool-card">
+                <form id="converter-form">
+                    <div class="converter-layout">
+                        <div class="controls">
+                            <h4>1. 이미지 선택</h4>
+                            <label for="image-input" class="file-upload-label">파일 찾기</label>
+                            <input type="file" id="image-input" accept="image/*" class="hidden-input">
+                            <p id="file-name">선택된 파일 없음</p>
+                            
+                            <h4 class="mt-2">2. 변환할 형식 선택</h4>
+                            <div class="input-group">
+                                <select id="format-select" class="w-100">
+                                    <option value="jpeg">JPG</option>
+                                    <option value="png">PNG</option>
+                                    <option value="webp">WebP</option>
+                                    <option value="bmp">BMP</option>
+                                    <option value="gif">GIF (첫 프레임만)</option>
+                                </select>
+                            </div>
+                            <button type="button" id="convert-btn" class="w-100">변환하기</button>
+                        </div>
+                        <div class="preview-area">
+                            <h4>미리보기</h4>
+                            <div class="preview-box">
+                                <img id="preview" src="" alt="이미지 미리보기">
+                            </div>
+                            <a id="download-link" class="button" style="display: none;">다운로드</a>
+                        </div>
+                    </div>
+                    <p class="notice">참고: GIF 형식은 애니메이션의 첫 번째 프레임만 변환됩니다. 브라우저에 따라 일부 형식(예: BMP) 지원이 다를 수 있습니다.</p>
+                </form>
+            </div>
+            <div id="tool-description" class="tool-card" style="display: none;"></div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initTheme } from '../../assets/js/modules/theme.js';
+
+        function initImageFormatConverter() {
+            // 1. DOM Elements
+            const imageInput = document.getElementById('image-input');
+            const formatSelect = document.getElementById('format-select');
+            const convertBtn = document.getElementById('convert-btn');
+            const preview = document.getElementById('preview');
+            const downloadLink = document.getElementById('download-link');
+            const fileNameDisplay = document.getElementById('file-name');
+            
+            // 2. State
+            let originalFile = null;
+
+            // 3. Event Listeners
+            imageInput.addEventListener('change', handleFileSelect);
+            convertBtn.addEventListener('click', convertImage);
+
+            // 4. Functions
+            function handleFileSelect(e) {
+                originalFile = e.target.files[0];
+                if (originalFile) {
+                    fileNameDisplay.textContent = originalFile.name;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        preview.src = event.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(originalFile);
+                    downloadLink.style.display = 'none';
+                }
+            }
+
+            function convertImage() {
+                if (!originalFile) {
+                    alert('먼저 이미지 파일을 선택해주세요.');
+                    return;
+                }
+
+                const image = new Image();
+                image.src = preview.src;
+                image.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(image, 0, 0);
+
+                    const targetFormat = formatSelect.value;
+                    const dataUrl = canvas.toDataURL(`image/${targetFormat}`);
+                    
+                    const originalFileName = originalFile.name.substring(0, originalFile.name.lastIndexOf('.'));
+                    downloadLink.href = dataUrl;
+                    downloadLink.download = `${originalFileName}.${targetFormat}`;
+                    downloadLink.style.display = 'inline-block';
+                    downloadLink.textContent = `변환된 이미지 다운로드 (${targetFormat.toUpperCase()})`;
+                };
+            }
+        }
+
+        async function loadDescription() {
+            const descriptionEl = document.getElementById('tool-description');
+            try {
+                const response = await fetch('./description.md');
+                if (!response.ok) return;
+                const markdown = await response.text();
+                descriptionEl.innerHTML = marked.parse(markdown);
+                descriptionEl.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading description:', error);
+                descriptionEl.style.display = 'none';
+            }
+        }
+
+        initTheme();
+        initImageFormatConverter();
+        loadDescription();
+    </script>
+</body>
+</html>
