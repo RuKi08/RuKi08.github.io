@@ -1,61 +1,79 @@
-# 도구 디자인 시스템 명세서
+# 프로젝트 디자인 시스템 및 개발 가이드
 
-이 문서는 프로젝트의 모든 도구가 따라야 할 디자인 시스템, 코드 구조, 규칙을 상세히 정의합니다.
+이 문서는 프로젝트의 일관된 디자인과 코드 품질을 유지하기 위한 모든 규칙과 명세를 정의합니다.
 
-## 1. 기본 구조
+## 1. 파일 구조
 
-모든 도구는 `tool/` 디렉토리 내에 고유한 하위 디렉토리를 가지며, `index.html`과 `tool.json` 파일을 포함해야 합니다.
+프로젝트의 기본 파일 구조는 다음과 같습니다.
 
 ```
-tool/
-└───my-new-tool/      # 예: "새로운 도구"
-    ├───index.html    # 도구의 UI와 기능 구현
-    └───tool.json     # 도구의 메타데이터
+my-web/
+├── assets/
+│   ├── css/
+│   │   ├── style.css         # 모든 스타일 규칙
+│   │   └── variables.css     # 색상, 폰트 등 디자인 변수
+│   └── js/
+│       ├── common-components.js # 공통 헤더/푸터 생성
+│       ├── tool-loader.js       # 도구 목록 페이지 로직
+│       └── modules/
+│           └── theme.js         # 다크/라이트 모드 로직
+├── home/
+│   └── index.html
+├── portfolio/
+│   └── index.html
+└── tool/
+    ├── index.html          # 도구 목록 페이지
+    └── [tool-name]/        # 개별 도구 디렉토리
+        ├── index.html
+        ├── tool.json
+        └── description.md
 ```
 
-## 2. `tool.json` 파일
+## 2. 데이터 파일 명세
 
-도구 목록 페이지(`tool/index.html`)에 표시될 정보를 정의합니다.
+### `tool.json`
+
+각 도구의 메타데이터를 정의합니다.
 
 - `name` (string): 도구의 이름
-- `description` (string): 도구에 대한 간략한 설명
-- `icon` (string): [Font Awesome](https://fontawesome.com/) 아이콘 클래스
+- `description` (string): 도구 목록에 표시될 한 줄 설명
+- `icon` (string): Font Awesome 아이콘 클래스
+- `tags` (string[]): 검색 및 필터링을 위한 키워드 태그
 
 **예시:**
 ```json
 {
-  "name": "텍스트 뒤집기",
-  "description": "입력한 텍스트를 뒤집어 줍니다.",
-  "icon": "fa-solid fa-retweet"
+  "name": "QR 코드 생성기",
+  "description": "URL이나 텍스트를 즉시 QR 코드로 변환합니다.",
+  "icon": "fa-solid fa-qrcode",
+  "tags": ["generator", "image", "qr"]
 }
 ```
 
-## 3. `description.md` 파일 (상세 설명)
+### `description.md`
 
-각 도구 디렉토리에는 `description.md` 파일을 추가하여, 도구 카드 아래에 표시될 상세 설명과 사용법을 작성합니다.
+각 도구의 상세 정보를 Markdown 형식으로 작성합니다. 기술적 원리보다는 사용자에게 유용한 정보를 중심으로 작성합니다.
 
-### `description.md` 작성 양식
-
+**권장 형식:**
 ```markdown
-### 상세 설명
+### 주요 기능
 
-이 도구는 어떤 배경에서 만들어졌고, 어떤 기술적 원리로 동작하는지에 대한 상세한 설명을 작성합니다.
+이 도구가 사용자에게 제공하는 핵심적인 기능들을 목록 형식으로 설명합니다.
 
-### 사용 방법
+- **기능 1**: 이런 기능입니다.
+- **기능 2**: 저런 기능입니다.
 
-1.  첫 번째 입력 필드에 값을 입력합니다.
-2.  '변환' 버튼을 클릭합니다.
-3.  결과 필드에서 변환된 값을 확인하고 복사할 수 있습니다.
+### 사용 팁
 
-- **옵션 A**: 이 옵션은 ... 기능을 합니다.
-- **옵션 B**: 저 옵션은 ... 기능을 합니다.
+사용자가 이 도구를 더 효과적으로 사용할 수 있는 팁이나 숨겨진 기능을 알려줍니다.
+
+- URL을 입력할 때는 `https://`를 포함하는 전체 주소를 입력해야 더 정확하게 인식됩니다.
+- 생성된 이미지는 마우스 오른쪽 버튼으로 클릭하여 저장할 수 있습니다.
 ```
 
-## 4. `index.html` 표준 구조
+## 3. 페이지 표준 구조
 
-모든 도구는 다음의 표준 HTML 구조와 시맨틱을 따라야 합니다.
-
-### 최종 템플릿
+모든 페이지(`home`, `portfolio`, 개별 도구 페이지 등)는 다음 표준 구조를 따라야 합니다.
 
 ```html
 <!DOCTYPE html>
@@ -63,112 +81,50 @@ tool/
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도구 이름</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        /* 이 도구에만 필요한 최소한의 스타일을 여기에 작성 */
-    </style>
+    <title>페이지 제목</title>
+    <link rel="stylesheet" href="../assets/css/style.css"> <!-- 경로에 주의 -->
+    <!-- 페이지 전용 스크립트가 있다면 여기에 추가 -->
 </head>
 <body>
-    <header>
-        <div class="logo">도구 이름</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
-
+    <!-- 공통 헤더와 푸터는 스크립트로 자동 삽입됩니다 -->
     <main>
-        <section id="tool-id" class="page-section active">
-            <!-- Tool Card -->
-            <div class="tool-card">
-                <form id="tool-form">
-                    <!-- UI 요소들은 여기에 배치 -->
-                </form>
+        <section class="page-section active">
+            <div class="content-container">
+                <h2>페이지 제목</h2>
+                <!-- 이 안에 카드 등 페이지 콘텐츠 배치 -->
             </div>
-
-            <!-- Description Card -->
-            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
     <script type="module">
-        import { initTheme } from '../../assets/js/modules/theme.js';
+        import { createHeader, createFooter } from '../assets/js/common-components.js';
+        import { initTheme } from '../assets/js/modules/theme.js';
 
-        function initMyNewTool() {
-            // ... (1, 2, 3, 4)
-        }
+        // 1. 공통 컴포넌트 렌더링
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
 
-        async function loadDescription() {
-            const descriptionEl = document.getElementById('tool-description');
-            try {
-                const response = await fetch('./description.md');
-                if (!response.ok) return; // 파일이 없으면 그냥 넘어감
-                
-                const markdown = await response.text();
-                descriptionEl.innerHTML = marked.parse(markdown);
-                descriptionEl.style.display = 'block';
-            } catch (error) {
-                console.error('Error loading description:', error);
-                // 에러 발생 시 설명 카드 숨김
-                descriptionEl.style.display = 'none';
-            }
-        }
-
+        // 2. 테마 초기화
         initTheme();
-        initMyNewTool();
-        loadDescription();
+
+        // 3. 이 페이지의 고유 스크립트 실행 (예: initMyTool())
     </script>
 </body>
 </html>
 ```
 
-- **`.tool-card`**: 도구와 설명을 위한 두 개의 분리된 카드에 모두 이 클래스를 사용합니다.
-- **`#tool-description`**: 설명 카드로 사용되며, `description.md` 파일이 성공적으로 로드된 후에만 JavaScript에 의해 화면에 표시됩니다.
+## 4. CSS 디자인 시스템
 
-## 5. CSS 디자인 시스템
+모든 시각적 요소는 `style.css`와 `variables.css`에 정의된 규칙을 따릅니다. **개별 페이지에 `<style>` 태그나 인라인 `style` 속성을 사용하는 것은 금지됩니다.**
 
-`assets/css/tool-page.css`에 정의된 공통 클래스를 사용하여 일관된 디자인을 유지합니다. **인라인 스타일 사용은 지양합니다.**
+- **`.content-container`**: 페이지의 메인 콘텐츠를 감싸는 중앙 정렬 컨테이너입니다. `max-width: 800px`를 가집니다.
+- **`.tool-card`**: 도구 UI 또는 설명 내용을 담는 기본 카드 컴포넌트입니다.
+- **`<h2>`**: `.content-container` 내부의 최상위 제목으로 사용됩니다.
+- **폼 요소**: `input`, `button`, `select`, `textarea` 등은 모두 일관된 디자인이 적용되어 있습니다.
+- **유틸리티 클래스**: `.w-100` (width 100%), `.mt-2` (margin-top 2rem), `.mx-auto` (좌우 margin auto) 등 재사용 가능한 클래스를 활용합니다.
 
-- **`.tool-card`**: 기본 카드 스타일.
-    - **`.tool-card.text-center`**: 내부 텍스트와 요소들을 가운데 정렬합니다.
-- **간격**: `.tool-card > * + *` 규칙에 의해 카드 내의 직계 자식 요소들 사이에는 `1rem`의 상단 마진이 자동으로 적용됩니다. `<form>` 내부도 마찬가지입니다.
-- **`.input-group`**: `label`과 `input`, 또는 여러 `input`들을 그룹화할 때 사용합니다.
-- **`.button-group`**: 여러 버튼을 그룹화할 때 사용합니다. `display: flex`가 적용됩니다.
-- **`.notice`**: 작은 회색 폰트의 알림 텍스트 스타일입니다.
-- **`.preview-box`**: 미리보기 영역을 위한 컨테이너입니다. (예: QR코드, 색상 견본)
-- **`.file-upload-label`**: `<input type="file">`을 대체하는 커스텀 버튼 스타일입니다. 실제 `input`은 `.hidden-input` 클래스를 추가하여 숨깁니다.
-- **`.tool-description`**: 상세 설명 영역의 스타일입니다. `.tool-card`와 유사하지만, 사용자가 내용을 읽기 편하도록 최적화됩니다.
+## 5. JavaScript 실행 구조
 
-## 6. JavaScript 코드 구조
-
-모든 도구의 스크립트는 `init<ToolName>` 함수로 감싸야 하며, 내부 구조는 다음 순서를 따릅니다.
-
-```javascript
-function initMyTool() {
-    // 1. DOM 요소 조회
-    const form = document.getElementById('tool-form');
-    const input = document.getElementById('my-input');
-    const output = document.getElementById('my-output');
-
-    // 2. (선택) 상태 변수 (State)
-    let isProcessing = false;
-
-    // 3. 이벤트 리스너 등록
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        doSomething();
-    });
-
-    // 4. 핵심 로직 함수 (Functions)
-    function doSomething() {
-        if (isProcessing) return;
-        output.textContent = input.value.split('').reverse().join('');
-    }
-}
-```
-
-## 7. 새 도구 추가 절차
-
-1.  `tool/` 아래에 도구 이름으로 새 디렉토리를 생성합니다.
-2.  `index.html`, `tool.json`, **`description.md`** 파일을 생성합니다.
-3.  각 파일의 내용을 이 명세서의 가이드에 따라 작성합니다.
-4.  `assets/js/tool-loader.js`의 `tool` 배열에 새 도구의 디렉토리 이름을 추가합니다.
+- **공통 로직**: 모든 페이지는 `common-components.js`를 통해 헤더/푸터를, `theme.js`를 통해 테마 기능을 부여받습니다.
+- **고유 로직**: 각 페이지의 고유 기능은 `init<PageName>()` 형태의 함수로 작성하여 실행합니다. (예: `initColorConverter()`)
+- **`tool-loader.js`**: `tool/index.html` 페이지의 모든 동적 기능(툴 목록 로딩, 태그 필터링 등)을 담당합니다.

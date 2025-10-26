@@ -8,51 +8,57 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="logo">이미지 형식 변환기</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
+    <!-- Common header will be injected here -->
 
     <main>
         <section id="image-format-converter" class="page-section active">
-            <div class="tool-card">
-                <form id="converter-form">
-                    <div class="converter-layout">
-                        <div class="controls">
-                            <h4>1. 이미지 선택</h4>
-                            <label for="image-input" class="file-upload-label">파일 찾기</label>
-                            <input type="file" id="image-input" accept="image/*" class="hidden-input">
-                            <p id="file-name">선택된 파일 없음</p>
-                            
-                            <h4 class="mt-2">2. 변환할 형식 선택</h4>
-                            <div class="input-group">
-                                <select id="format-select" class="w-100">
-                                    <option value="jpeg">JPG</option>
-                                    <option value="png">PNG</option>
-                                    <option value="webp">WebP</option>
-                                    <option value="bmp">BMP</option>
-                                    <option value="gif">GIF (첫 프레임만)</option>
-                                </select>
+            <div class="content-container">
+                <h2>이미지 형식 변환기</h2>
+                <div class="tool-card">
+                    <form id="converter-form">
+                        <div class="converter-layout">
+                            <div class="controls">
+                                <h4>1. 이미지 선택</h4>
+                                <label for="image-input" class="file-upload-label">파일 찾기</label>
+                                <input type="file" id="image-input" accept="image/*" class="hidden-input">
+                                <p id="file-name">선택된 파일 없음</p>
+                                
+                                <h4 class="mt-2">2. 변환할 형식 선택</h4>
+                                <div class="input-group">
+                                    <select id="format-select" class="w-100">
+                                        <option value="jpeg">JPG</option>
+                                        <option value="png">PNG</option>
+                                        <option value="webp">WebP</option>
+                                        <option value="bmp">BMP</option>
+                                        <option value="gif">GIF (첫 프레임만)</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="convert-btn" class="w-100">변환하기</button>
                             </div>
-                            <button type="button" id="convert-btn" class="w-100">변환하기</button>
-                        </div>
-                        <div class="preview-area">
-                            <h4>미리보기</h4>
-                            <div class="preview-box">
-                                <img id="preview" src="" alt="이미지 미리보기">
+                            <div class="preview-area">
+                                <h4>미리보기</h4>
+                                <div class="preview-box">
+                                    <img id="preview" src="" alt="이미지 미리보기">
+                                </div>
+                                <a id="download-link" class="button" style="display: none;">다운로드</a>
                             </div>
-                            <a id="download-link" class="button" style="display: none;">다운로드</a>
                         </div>
-                    </div>
-                    <p class="notice">참고: GIF 형식은 애니메이션의 첫 번째 프레임만 변환됩니다. 브라우저에 따라 일부 형식(예: BMP) 지원이 다를 수 있습니다.</p>
-                </form>
+                        <p class="notice">참고: GIF 형식은 애니메이션의 첫 번째 프레임만 변환됩니다. 브라우저에 따라 일부 형식(예: BMP) 지원이 다를 수 있습니다.</p>
+                    </form>
+                </div>
+                <div id="tool-description" class="tool-card" style="display: none;"></div>
             </div>
-            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
+    <!-- Common footer will be injected here -->
+
     <script type="module">
+        import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
 
         function initImageFormatConverter() {
             // 1. DOM Elements

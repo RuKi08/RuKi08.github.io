@@ -1,5 +1,6 @@
 {
   "name": "QR 코드 생성기",
   "description": "마케팅이나 정보 공유 목적으로 URL이나 텍스트를 즉시 QR 코드로 변환합니다.",
-  "icon": "fa-solid fa-qrcode"
+  "icon": "fa-solid fa-qrcode",
+  "tags": ["generator", "image", "qr"]
 }

@@ -8,34 +8,40 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="logo">아스키/유니코드 변환기</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
+    <!-- Common header will be injected here -->
 
     <main>
         <section id="ascii-unicode-converter" class="page-section active">
-            <div class="tool-card">
-                <form id="converter-form">
-                    <div class="form-section">
-                        <label for="char-input">문자 (Character)</label>
-                        <textarea id="char-input" placeholder="문자를 입력하세요..." rows="4"></textarea>
-                        <button type="button" id="to-code-btn" class="w-100">▼ 문자를 코드로</button>
-                    </div>
-                    <div class="form-section">
-                        <label for="code-output">코드 (Code)</label>
-                        <textarea id="code-output" placeholder="코드 결과 (쉼표로 구분) - 예: 72,101,108,108,111" rows="4"></textarea>
-                        <button type="button" id="to-char-btn" class="w-100">▲ 코드를 문자로</button>
-                    </div>
-                </form>
+            <div class="content-container">
+                <h2>아스키/유니코드 변환기</h2>
+                <div class="tool-card">
+                    <form id="converter-form">
+                        <div class="form-section">
+                            <label for="char-input">문자 (Character)</label>
+                            <textarea id="char-input" placeholder="문자를 입력하세요..." rows="4"></textarea>
+                            <button type="button" id="to-code-btn" class="w-100">▼ 문자를 코드로</button>
+                        </div>
+                        <div class="form-section">
+                            <label for="code-output">코드 (Code)</label>
+                            <textarea id="code-output" placeholder="코드 결과 (쉼표로 구분) - 예: 72,101,108,108,111" rows="4"></textarea>
+                            <button type="button" id="to-char-btn" class="w-100">▲ 코드를 문자로</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="tool-description" class="tool-card" style="display: none;"></div>
             </div>
-            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
+    <!-- Common footer will be injected here -->
+
     <script type="module">
+        import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
         
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
+
         function initAsciiUnicodeConverter() {
             // 1. DOM Elements
             const charInput = document.getElementById('char-input');

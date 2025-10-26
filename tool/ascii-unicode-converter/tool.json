@@ -1,5 +1,6 @@
 {
   "name": "아스키/유니코드 변환기",
   "description": "문자와 해당 코드 값을 확인하거나 변환하여 인코딩 문제를 해결합니다.",
-  "icon": "fa-solid fa-font"
+  "icon": "fa-solid fa-font",
+  "tags": ["text", "converter", "encoding"]
 }

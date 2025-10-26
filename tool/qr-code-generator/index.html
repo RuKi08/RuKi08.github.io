@@ -9,26 +9,32 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="logo">QR 코드 생성기</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
+    <!-- Common header will be injected here -->
 
     <main>
         <section id="qr-code-generator" class="page-section active">
-            <div class="tool-card text-center">
-                <form id="qr-form">
-                    <textarea id="qr-input" placeholder="QR 코드로 변환할 텍스트나 URL을 입력하세요..." rows="5"></textarea>
-                    <button type="submit" class="w-100">QR 코드 생성</button>
-                    <div id="qrcode-display" class="preview-box mx-auto"><p>QR 코드가 여기에 표시됩니다.</p></div>
-                </form>
+            <div class="content-container">
+                <h2>QR 코드 생성기</h2>
+                <div class="tool-card text-center">
+                    <form id="qr-form">
+                        <textarea id="qr-input" placeholder="QR 코드로 변환할 텍스트나 URL을 입력하세요..." rows="5"></textarea>
+                        <button type="submit" class="w-100">QR 코드 생성</button>
+                        <div id="qrcode-display" class="preview-box mx-auto"><p>QR 코드가 여기에 표시됩니다.</p></div>
+                    </form>
+                </div>
+                <div id="tool-description" class="tool-card" style="display: none;"></div>
             </div>
-            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
+    <!-- Common footer will be injected here -->
+
     <script type="module">
+        import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
 
         function initQrCodeGenerator() {
             // 1. DOM Elements

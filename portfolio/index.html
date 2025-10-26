@@ -5,38 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나의 모든 것 - Portfolio</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    <script src="../assets/js/firebase-config.js" type="module"></script>
-    <script src="../assets/js/script.js" type="module" defer></script>
 </head>
 <body>
-    <header>
-        <div class="logo">MyEverything</div>
-        <nav>
-            <ul>
-                <li><a href="/home" class="nav-link" data-target="home">Home</a></li>
-                <li><a href="/portfolio" class="nav-link" data-target="portfolio">Portfolio</a></li>
-                <li><a href="/tool" class="nav-link" data-target="tool">AllTheTools</a></li>
-            </ul>
-        </nav>
-        <button id="theme-toggle">☀️</button>
-    </header>
-
+    <!-- Common header/footer will be injected by script -->
     <main>
         <section id="portfolio" class="page-section active">
-            <h2>Portfolio</h2>
-            <div class="placeholder-section">
-                <h3>About Me</h3>
-                <p>자기소개 내용이 여기에 들어갑니다.</p>
-            </div>
-            <div class="placeholder-section">
-                <h3>My Projects</h3>
-                <p>프로젝트 목록이 여기에 들어갑니다.</p>
-            </div>
-            <div class="placeholder-section">
-                <h3>Contact</h3>
-                <p>연락처 정보가 여기에 들어갑니다.</p>
+            <div class="content-container">
+                <h2>Portfolio</h2>
+                <div class="placeholder-section">
+                    <h3>About Me</h3>
+                    <p>자기소개 내용이 여기에 들어갑니다.</p>
+                </div>
+                <div class="placeholder-section">
+                    <h3>My Projects</h3>
+                    <p>프로젝트 목록이 여기에 들어갑니다.</p>
+                </div>
+                <div class="placeholder-section">
+                    <h3>Contact</h3>
+                    <p>연락처 정보가 여기에 들어갑니다.</p>
+                </div>
             </div>
         </section>
     </main>
+
+    <script type="module">
+        import { createHeader, createFooter } from '../assets/js/common-components.js';
+        import { initTheme } from '../assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
+        initTheme();
+    </script>
+
 </body>
 </html>

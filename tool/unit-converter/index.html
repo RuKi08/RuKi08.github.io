@@ -8,47 +8,53 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="logo">단위 변환기</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
+    <!-- Common header will be injected here -->
 
     <main>
         <section id="unit-converter" class="page-section active">
-            <div class="tool-card">
-                <form id="converter-form">
-                    <div class="form-section">
-                        <label for="category-select">변환 종류</label>
-                        <select id="category-select">
-                            <option value="length">길이</option>
-                            <option value="weight">무게</option>
-                            <option value="temperature">온도</option>
-                            <option value="volume">부피</option>
-                        </select>
-                    </div>
-                    <fieldset>
-                        <legend>From</legend>
-                        <div class="input-group">
-                            <input type="text" id="from-value" value="1">
-                            <select id="from-unit"></select>
+            <div class="content-container">
+                <h2>단위 변환기</h2>
+                <div class="tool-card">
+                    <form id="converter-form">
+                        <div class="form-section">
+                            <label for="category-select">변환 종류</label>
+                            <select id="category-select">
+                                <option value="length">길이</option>
+                                <option value="weight">무게</option>
+                                <option value="temperature">온도</option>
+                                <option value="volume">부피</option>
+                            </select>
                         </div>
-                    </fieldset>
-                    <div class="unit-separator"></div>
-                    <fieldset>
-                        <legend>To</legend>
-                        <div class="input-group">
-                            <input type="text" id="to-value" readonly>
-                            <select id="to-unit"></select>
-                        </div>
-                    </fieldset>
-                </form>
+                        <fieldset>
+                            <legend>From</legend>
+                            <div class="input-group">
+                                <input type="text" id="from-value" value="1">
+                                <select id="from-unit"></select>
+                            </div>
+                        </fieldset>
+                        <div class="unit-separator"></div>
+                        <fieldset>
+                            <legend>To</legend>
+                            <div class="input-group">
+                                <input type="text" id="to-value" readonly>
+                                <select id="to-unit"></select>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div id="tool-description" class="tool-card" style="display: none;"></div>
             </div>
-            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
+    <!-- Common footer will be injected here -->
+
     <script type="module">
+        import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
 
         function initUnitConverter() {
             // 1. DOM Elements

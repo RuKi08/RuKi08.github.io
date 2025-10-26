@@ -8,39 +8,45 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="logo">색상 코드 변환기</div>
-        <button id="theme-toggle">☀️</button>
-    </header>
+    <!-- Common header will be injected here -->
 
     <main>
         <section id="color-code-converter" class="page-section active">
-            <div class="tool-card">
-                <div class="preview-box mx-auto" id="color-preview"></div>
-                <form id="converter-form">
-                    <fieldset>
-                        <legend>색상 값</legend>
-                        <div class="input-group color-input-group">
-                            <label for="hex-input">HEX</label>
-                            <input type="text" id="hex-input" placeholder="#RRGGBB">
-                        </div>
-                        <div class="input-group color-input-group">
-                            <label for="rgb-input">RGB</label>
-                            <input type="text" id="rgb-input" placeholder="R, G, B">
-                        </div>
-                        <div class="input-group color-input-group">
-                            <label for="hsl-input">HSL</label>
-                            <input type="text" id="hsl-input" placeholder="H, S, L">
-                        </div>
-                    </fieldset>
-                </form>
+            <div class="content-container">
+                <h2>색상 코드 변환기</h2>
+                <div class="tool-card">
+                    <div class="preview-box mx-auto" id="color-preview"></div>
+                    <form id="converter-form">
+                        <fieldset>
+                            <legend>색상 값</legend>
+                            <div class="input-group color-input-group">
+                                <label for="hex-input">HEX</label>
+                                <input type="text" id="hex-input" placeholder="#RRGGBB">
+                            </div>
+                            <div class="input-group color-input-group">
+                                <label for="rgb-input">RGB</label>
+                                <input type="text" id="rgb-input" placeholder="R, G, B">
+                            </div>
+                            <div class="input-group color-input-group">
+                                <label for="hsl-input">HSL</label>
+                                <input type="text" id="hsl-input" placeholder="H, S, L">
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div id="tool-description" class="tool-card" style="display: none;"></div>
             </div>
-            <div id="tool-description" class="tool-card" style="display: none;"></div>
         </section>
     </main>
 
+    <!-- Common footer will be injected here -->
+
     <script type="module">
+        import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
 
         function initColorCodeConverter() {
             // 1. DOM Elements
