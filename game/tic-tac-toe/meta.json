@@ -2,5 +2,7 @@
   "name": "틱택토 (Tic-Tac-Toe)",
   "description": "두 플레이어가 번갈아가며 O와 X를 놓아 한 줄을 만드는 클래식 게임입니다.",
   "icon": "fa-solid fa-border-all",
-  "tags": ["board game", "classic", "2-player"]
+  "tags": ["board game", "classic", "2-player"],
+  "script": "script.js",
+  "style": "style.css"
 }

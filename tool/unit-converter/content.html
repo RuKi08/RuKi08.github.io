@@ -1,0 +1,27 @@
+
+<form id="converter-form">
+    <div class="form-section">
+        <label for="category-select">변환 종류</label>
+        <select id="category-select">
+            <option value="length">길이</option>
+            <option value="weight">무게</option>
+            <option value="temperature">온도</option>
+            <option value="volume">부피</option>
+        </select>
+    </div>
+    <fieldset>
+        <legend>From</legend>
+        <div class="input-group">
+            <input type="text" id="from-value" value="1">
+            <select id="from-unit"></select>
+        </div>
+    </fieldset>
+    <div class="unit-separator"></div>
+    <fieldset>
+        <legend>To</legend>
+        <div class="input-group">
+            <input type="text" id="to-value" readonly>
+            <select id="to-unit"></select>
+        </div>
+    </fieldset>
+</form>

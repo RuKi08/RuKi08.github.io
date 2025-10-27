@@ -3,54 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오목</title>
+    <title>Game</title> <!-- Title will be dynamically updated -->
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tool-page.css">
 </head>
 <body>
+    <!-- Common header will be injected here -->
+
     <main>
         <section class="page-section active">
-            <div class="content-container">
-                <h2>오목 (Gomoku)</h2>
-                <div class="tool-card">
-                    <div id="game-container" class="game-container">
-                        <div id="status-text" class="game-status"></div>
-                        <div id="game-board" class="game-board mx-auto" style="max-width: 600px; aspect-ratio: 1; cursor: pointer;"></div>
-                        <div id="game-overlay" class="game-overlay">
-                            <div id="game-overlay-message" class="game-overlay-message"></div>
-                            <button id="reset-game-btn" class="button">다시하기</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="tool-description" class="tool-card" style="display: none;"></div>
+            <div id="game-container" class="content-container">
+                <!-- Game content will be loaded here by game-page-loader.js -->
+                <div class="loading-spinner"></div>
             </div>
         </section>
     </main>
 
+    <!-- Common footer will be injected here -->
+
     <script type="module">
         import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
-        import { initGomokuGame } from './gomoku.js';
+        import { loadGamePage } from '../../assets/js/game-page-loader.js';
 
+        // 1. Render common components
         document.body.prepend(createHeader());
         document.body.append(createFooter());
+        
+        // 2. Initialize theme
         initTheme();
-        initGomokuGame();
 
-        async function loadDescription() {
-            const descriptionEl = document.getElementById('tool-description');
-            try {
-                const response = await fetch('./description.md');
-                if (!response.ok) return;
-                const markdown = await response.text();
-                descriptionEl.innerHTML = marked.parse(markdown);
-                descriptionEl.style.display = 'block';
-            } catch (error) {
-                console.error('Error loading description:', error);
-                descriptionEl.style.display = 'none';
-            }
-        }
-        loadDescription();
+        // 3. Load the specific game's content
+        loadGamePage();
     </script>
 </body>
 </html>

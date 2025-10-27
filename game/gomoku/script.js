@@ -169,3 +169,5 @@ export function initGomokuGame() {
     resetButton.addEventListener('click', setupGame);
     setupGame();
 }
+
+initGomokuGame();

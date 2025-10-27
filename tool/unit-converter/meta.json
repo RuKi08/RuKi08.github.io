@@ -2,5 +2,6 @@
   "name": "단위 변환기",
   "description": "길이, 무게, 부피, 온도 등 일상 및 전문 분야의 모든 측정 단위를 상호 변환합니다.",
   "icon": "fa-solid fa-ruler-combined",
-  "tags": ["converter", "unit"]
+  "tags": ["converter", "unit"],
+  "script": "script.js"
 }

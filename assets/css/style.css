@@ -385,45 +385,16 @@ input[type="file"].hidden-input { display: none; }
     color: var(--text-secondary-color);
 }
 
-/* --- Gomoku Game --- */
-.gomoku-board-bg {
-    background-color: #d2b48c; /* Wooden board color */
-    background-image: 
-        linear-gradient(to right, #a08060 1px, transparent 1px),
-        linear-gradient(to bottom, #a08060 1px, transparent 1px);
-    background-size: calc(100% / 15) calc(100% / 15);
-    background-position: calc(100% / 30) calc(100% / 30); /* Offset by half a cell */
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border-radius: var(--border-radius);
-}
-.stone {
-    position: absolute;
-    width: calc(100% / 15 * 0.9);
-    height: calc(100% / 15 * 0.9);
-    border-radius: 50%;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-    transform: translate(-50%, -50%);
-    animation: popIn 0.2s;
-}
-.stone.black { background: radial-gradient(circle at 65% 35%, #555, #111); }
-.stone.white { background: radial-gradient(circle at 65% 35%, #fff, #ccc); border: 1px solid #bbb; }
-
-.forbidden-mark {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #e03131;
-    font-size: 1.5rem;
-    font-weight: bold;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}
 
 
+
+
+.game-status {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    height: 2rem; /* Keep space consistent */
+}
 
 /*
 ========================================
@@ -438,19 +409,14 @@ Game UI System
 .game-board {
     display: grid;
     grid-template-columns: repeat(var(--grid-size, 4), 1fr);
-    /* grid-template-rows is now determined by the aspect-ratio of the cells */
     gap: 10px;
     background-color: var(--border-color);
     padding: 10px;
     border-radius: var(--border-radius);
     position: relative;
     box-shadow: var(--box-shadow);
-}
-
-.game-cell {
-    background-color: var(--bg-color);
-    border-radius: var(--border-radius);
-    aspect-ratio: 1;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .game-overlay {
@@ -487,126 +453,13 @@ body.dark-mode .game-overlay { background-color: var(--game-overlay-bg-dark); }
     to { transform: scale(1); opacity: 1; }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
-
-.tile-merged {
-    animation: pulse 0.2s;
-}
-
-.tile-new {
-    animation: popIn 0.2s;
-}
-
-/* --- Game Specific Styles --- */
-
-/* Universal Game Piece */
-.game-piece {
-    position: absolute;
-    border-radius: 50%;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-    transform: translate(-50%, -50%);
-    transition: all 0.1s;
-    animation: popIn 0.2s;
-}
-
-/* Gomoku Stones */
-.game-piece.gomoku {
-    width: calc(100% / 14 * 0.9);
-    height: calc(100% / 14 * 0.9);
-}
-.game-piece.black { background: radial-gradient(circle at 65% 35%, #555, #111); }
-.game-piece.white { background: radial-gradient(circle at 65% 35%, #fff, #ccc); border: 1px solid #bbb; }
-
-/* Tic-Tac-Toe Pieces */
-.game-piece.ttt {
-    width: calc(100% / 3 - 10px);
-    height: calc(100% / 3 - 10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5rem;
-    font-weight: bold;
-    background: transparent !important; /* Override stone background */
-    box-shadow: none;
-}
-.game-piece.ttt.x { color: var(--game-piece-color-x); }
-.game-piece.ttt.o { color: var(--game-accent-color); }
-
-.game-status {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 500;
-    height: 2rem; /* Keep space consistent */
-}
-
-/* --- 2048 Game --- */
-.game-wrapper {
-    position: relative;
-    aspect-ratio: 1;
-}
-.game-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-.score-box-container {
-    display: flex;
-    gap: 0.5rem;
-}
-.score-box {
-    background-color: var(--input-bg);
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    font-weight: bold;
-    font-size: 0.9rem;
-    text-align: center;
-    color: var(--text-secondary-color);
-}
-.score-box span {
-    font-size: 1.5rem;
-    color: var(--text-color);
-    display: block;
-}
-#grid-container, #tile-container {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 10px;
-    padding: 10px;
-    border-radius: var(--border-radius);
-}
-#grid-container {
-    background-color: var(--border-color);
-}
-.game-tile {
-    grid-row-start: var(--y);
-    grid-column-start: var(--x);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
-    border-radius: var(--border-radius);
-}
-
-/* 2048 Themed Tile Colors */
-.game-tile[data-value="2"] { background-color: #e9ecef; color: #495057; }
-.game-tile[data-value="4"] { background-color: #dee2e6; color: #495057; }
-.game-tile[data-value="8"] { background-color: #ffe8cc; color: #854c00; }
-.game-tile[data-value="16"] { background-color: #ffd8a8; color: #854c00; }
-.game-tile[data-value="32"] { background-color: #ffc078; color: #fff; }
-.game-tile[data-value="64"] { background-color: var(--game-accent-color); color: #fff; }
-.game-tile[data-value="128"] { background-color: #a5d8ff; color: #212529; font-size: 1.8rem; }
-.game-tile[data-value="256"] { background-color: #74c0fc; color: #fff; font-size: 1.8rem; }
-.game-tile[data-value="512"] { background-color: #4dabf7; color: #fff; font-size: 1.8rem; }
-.game-tile[data-value="1024"] { background-color: var(--primary-color); color: #fff; font-size: 1.5rem; }
-.game-tile[data-value="2048"] { background-color: #d6336c; color: #fff; font-size: 1.5rem; }
-.game-tile[data-value="4096"] { background-color: #a61e4d; color: #fff; font-size: 1.5rem; }

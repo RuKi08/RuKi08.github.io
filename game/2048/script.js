@@ -202,7 +202,57 @@ export function init2048Game() {
     document.addEventListener('keydown', handleKeyPress);
     newGameButton.addEventListener('click', setupGame);
     overlay.querySelector('button').addEventListener('click', setupGame);
+
+    // Mobile Swipe Controls
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const gameArea = document.querySelector('.game-wrapper');
+
+    gameArea.addEventListener('touchstart', function(event) {
+        if (event.touches.length > 1) return; // Ignore multi-touch
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+
+    gameArea.addEventListener('touchmove', function(event) {
+        // Prevent scrolling while swiping
+        event.preventDefault();
+    }, { passive: false });
+
+    gameArea.addEventListener('touchend', function(event) {
+        if (event.changedTouches.length > 1) return; // Ignore multi-touch
+        const touchEndX = event.changedTouches[0].clientX;
+        const touchEndY = event.changedTouches[0].clientY;
+        handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+    }, { passive: true });
+
+    function handleSwipe(startX, startY, endX, endY) {
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+        const minSwipeDistance = 30; // Minimum distance for a swipe
+
+        if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
+            return; // Not a swipe
+        }
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) { // Horizontal swipe
+            if (deltaX > 0) {
+                move('ArrowRight');
+            } else {
+                move('ArrowLeft');
+            }
+        } else { // Vertical swipe
+            if (deltaY > 0) {
+                move('ArrowDown');
+            } else {
+                move('ArrowUp');
+            }
+        }
+    }
+
     
     loadBestScore();
     setupGame();
 }
+
+init2048Game();

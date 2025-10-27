@@ -21,7 +21,7 @@ async function loadToolsAndTags() {
 
     for (const dir of toolDirs) {
         try {
-            const response = await fetch(`./${dir}/tool.json`);
+            const response = await fetch(`./${dir}/meta.json`);
             const tool = await response.json();
             tool.dir = dir;
             toolsData.push(tool);

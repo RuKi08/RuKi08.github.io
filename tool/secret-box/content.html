@@ -1,0 +1,13 @@
+
+<div class="text-center">
+    <p>전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
+    <form id="secret-form">
+        <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..." rows="4"></textarea>
+        <input type="password" id="secret-key" placeholder="해독암호 (비밀키)">
+        <button type="submit" id="save-secret" class="w-100">저장하기</button>
+    </form>
+    <div class="secret-display mt-2">
+        <button id="load-secrets" class="w-100">모든 데이터 보기</button>
+        <ul id="secret-list" class="preview-box"></ul>
+    </div>
+</div>

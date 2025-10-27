@@ -3,26 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR 코드 생성기</title>
+    <title>Tool</title> <!-- Title will be dynamically updated -->
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tool-page.css">
 </head>
 <body>
     <!-- Common header will be injected here -->
 
     <main>
-        <section id="qr-code-generator" class="page-section active">
-            <div class="content-container">
-                <h2>QR 코드 생성기</h2>
-                <div class="tool-card text-center">
-                    <form id="qr-form">
-                        <textarea id="qr-input" placeholder="QR 코드로 변환할 텍스트나 URL을 입력하세요..." rows="5"></textarea>
-                        <button type="submit" class="w-100">QR 코드 생성</button>
-                        <div id="qrcode-display" class="preview-box mx-auto"><p>QR 코드가 여기에 표시됩니다.</p></div>
-                    </form>
-                </div>
-                <div id="tool-description" class="tool-card" style="display: none;"></div>
+        <section class="page-section active">
+            <div id="tool-container" class="content-container">
+                <!-- Tool content will be loaded here by tool-page-loader.js -->
+                <div class="loading-spinner"></div>
             </div>
         </section>
     </main>
@@ -32,61 +24,17 @@
     <script type="module">
         import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
+        import { loadToolPage } from '../../assets/js/tool-page-loader.js';
 
+        // 1. Render common components
         document.body.prepend(createHeader());
         document.body.append(createFooter());
-
-        function initQrCodeGenerator() {
-            // 1. DOM Elements
-            const form = document.getElementById('qr-form');
-            const qrInput = document.getElementById('qr-input');
-            const qrDisplay = document.getElementById('qrcode-display');
-
-            // 2. Event Listeners
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                generateQrCode();
-            });
-
-            // 3. Functions
-            function generateQrCode() {
-                const inputText = qrInput.value.trim();
-                if (!inputText) {
-                    alert('텍스트나 URL을 입력해주세요.');
-                    return;
-                }
-
-                try {
-                    qrDisplay.innerHTML = '';
-                    const qr = qrcode(0, 'M');
-                    qr.addData(inputText);
-                    qr.make();
-                    const imgTag = qr.createImgTag(8, 16);
-                    qrDisplay.innerHTML = imgTag;
-
-                } catch (e) {
-                    qrDisplay.innerHTML = `<p>QR 코드 생성 중 오류 발생: ${e.message}</p>`;
-                }
-            }
-        }
-
-        async function loadDescription() {
-            const descriptionEl = document.getElementById('tool-description');
-            try {
-                const response = await fetch('./description.md');
-                if (!response.ok) return;
-                const markdown = await response.text();
-                descriptionEl.innerHTML = marked.parse(markdown);
-                descriptionEl.style.display = 'block';
-            } catch (error) {
-                console.error('Error loading description:', error);
-                descriptionEl.style.display = 'none';
-            }
-        }
-
+        
+        // 2. Initialize theme
         initTheme();
-        initQrCodeGenerator();
-        loadDescription();
+
+        // 3. Load the specific tool's content
+        loadToolPage();
     </script>
 </body>
 </html>

@@ -1,0 +1,7 @@
+{
+  "name": "아스키/유니코드 변환기",
+  "description": "문자와 아스키/유니코드 코드 값을 상호 변환합니다.",
+  "icon": "fa-solid fa-right-left",
+  "tags": ["converter", "text", "ascii", "unicode"],
+  "script": "script.js"
+}

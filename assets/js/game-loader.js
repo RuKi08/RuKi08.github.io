@@ -21,7 +21,7 @@ async function loadGamesAndTags() {
 
     for (const dir of gameDirs) {
         try {
-            const response = await fetch(`./${dir}/game.json`);
+            const response = await fetch(`./${dir}/meta.json`);
             const game = await response.json();
             game.dir = dir;
             gamesData.push(game);

@@ -2,5 +2,7 @@
   "name": "2048",
   "description": "방향키로 타일을 합쳐 2048 타일을 만드는 중독성 있는 퍼즐 게임입니다.",
   "icon": "fa-solid fa-grip",
-  "tags": ["puzzle", "classic", "number"]
+  "tags": ["puzzle", "classic", "number"],
+  "script": "script.js",
+  "style": "style.css"
 }
