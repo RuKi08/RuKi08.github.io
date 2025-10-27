@@ -23,6 +23,14 @@
         </section>
     </main>
 
-    <script type="module" src="../assets/js/tool-loader.js"></script>
+    <script type="module">
+        import { loadItemList } from '../assets/js/item-list-loader.js';
+
+        const toolDirs = ['ascii-unicode-converter', 'color-code-converter', 'image-format-converter', 'qr-code-generator', 'secret-box', 'unit-converter'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadItemList('tool', toolDirs);
+        });
+    </script>
 </body>
 </html>

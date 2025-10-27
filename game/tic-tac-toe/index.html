@@ -13,7 +13,7 @@
     <main>
         <section class="page-section active">
             <div id="game-container" class="content-container">
-                <!-- Game content will be loaded here by game-page-loader.js -->
+                <!-- Game content will be loaded here by item-page-loader.js -->
                 <div class="loading-spinner"></div>
             </div>
         </section>
@@ -24,7 +24,7 @@
     <script type="module">
         import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
-        import { loadGamePage } from '../../assets/js/game-page-loader.js';
+        import { loadItemPage } from '../../assets/js/item-page-loader.js';
 
         // 1. Render common components
         document.body.prepend(createHeader());
@@ -34,7 +34,7 @@
         initTheme();
 
         // 3. Load the specific game's content
-        loadGamePage();
+        loadItemPage('game', 'game-container');
     </script>
 </body>
 </html>

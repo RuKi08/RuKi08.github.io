@@ -5,68 +5,65 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.prepend(createHeader());
     document.body.append(createFooter());
     initTheme();
-    loadToolsAndTags();
 });
 
-async function loadToolsAndTags() {
-    const toolContainer = document.getElementById('tool-list-container');
+export async function loadItemList(itemType, itemDirs) {
+    const listContainer = document.getElementById(`${itemType}-list-container`);
     const tagContainer = document.getElementById('tag-list');
     const searchInput = document.getElementById('search-input');
     const expandBtn = document.getElementById('expand-tags-btn');
-    if (!toolContainer || !tagContainer || !searchInput || !expandBtn) return;
+    if (!listContainer || !tagContainer || !searchInput || !expandBtn) return;
 
-    const toolDirs = ['ascii-unicode-converter', 'color-code-converter', 'image-format-converter', 'qr-code-generator', 'secret-box', 'unit-converter'];
     let allTags = new Set();
-    let toolsData = [];
+    let itemsData = [];
 
-    for (const dir of toolDirs) {
+    for (const dir of itemDirs) {
         try {
             const response = await fetch(`./${dir}/meta.json`);
-            const tool = await response.json();
-            tool.dir = dir;
-            toolsData.push(tool);
-            if (tool.tags) {
-                tool.tags.forEach(tag => allTags.add(tag));
+            const item = await response.json();
+            item.dir = dir;
+            itemsData.push(item);
+            if (item.tags) {
+                item.tags.forEach(tag => allTags.add(tag));
             }
         } catch (error) {
-            console.error(`Error fetching tool data for ${dir}:`, error);
+            console.error(`Error fetching ${itemType} data for ${dir}:`, error);
         }
     }
 
-    renderTools(toolsData, toolContainer);
+    renderItems(itemsData, listContainer, itemType);
     renderTags(allTags, tagContainer);
 
     // Event Listeners
-    searchInput.addEventListener('input', () => filterTools(toolsData));
+    searchInput.addEventListener('input', () => filterItems(itemsData));
     expandBtn.addEventListener('click', () => {
         const isCollapsed = tagContainer.classList.toggle('collapsed');
         expandBtn.textContent = isCollapsed ? '▼' : '▲';
     });
-    expandBtn.textContent = '▼'; // Initial state
+    expandBtn.textContent = '▼';
 }
 
-function renderTools(tools, container) {
+function renderItems(items, container, itemType) {
     container.innerHTML = '';
-    tools.forEach(tool => {
+    items.forEach(item => {
         const card = document.createElement('a');
-        card.href = `./${tool.dir}`;
-        card.className = 'tool-list-card';
-        card.dataset.tags = tool.tags ? tool.tags.join(' ') : '';
+        card.href = `./${item.dir}`;
+        card.className = 'tool-list-card'; // Reusing tool-list-card class for both
+        card.dataset.tags = item.tags ? item.tags.join(' ') : '';
 
-        const tagsHTML = tool.tags ? `<div class="card-tags">${tool.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>` : '';
+        const tagsHTML = item.tags ? `<div class="card-tags">${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>` : '';
 
         card.innerHTML = `
-            <i class="${tool.icon}"></i>
-            <h3>${tool.name}</h3>
+            <i class="${item.icon}"></i>
+            <h3>${item.name}</h3>
             ${tagsHTML}
-            <p>${tool.description}</p>
+            <p>${item.description}</p>
         `;
 
-        // Add click event to on-card tags
         card.querySelectorAll('.card-tags .tag').forEach(tagEl => {
             tagEl.addEventListener('click', (e) => {
-                e.preventDefault(); // Prevent navigation
-                e.stopPropagation(); // Prevent card click
+                e.preventDefault();
+                e.stopPropagation();
                 const tagName = tagEl.textContent.substring(1);
                 handleTagClick(tagName);
             });
@@ -116,10 +113,10 @@ function handleTagClick(tagName) {
         allBtn.classList.add('active');
     }
 
-    filterTools();
+    filterItems();
 }
 
-function filterTools() {
+function filterItems() {
     const searchInput = document.getElementById('search-input');
     const searchLower = searchInput.value.toLowerCase();
     const activeTagButtons = document.querySelectorAll('.tag-list .tag-btn.active');

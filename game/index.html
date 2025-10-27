@@ -23,6 +23,14 @@
         </section>
     </main>
 
-    <script type="module" src="../assets/js/game-loader.js"></script>
+    <script type="module">
+        import { loadItemList } from '../assets/js/item-list-loader.js';
+
+        const gameDirs = ['tic-tac-toe', '2048', 'gomoku'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadItemList('game', gameDirs);
+        });
+    </script>
 </body>
 </html>

@@ -14,7 +14,7 @@
     <main>
         <section class="page-section active">
             <div id="tool-container" class="content-container">
-                <!-- Tool content will be loaded here by tool-page-loader.js -->
+                <!-- Tool content will be loaded here by item-page-loader.js -->
                 <div class="loading-spinner"></div>
             </div>
         </section>
@@ -25,7 +25,7 @@
     <script type="module">
         import { createHeader, createFooter } from '../../assets/js/common-components.js';
         import { initTheme } from '../../assets/js/modules/theme.js';
-        import { loadToolPage } from '../../assets/js/tool-page-loader.js';
+        import { loadItemPage } from '../../assets/js/item-page-loader.js';
 
         // 1. Render common components
         document.body.prepend(createHeader());
@@ -35,7 +35,7 @@
         initTheme();
 
         // 3. Load the specific tool's content
-        loadToolPage();
+        loadItemPage('tool', 'tool-container');
     </script>
 </body>
 </html>
