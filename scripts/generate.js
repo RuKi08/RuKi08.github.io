@@ -11,14 +11,17 @@ function toSlug(name) {
 }
 
 // --- File Content Templates ---
-const metaTemplate = (name) => `{
+const metaTemplate = (name, itemType) => {
+    const styleLine = itemType === 'game' ? `,
+  "style": "style.css"` : '';
+    return `{ 
   "name": "${name}",
   "description": "A brief description of this item.",
   "icon": "fa-solid fa-star",
   "tags": [],
-  "script": "script.js",
-  "style": "style.css"
+  "script": "script.js"${styleLine}
 }`;
+};
 
 const contentTemplate = (slug) => `<!-- The main HTML content for ${slug} goes here -->
 <div id="${slug}-container">
@@ -107,12 +110,15 @@ function generate() {
 
         const files = {
             'index.html': indexTemplate(),
-            'meta.json': metaTemplate(itemName),
+            'meta.json': metaTemplate(itemName, itemType),
             'content.html': contentTemplate(itemSlug),
             'script.js': scriptTemplate(),
-            'style.css': styleTemplate(itemSlug),
             'description.md': descriptionTemplate(itemName)
         };
+
+        if (itemType === 'game') {
+            files['style.css'] = styleTemplate(itemSlug);
+        }
 
         for (const [fileName, content] of Object.entries(files)) {
             const filePath = path.join(targetDir, fileName);
