@@ -1,5 +1,5 @@
 
-function initAsciiUnicodeConverter() {
+export function init() {
     // 1. DOM Elements
     const charInput = document.getElementById('char-input');
     const codeOutput = document.getElementById('code-output');
@@ -43,5 +43,3 @@ function initAsciiUnicodeConverter() {
         }
     }
 }
-
-initAsciiUnicodeConverter();

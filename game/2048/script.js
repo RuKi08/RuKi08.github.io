@@ -1,4 +1,4 @@
-export function init2048Game() {
+export function init() {
     const gridElement = document.getElementById('grid-container');
     const scoreElement = document.getElementById('score');
     const bestScoreElement = document.getElementById('best-score');
@@ -254,5 +254,3 @@ export function init2048Game() {
     loadBestScore();
     setupGame();
 }
-
-init2048Game();

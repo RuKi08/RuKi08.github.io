@@ -1,4 +1,4 @@
-function initColorCodeConverter() {
+export function init() {
     // 1. DOM Elements
     const preview = document.getElementById('color-preview');
     const hexInput = document.getElementById('hex-input');
@@ -83,5 +83,3 @@ function initColorCodeConverter() {
     // Initial color
     updateColor('hex', '#4A90E2');
 }
-
-initColorCodeConverter();

@@ -14,7 +14,21 @@ function loadScript(src) {
     });
 }
 
-function initQrCodeGenerator() {
+export function init() {
+    loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js')
+        .then(() => {
+            setupQrCodeGenerator();
+        })
+        .catch(error => {
+            console.error("Error loading qrcode.js library:", error);
+            const qrDisplay = document.getElementById('qrcode-display');
+            if (qrDisplay) {
+                qrDisplay.innerHTML = '<p>QR 코드 라이브러리를 로드하는 중 오류가 발생했습니다.</p>';
+            }
+        });
+}
+
+function setupQrCodeGenerator() {
     // 1. DOM Elements
     const form = document.getElementById('qr-form');
     const qrInput = document.getElementById('qr-input');
@@ -53,16 +67,3 @@ function initQrCodeGenerator() {
         }
     }
 }
-
-// Main execution
-loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js')
-    .then(() => {
-        initQrCodeGenerator();
-    })
-    .catch(error => {
-        console.error("Error loading qrcode.js library:", error);
-        const qrDisplay = document.getElementById('qrcode-display');
-        if (qrDisplay) {
-            qrDisplay.innerHTML = '<p>QR 코드 라이브러리를 로드하는 중 오류가 발생했습니다.</p>';
-        }
-    });

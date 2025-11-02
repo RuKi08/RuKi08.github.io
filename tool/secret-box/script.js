@@ -2,7 +2,7 @@
 import { db } from '../../assets/js/firebase-config.js';
 import { collection, addDoc, query, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-function initSecretBox() {
+export function init() {
     // 1. DOM Elements
     const form = document.getElementById('secret-form');
     const secretDataInput = document.getElementById('secret-data');
@@ -76,5 +76,3 @@ function initSecretBox() {
         }
     }
 }
-
-initSecretBox();

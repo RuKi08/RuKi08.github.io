@@ -49,11 +49,8 @@ export async function loadItemPage(itemType, containerId) {
             const scriptPath = `../../${itemType}/${itemDir}/${meta.script}`;
             const itemModule = await import(scriptPath);
 
-            const cleanItemName = meta.name.replace(/\s|\(|\)/g, '');
-            const initFunctionName = `init${cleanItemName}${itemType === 'game' ? 'Game' : 'Tool'}`;
-
-            if (itemModule[initFunctionName]) {
-                itemModule[initFunctionName](container); // Pass the container element
+            if (itemModule.init) {
+                itemModule.init(container); // Pass the container element
             }
         }
 

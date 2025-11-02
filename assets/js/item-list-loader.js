@@ -7,40 +7,44 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
 });
 
-export async function loadItemList(itemType, itemDirs) {
+export async function loadItemList(itemType) {
     const listContainer = document.getElementById(`${itemType}-list-container`);
     const tagContainer = document.getElementById('tag-list');
     const searchInput = document.getElementById('search-input');
     const expandBtn = document.getElementById('expand-tags-btn');
     if (!listContainer || !tagContainer || !searchInput || !expandBtn) return;
 
-    let allTags = new Set();
-    let itemsData = [];
-
-    for (const dir of itemDirs) {
-        try {
-            const response = await fetch(`./${dir}/meta.json`);
-            const item = await response.json();
-            item.dir = dir;
-            itemsData.push(item);
+    try {
+        const response = await fetch('../assets/data/items.json');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch items.json: ${response.statusText}`);
+        }
+        const allData = await response.json();
+        
+        const itemsData = itemType === 'game' ? allData.games : allData.tools;
+        
+        const allTags = new Set();
+        itemsData.forEach(item => {
             if (item.tags) {
                 item.tags.forEach(tag => allTags.add(tag));
             }
-        } catch (error) {
-            console.error(`Error fetching ${itemType} data for ${dir}:`, error);
-        }
+        });
+
+        renderItems(itemsData, listContainer, itemType);
+        renderTags(allTags, tagContainer);
+
+        // Event Listeners
+        searchInput.addEventListener('input', filterItems);
+        expandBtn.addEventListener('click', () => {
+            const isCollapsed = tagContainer.classList.toggle('collapsed');
+            expandBtn.textContent = isCollapsed ? '▼' : '▲';
+        });
+        expandBtn.textContent = '▼';
+
+    } catch (error) {
+        console.error(`Error loading ${itemType} list:`, error);
+        listContainer.innerHTML = `<p>Error loading list. Please try again later.</p>`;
     }
-
-    renderItems(itemsData, listContainer, itemType);
-    renderTags(allTags, tagContainer);
-
-    // Event Listeners
-    searchInput.addEventListener('input', () => filterItems(itemsData));
-    expandBtn.addEventListener('click', () => {
-        const isCollapsed = tagContainer.classList.toggle('collapsed');
-        expandBtn.textContent = isCollapsed ? '▼' : '▲';
-    });
-    expandBtn.textContent = '▼';
 }
 
 function renderItems(items, container, itemType) {

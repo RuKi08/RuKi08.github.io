@@ -1,5 +1,5 @@
 
-function initImageFormatConverter() {
+export function init() {
     // 1. DOM Elements
     const imageInput = document.getElementById('image-input');
     const formatSelect = document.getElementById('format-select');
@@ -56,5 +56,3 @@ function initImageFormatConverter() {
         };
     }
 }
-
-initImageFormatConverter();

@@ -1,4 +1,4 @@
-export function initTicTacToe() {
+export function init() {
     const boardElement = document.getElementById('game-board');
     const statusElement = document.getElementById('status-text');
     const overlay = document.getElementById('game-overlay');
@@ -99,5 +99,3 @@ export function initTicTacToe() {
     resetButton.addEventListener('click', setupGame);
     setupGame();
 }
-
-initTicTacToe();

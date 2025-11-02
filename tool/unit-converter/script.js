@@ -1,5 +1,5 @@
 
-function initUnitConverter() {
+export function init() {
     // 1. DOM Elements
     const categorySelect = document.getElementById('category-select');
     const fromValueInput = document.getElementById('from-value');
@@ -96,5 +96,3 @@ function initUnitConverter() {
     // Initial setup
     populateUnits();
 }
-
-initUnitConverter();
