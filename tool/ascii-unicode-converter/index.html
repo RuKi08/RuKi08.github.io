@@ -1,41 +1,30 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tool</title> <!-- Title will be dynamically updated -->
-    <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/tool-page.css">
+    <title>Loading...</title>
+    <script>
+        (async () => {
+            try {
+                const response = await fetch('../template.html');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch template: ${response.statusText}`);
+                }
+                const templateHtml = await response.text();
+                document.open();
+                document.write(templateHtml);
+                document.close();
+            } catch (error) {
+                console.error('Error loading template:', error);
+                document.body.innerHTML = '<h2>Error</h2><p>Could not load page content. Please check the console for details.</p>';
+            }
+        })();
+    </script>
 </head>
 <body>
-    <!-- Common header will be injected here -->
-
-    <main>
-        <section class="page-section active">
-            <div id="tool-container" class="content-container">
-                <!-- Tool content will be loaded here by item-page-loader.js -->
-                <div class="loading-spinner"></div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Common footer will be injected here -->
-
-    <script type="module">
-        import { createHeader, createFooter } from '../../assets/js/common-components.js';
-        import { initTheme } from '../../assets/js/modules/theme.js';
-        import { loadItemPage } from '../../assets/js/item-page-loader.js';
-
-        // 1. Render common components
-        document.body.prepend(createHeader());
-        document.body.append(createFooter());
-        
-        // 2. Initialize theme
-        initTheme();
-
-        // 3. Load the specific tool's content
-        loadItemPage('tool', 'tool-container');
-    </script>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
+        <p>Loading...</p>
+    </div>
 </body>
 </html>

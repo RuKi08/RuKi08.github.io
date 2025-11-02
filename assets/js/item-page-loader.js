@@ -54,8 +54,6 @@ export async function loadItemPage(itemType, containerId) {
 
             if (itemModule[initFunctionName]) {
                 itemModule[initFunctionName](container); // Pass the container element
-            } else {
-                console.error(`Error: Init function ${initFunctionName} not found in ${meta.script}`);
             }
         }
 

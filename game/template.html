@@ -12,7 +12,7 @@
 
     <main>
         <section class="page-section active">
-            <div id="game-container" class="content-container">
+            <div id="item-container" class="content-container">
                 <!-- Game content will be loaded here by item-page-loader.js -->
                 <div class="loading-spinner"></div>
             </div>
@@ -34,7 +34,8 @@
         initTheme();
 
         // 3. Load the specific game's content
-        loadItemPage('game', 'game-container');
+        const itemType = window.location.pathname.includes('/game/') ? 'game' : 'tool';
+        loadItemPage(itemType, 'item-container');
     </script>
 </body>
 </html>
