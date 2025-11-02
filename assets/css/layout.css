@@ -29,3 +29,26 @@ main {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+.site-footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 4rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary-color);
+    font-size: 0.9rem;
+}
+
+.footer-nav {
+    margin-bottom: 1rem;
+}
+
+.footer-nav a {
+    margin: 0 0.75rem;
+    text-decoration: none;
+    color: var(--text-secondary-color);
+}
+
+.footer-nav a:hover {
+    color: var(--text-color);
+}

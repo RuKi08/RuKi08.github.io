@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Licenses</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    <main>
+        <div class="content-container" style="padding-top: 2rem;">
+            <h2>Licenses and Open Source Notices</h2>
+            <p>This project utilizes the following open-source software. We are grateful to the developers for their contributions.</p>
+            
+            <hr>
+
+            <div class="license-item">
+                <h3>Marked.js</h3>
+                <p><strong>License:</strong> MIT License</p>
+                <p>A markdown parser and compiler. Used for rendering description files.</p>
+                <p><a href="https://github.com/markedjs/marked/blob/master/LICENSE.md" target="_blank">View License</a></p>
+            </div>
+
+            <hr>
+
+            <div class="license-item">
+                <h3>Font Awesome</h3>
+                <p><strong>License:</strong> Font Awesome Free License (SIL OFL 1.1 for Fonts, MIT for Code)</p>
+                <p>The iconic font and CSS toolkit. Used for icons throughout the site.</p>
+                <p><a href="https://fontawesome.com/license/free" target="_blank">View License</a></p>
+            </div>
+
+            <hr>
+
+            <div class="license-item">
+                <h3>qrcode-generator</h3>
+                <p><strong>License:</strong> MIT License</p>
+                <p>A QR code generator library. Used in the QR Code Generator tool.</p>
+                <p><a href="https://github.com/kazuhikoarase/qrcode-generator/blob/master/LICENSE" target="_blank">View License</a></p>
+            </div>
+
+            <hr>
+
+            <div class="license-item">
+                <h3>Firebase</h3>
+                <p><strong>License:</strong> Apache License 2.0</p>
+                <p>A platform developed by Google for creating mobile and web applications. Used for the Secret Box tool.</p>
+                <p><a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">View License</a></p>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module">
+        import { createHeader, createFooter } from './assets/js/common-components.js';
+        import { initTheme } from './assets/js/modules/theme.js';
+
+        document.body.prepend(createHeader());
+        document.body.append(createFooter());
+        initTheme();
+    </script>
+</body>
+</html>

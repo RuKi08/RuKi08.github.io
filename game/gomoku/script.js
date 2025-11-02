@@ -1,3 +1,5 @@
+// DEVELOPER REMINDER: Ensure all visual assets, text, and code for this game are your original creation or are properly licensed for commercial use to avoid copyright infringement.
+
 export function init() {
     const boardElement = document.getElementById('game-board');
     const statusElement = document.getElementById('status-text');

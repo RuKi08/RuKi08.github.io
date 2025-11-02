@@ -1,3 +1,5 @@
+// DEVELOPER REMINDER: Ensure all visual assets, text, and code for this game are your original creation or are properly licensed for commercial use to avoid copyright infringement.
+
 export function init() {
     const gridElement = document.getElementById('grid-container');
     const scoreElement = document.getElementById('score');
