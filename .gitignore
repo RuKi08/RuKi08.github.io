@@ -1,0 +1,12 @@
+# Node.js dependencies
+/node_modules
+npm-debug.log*
+yarn-error.log
+pnpm-debug.log
+
+# Build output directory
+/dist
+
+# Operating System files
+.DS_Store
+Thumbs.db

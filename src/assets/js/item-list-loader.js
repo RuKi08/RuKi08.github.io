@@ -51,7 +51,7 @@ function renderItems(items, container, itemType) {
     container.innerHTML = '';
     items.forEach(item => {
         const card = document.createElement('a');
-        card.href = `./${item.dir}`;
+        card.href = `/${itemType}/${item.dir}/`;
         card.className = 'tool-list-card'; // Reusing tool-list-card class for both
         card.dataset.tags = item.tags ? item.tags.join(' ') : '';
 

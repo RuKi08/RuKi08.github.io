@@ -1,0 +1,54 @@
+/* --- Specific Tool Component Styles --- */
+
+/* Color Converter */
+.color-input-group label {
+    width: 40px;
+}
+#color-preview {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+}
+
+/* QR Code Generator */
+#qrcode-display {
+    width: 256px;
+    height: 256px;
+    background: white;
+}
+
+/* Image Format Converter */
+.converter-layout {
+    display: flex;
+    gap: 2rem;
+}
+.converter-layout > div { flex: 1; }
+#preview {
+    max-width: 100%;
+    max-height: 300px;
+    display: none;
+}
+@media (max-width: 768px) {
+    .converter-layout {
+        flex-direction: column;
+    }
+}
+
+/* Secret Box */
+#secret-list {
+    list-style: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+#secret-list li {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+#secret-list li:last-child { border-bottom: none; }
+
+/* Unit Converter */
+.unit-separator {
+    text-align: center;
+    font-size: 1.5rem;
+}

@@ -105,3 +105,112 @@ body.dark-mode select {
     flex-grow: 0;
     width: auto;
 }
+
+/*
+========================================
+Item Page Card Layout
+========================================
+*/
+
+.tool-card {
+    background-color: var(--background-secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 2rem auto 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.tool-card + .tool-card {
+    margin-top: 2rem;
+}
+
+.tool-card > * + * {
+    margin-top: 1rem;
+}
+
+.tool-card.text-center {
+    text-align: center;
+}
+
+.tool-card form > * + * {
+    margin-top: 1rem;
+}
+
+.tool-card label {
+    font-weight: 500;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.notice {
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+}
+
+.preview-box {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+}
+
+.file-upload-label {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.file-upload-label:hover {
+    opacity: 0.9;
+}
+
+input[type="file"].hidden-input {
+    display: none;
+}
+
+/* Markdown content styling inside cards */
+.tool-card h3 {
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.tool-card h3:first-child {
+    margin-top: 0;
+}
+
+.tool-card p, .tool-card ul, .tool-card ol {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.tool-card ul, .tool-card ol {
+    padding-left: 1.5rem;
+}
+
+.tool-card code {
+    background-color: var(--bg-color);
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    border-radius: 3px;
+}
+
+.w-100 { width: 100%; }
+.mt-2 { margin-top: 2rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
