@@ -1,10 +1,10 @@
 function createHeader() {
     const header = document.createElement('header');
     header.innerHTML = `
-        <div class="logo"><a href="/">RUKI</a></div>
+        <div class="logo"><a href="/"><span class="logo-ctrl">ctrl</span><span class="logo-cat">cat</span></a></div>
         <nav>
             <ul>
-                <li><a href="/home">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="/tool">Tools</a></li>
                 <li><a href="/game">Games</a></li>
             </ul>
@@ -23,7 +23,7 @@ function createFooter() {
             <a href="/privacy.html">Privacy Policy</a>
             <a href="/licenses.html">Licenses</a>
         </nav>
-        <p class="copyright">&copy; 2025 RUKI. All rights reserved.</p>
+        <p class="copyright">&copy; 2025 ctrlcat. All rights reserved.</p>
     `;
     return footer;
 }

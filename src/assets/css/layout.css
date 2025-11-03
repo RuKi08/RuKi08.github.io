@@ -12,6 +12,20 @@ header {
     z-index: 1000;
 }
 
+.logo a {
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logo-ctrl {
+    color: var(--text-color);
+}
+
+.logo-cat {
+    color: var(--primary-color);
+}
+
 main {
     padding: 6rem 2rem 2rem;
 }
