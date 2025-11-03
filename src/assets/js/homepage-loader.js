@@ -39,12 +39,10 @@ function createItemCard(item, itemType, langPrefix) {
     const iconHtml = item.icon.startsWith('<') ? item.icon : `<i class="${item.icon}"></i>`;
 
     return `
-        <a href="${itemUrl}" class="item-card">
-            <div class="item-icon">${iconHtml}</div>
-            <div class="item-info">
-                <h3>${item.name}</h3>
-                <p>${item.description}</p>
-            </div>
+        <a href="${itemUrl}" class="c-card">
+            <div class="c-card__icon">${iconHtml}</div>
+            <h3 class="c-card__title">${item.name}</h3>
+            <p class="c-card__text">${item.description}</p>
         </a>
     `;
 }

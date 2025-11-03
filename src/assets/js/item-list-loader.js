@@ -68,16 +68,17 @@ function renderItems(items, container, itemType) {
     items.forEach(item => {
         const card = document.createElement('a');
         card.href = `${langPrefix}/${itemType}/${item.dir}/`;
-        card.className = 'tool-list-card';
+        card.className = 'c-card';
         card.dataset.tags = item.tags ? item.tags.join(' ') : '';
 
+        const iconHtml = item.icon && item.icon.startsWith('<') ? item.icon : `<i class="${item.icon || 'fa-solid fa-question'}"></i>`;
         const tagsHTML = item.tags ? `<div class="card-tags">${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>` : '';
 
         card.innerHTML = `
-            <i class="${item.icon}"></i>
-            <h3>${item.name}</h3>
+            <div class="c-card__icon">${iconHtml}</div>
+            <h3 class="c-card__title">${item.name}</h3>
+            <p class="c-card__text">${item.description}</p>
             ${tagsHTML}
-            <p>${item.description}</p>
         `;
 
         card.querySelectorAll('.card-tags .tag').forEach(tagEl => {
@@ -97,20 +98,20 @@ function filterItems() {
     const i18nData = document.getElementById('i18n-data');
     const searchInput = document.getElementById('search-input');
     const searchLower = searchInput.value.toLowerCase();
-    const activeTagButtons = document.querySelectorAll('.tag-list .tag-btn.active');
+    const activeTagButtons = document.querySelectorAll('.tag-list .c-btn.active');
     const activeTags = Array.from(activeTagButtons).map(btn => btn.textContent.toLowerCase());
     const showAll = activeTags.includes(i18nData.dataset.listAllTags.toLowerCase());
 
-    document.querySelectorAll('.tool-list-card').forEach(card => {
+    document.querySelectorAll('.c-card').forEach(card => {
         const cardTags = card.dataset.tags.toLowerCase().split(' ');
-        const cardName = card.querySelector('h3').textContent.toLowerCase();
-        const cardDesc = card.querySelector('p').textContent.toLowerCase();
+        const cardName = card.querySelector('.c-card__title').textContent.toLowerCase();
+        const cardDesc = card.querySelector('.c-card__text').textContent.toLowerCase();
 
         const matchesSearch = cardName.includes(searchLower) || cardDesc.includes(searchLower);
         const matchesTags = showAll || activeTags.every(t => cardTags.includes(t));
 
         if (matchesSearch && matchesTags) {
-            card.style.display = 'block';
+            card.style.display = 'flex';
         } else {
             card.style.display = 'none';
         }
@@ -133,7 +134,7 @@ function renderTags(tags, container) {
 
 function createTagButton(tag, isActive = false) {
     const tagBtn = document.createElement('button');
-    tagBtn.className = 'tag-btn';
+    tagBtn.className = 'c-btn c-btn--secondary c-btn--pill c-btn--sm';
     if (isActive) tagBtn.classList.add('active');
     tagBtn.textContent = tag;
     tagBtn.addEventListener('click', () => handleTagClick(tag));
@@ -142,11 +143,11 @@ function createTagButton(tag, isActive = false) {
 
 function handleTagClick(tagName) {
     const i18nData = document.getElementById('i18n-data');
-    const allBtn = document.querySelector('.tag-list .tag-btn:first-child');
-    const clickedBtn = Array.from(document.querySelectorAll('.tag-list .tag-btn')).find(btn => btn.textContent === tagName);
+    const allBtn = document.querySelector('.tag-list .c-btn:first-child');
+    const clickedBtn = Array.from(document.querySelectorAll('.tag-list .c-btn')).find(btn => btn.textContent === tagName);
 
     if (tagName === i18nData.dataset.listAllTags) {
-        document.querySelectorAll('.tag-list .tag-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tag-list .c-btn').forEach(btn => btn.classList.remove('active'));
         allBtn.classList.add('active');
     } else {
         allBtn.classList.remove('active');
@@ -155,7 +156,7 @@ function handleTagClick(tagName) {
         }
     }
 
-    if (document.querySelectorAll('.tag-list .tag-btn.active').length === 0) {
+    if (document.querySelectorAll('.tag-list .c-btn.active').length === 0) {
         allBtn.classList.add('active');
     }
 

@@ -3,13 +3,13 @@
     <div class="converter-layout">
         <div class="controls">
             <h4>{{__i18n.content.select_image_title__}}</h4>
-            <label for="image-input" class="file-upload-label">{{__i18n.content.find_file__}}</label>
+            <label for="image-input" class="c-btn c-btn--secondary c-btn--block w-100">{{__i18n.content.find_file__}}</label>
             <input type="file" id="image-input" accept="image/*" class="hidden-input">
             <p id="file-name">{{__i18n.content.no_file_selected__}}</p>
             
             <h4 class="mt-2">{{__i18n.content.select_format_title__}}</h4>
             <div class="input-group">
-                <select id="format-select" class="w-100">
+                <select id="format-select" class="c-input w-100">
                     <option value="jpeg">{{__i18n.content.format_jpg__}}</option>
                     <option value="png">{{__i18n.content.format_png__}}</option>
                     <option value="webp">{{__i18n.content.format_webp__}}</option>
@@ -17,7 +17,7 @@
                     <option value="gif">{{__i18n.content.format_gif__}}</option>
                 </select>
             </div>
-            <button type="button" id="convert-btn" class="w-100">{{__i18n.content.convert__}}</button>
+            <button id="convert-btn" class="c-btn c-btn--primary c-btn--block w-100">{{__i18n.content.convert__}}</button>
         </div>
         <div class="preview-area">
             <h4>{{__i18n.content.preview__}}</h4>

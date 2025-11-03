@@ -2,7 +2,7 @@
 <form id="converter-form">
     <div class="form-section">
         <label for="category-select">{{__i18n.content.category_label__}}</label>
-        <select id="category-select">
+        <select id="category-select" class="c-input">
             <option value="length">{{__i18n.content.categories.length__}}</option>
             <option value="weight">{{__i18n.content.categories.weight__}}</option>
             <option value="temperature">{{__i18n.content.categories.temperature__}}</option>
@@ -12,16 +12,16 @@
     <fieldset>
         <legend>{{__i18n.content.from_label__}}</legend>
         <div class="input-group">
-            <input type="text" id="from-value" value="1">
-            <select id="from-unit"></select>
+            <input type="text" id="from-value" class="c-input" value="1">
+            <select id="from-unit" class="c-input"></select>
         </div>
     </fieldset>
     <div class="unit-separator"></div>
     <fieldset>
         <legend>{{__i18n.content.to_label__}}</legend>
         <div class="input-group">
-            <input type="text" id="to-value" readonly>
-            <select id="to-unit"></select>
+            <input type="text" id="to-value" class="c-input" readonly>
+            <select id="to-unit" class="c-input"></select>
         </div>
     </fieldset>
 </form>
