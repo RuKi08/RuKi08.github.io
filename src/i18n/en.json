@@ -3,6 +3,7 @@
         "nav_home": "Home",
         "nav_tools": "Tools",
         "nav_games": "Games",
+        "nav_blog": "Blog",
         "lang_en": "English",
         "lang_ko": "Korean",
         "footer_terms": "Terms of Service",
@@ -18,11 +19,23 @@
         "home_title": "Home",
         "tools_title": "Tools",
         "games_title": "Games",
+        "blog_title": "Blog",
         "licenses_title": "Licenses",
         "privacy_title": "Privacy Policy",
         "terms_title": "Terms of Service",
-        "home_wip_header": "Under Construction",
-        "home_wip_text": "This page is currently under construction."
+        "home_meta_description": "A collection of free, easy-to-use online tools and fun games. Convert units, generate QR codes, play classic games, and more.",
+        "home_hero_title": "Your Ultimate Collection of Free Online Tools & Games",
+        "home_hero_subtitle": "Solve daily problems, boost productivity, and enjoy a moment of fun.",
+        "home_search_placeholder": "Search for tools and games...",
+        "home_featured_tools_title": "Featured Tools",
+        "home_blog_title": "From the Blog",
+        "home_view_all_posts": "View all posts",
+        "home_all_tools_title": "All Tools",
+        "home_all_tools_intro": "Boost your productivity with our suite of free online utilities. From converting color codes to generating QR codes, we have the tools to simplify your daily tasks.",
+        "home_view_all_tools": "View all tools",
+        "home_all_games_title": "All Games",
+        "home_all_games_intro": "Need a break? Challenge yourself with our collection of classic and addictive web-based games.",
+        "home_view_all_games": "View all games"
     },
     "pages": {
         "licenses": {

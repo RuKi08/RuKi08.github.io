@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{__i18n.global.blog_title__}} | ctrlcat</title>
+    <link rel="icon" href="/assets/images/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    {{__header__}}
+
+    <main class="has-sidebar">
+        <aside class="sidebar">
+            <h2>Categories</h2>
+            <div id="blog-category-tree"></div>
+        </aside>
+        <section id="blog-list" class="page-section active">
+            <div class="content-container">
+                <h1>{{__i18n.global.blog_title__}}</h1>
+                <div id="blog-posts-container">
+                    <!-- All blog posts will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {{__footer__}}
+
+    <script type="module">
+        import { initializeHeader, initializeFooter } from '/assets/js/common-components.js';
+        import { initTheme } from '/assets/js/modules/theme.js';
+        import { initBlogPage } from '/assets/js/blog-page-loader.js';
+
+        initializeHeader();
+        initializeFooter();
+        initTheme();
+        initBlogPage();
+    </script>
+
+</body>
+</html>

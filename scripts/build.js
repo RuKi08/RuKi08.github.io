@@ -49,6 +49,9 @@ function build() {
             fs.mkdirSync(langDistDir, { recursive: true });
         }
         const allItems = buildContentPages(contentDir, langDistDir, lang, translations, headerHtml, footerHtml);
+        const allPosts = buildBlogPages(contentDir, langDistDir, lang, translations, headerHtml, footerHtml);
+        allItems.blogs = allPosts;
+
         buildLegalPages(langDistDir, lang, translations, headerHtml, footerHtml);
 
         // Build data file for list pages
@@ -58,6 +61,17 @@ function build() {
         }
         fs.writeFileSync(path.join(dataOutputDir, 'items.json'), JSON.stringify(allItems, null, 2));
     });
+
+    // After building all languages, create a dedicated blog posts file for the homepage
+    const finalBlogPosts = [];
+    const defaultLangItems = JSON.parse(fs.readFileSync(path.join(distDir, 'assets', 'data', 'items.json'), 'utf-8'));
+    if (defaultLangItems.blogs) {
+        defaultLangItems.blogs.forEach(blogPost => {
+            finalBlogPosts.push(blogPost);
+        });
+    }
+    fs.writeFileSync(path.join(distDir, 'assets', 'data', 'blog-posts.json'), JSON.stringify(finalBlogPosts, null, 2));
+    console.log('[BUILD] Created dedicated blog posts data file.');
 
     console.log('[BUILD] Build complete! Your site is ready in the /dist directory.');
 }
@@ -205,7 +219,17 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             if (!fs.existsSync(metaPath)) return;
 
             const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
-            const contentHtml = fs.readFileSync(path.join(itemPath, 'content.html'), 'utf-8');
+
+            // Handle content from .md or .html
+            let contentHtml = '';
+            const mdPath = path.join(itemPath, 'content.md');
+            const htmlPath = path.join(itemPath, 'content.html');
+            if (fs.existsSync(mdPath)) {
+                const mdContent = fs.readFileSync(mdPath, 'utf-8');
+                contentHtml = marked.parse(mdContent);
+            } else if (fs.existsSync(htmlPath)) {
+                contentHtml = fs.readFileSync(htmlPath, 'utf-8');
+            }
 
             const itemTranslations = translations[lang]?.[itemName] || {};
 
@@ -219,12 +243,16 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
                 descriptionHtml = marked.parse(descContent);
             }
 
-            allItems[type + 's'].push({
-                dir: itemName,
-                ...meta,
-                name: translatedName,
-                description: translatedDescription
-            });
+            // Add item to the corresponding list
+            if (allItems[type + 's']) {
+                allItems[type + 's'].push({
+                    slug: itemName,
+                    type: type,
+                    ...meta,
+                    name: translatedName,
+                    description: translatedDescription
+                });
+            }
 
             let outputHtml = template;
             outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
@@ -237,7 +265,7 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             outputHtml = outputHtml.replace(/{{description_html}}/g, descriptionHtml);
 
             let scriptLoader = '';
-            if (meta.script) {
+            if (type !== 'blog' && meta.script) {
                 const scriptPath = `/${type}/${itemName}/${meta.script}`;
                 scriptLoader = `import('${scriptPath}').then(module => { if (module.init) { module.init(); } });`;
             }
@@ -246,7 +274,7 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             let styleBlock = '';
             if (type === 'tool') {
                 styleBlock = '<link rel="stylesheet" href="/assets/css/tool-main.css">';
-            } else if (meta.style) {
+            } else if (type !== 'blog' && meta.style) {
                 const stylePath = `/${type}/${itemName}/${meta.style}`;
                 styleBlock = `<link rel="stylesheet" href="${stylePath}">`;
             }
@@ -261,14 +289,14 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             fs.writeFileSync(path.join(itemOutDir, 'index.html'), outputHtml);
             console.log(`  -> Built page: /${type}/${itemName}/ for ${lang}`);
 
-            if (meta.script) {
+            if (type !== 'blog' && meta.script) {
                 const srcScriptPath = path.join(itemPath, meta.script);
                 const destScriptPath = path.join(itemOutDir, meta.script);
                 if (fs.existsSync(srcScriptPath)) {
                     fs.copyFileSync(srcScriptPath, destScriptPath);
                 }
             }
-            if (meta.style) {
+            if (type !== 'blog' && meta.style) {
                 const srcStylePath = path.join(itemPath, meta.style);
                 const destStylePath = path.join(itemOutDir, meta.style);
                 if (fs.existsSync(srcStylePath)) {
@@ -280,7 +308,7 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
 
     const otherDirs = fs.readdirSync(sourceDir).filter(file => {
         const filePath = path.join(sourceDir, file);
-        return fs.statSync(filePath).isDirectory() && !itemTypes.includes(file) && !languages.includes(file);
+        return fs.statSync(filePath).isDirectory() && !itemTypes.includes(file) && file !== 'blog' && !languages.includes(file);
     });
 
     otherDirs.forEach(dir => {
@@ -318,6 +346,147 @@ function copyRecursive(src, dest) {
     } else {
         fs.copyFileSync(src, dest);
     }
+}
+
+// --- New Blog Build Functions ---
+
+function generateBlogTree(dir, fullPath) {
+    const stats = fs.statSync(fullPath);
+    const name = path.basename(dir);
+
+    if (!stats.isDirectory()) {
+        return null;
+    }
+
+    // It's a post directory if it contains language subdirectories (en, ko)
+    const children = fs.readdirSync(fullPath);
+    if (children.includes('en') || children.includes('ko')) {
+        const enMetaPath = path.join(fullPath, 'en', 'meta.json');
+        const koMetaPath = path.join(fullPath, 'ko', 'meta.json');
+        let meta = {};
+        if (fs.existsSync(enMetaPath)) {
+            meta = JSON.parse(fs.readFileSync(enMetaPath, 'utf-8'));
+        } else if (fs.existsSync(koMetaPath)) {
+            meta = JSON.parse(fs.readFileSync(koMetaPath, 'utf-8'));
+        }
+
+        return {
+            type: 'post',
+            name: meta.title || name,
+            slug: name,
+            date: meta.date
+        };
+    }
+
+    // It's a category directory
+    const items = children
+        .map(child => generateBlogTree(path.join(dir, child), path.join(fullPath, child)))
+        .filter(item => item !== null)
+        .sort((a, b) => {
+            if (a.type === 'category' && b.type === 'post') return -1;
+            if (a.type === 'post' && b.type === 'category') return 1;
+            return a.name.localeCompare(b.name);
+        });
+
+    if (items.length === 0) {
+        return null;
+    }
+
+    return {
+        type: 'category',
+        name: name,
+        children: items
+    };
+}
+
+function buildBlogPages(sourceDir, outDir, lang, translations, headerHtml, footerHtml) {
+    const blogSourceDir = path.join(sourceDir, 'blog');
+    if (!fs.existsSync(blogSourceDir)) return [];
+
+    const template = fs.readFileSync(path.join(includesDir, 'item-template.html'), 'utf-8');
+    const allPosts = [];
+
+    function findAndBuildPosts(currentDir) {
+        const entries = fs.readdirSync(currentDir);
+        for (const entry of entries) {
+            const entryPath = path.join(currentDir, entry);
+            const stats = fs.statSync(entryPath);
+            if (stats.isDirectory()) {
+                const langDirs = fs.readdirSync(entryPath);
+                if (langDirs.includes(lang)) { // This is a post directory
+                    const slug = path.basename(entryPath);
+                    const langPath = path.join(entryPath, lang);
+                    const metaPath = path.join(langPath, 'meta.json');
+                    const mdPath = path.join(langPath, 'content.md');
+
+                    if (!fs.existsSync(metaPath) || !fs.existsSync(mdPath)) continue;
+
+                    const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
+                    const mdContent = fs.readFileSync(mdPath, 'utf-8');
+                    const contentHtml = marked.parse(mdContent);
+
+                    allPosts.push({
+                        slug: slug,
+                        type: 'blog',
+                        ...meta
+                    });
+
+                    let outputHtml = template;
+                    outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
+                    outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
+
+                    outputHtml = outputHtml.replace(/{{lang}}/g, lang);
+                    outputHtml = outputHtml.replace(/{{title}}/g, `${meta.title} | ctrlcat`);
+                    outputHtml = outputHtml.replace(/{{name}}/g, meta.title);
+                    outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
+                    outputHtml = outputHtml.replace(/{{description_html}}/g, ''); // No separate desc for blogs
+                    outputHtml = outputHtml.replace('{{script_loader}}', '');
+                    outputHtml = outputHtml.replace('{{style_block}}', '');
+
+                    outputHtml = translate(outputHtml, lang, translations);
+
+                    const itemOutDir = path.join(outDir, 'blog', slug);
+                    fs.mkdirSync(itemOutDir, { recursive: true });
+                    fs.writeFileSync(path.join(itemOutDir, 'index.html'), outputHtml);
+                    console.log(`  -> Built blog page: /blog/${slug}/ for ${lang}`);
+
+                } else {
+                    findAndBuildPosts(entryPath); // Recurse into subdirectories
+                }
+            }
+        }
+    }
+
+    findAndBuildPosts(blogSourceDir);
+
+    // Build the main blog list page
+    const listPageIndexSource = path.join(blogSourceDir, 'index.html');
+    if (fs.existsSync(listPageIndexSource)) {
+        let listPageContent = fs.readFileSync(listPageIndexSource, 'utf-8');
+        listPageContent = listPageContent.replace('{{__header__}}', headerHtml);
+        listPageContent = listPageContent.replace('{{__footer__}}', footerHtml);
+
+        let processedContent = listPageContent.replace(/{{lang}}/g, lang);
+        processedContent = translate(processedContent, lang, translations);
+
+        const listPageIndexDest = path.join(outDir, 'blog', 'index.html');
+        fs.mkdirSync(path.join(outDir, 'blog'), { recursive: true });
+        fs.writeFileSync(listPageIndexDest, processedContent);
+        console.log(`  -> Built blog list page: /blog/ for ${lang}`);
+    }
+
+    // For the main build process, only generate the tree for the default language to avoid duplication
+    if (lang === defaultLang) {
+        const blogTree = generateBlogTree('blog', blogSourceDir);
+        const dataOutputDir = path.join(distDir, 'assets', 'data');
+        if (!fs.existsSync(dataOutputDir)) {
+            fs.mkdirSync(dataOutputDir, { recursive: true });
+        }
+        fs.writeFileSync(path.join(dataOutputDir, 'blog-tree.json'), JSON.stringify(blogTree ? blogTree.children : [], null, 2));
+        console.log(`[BUILD] Generated blog category tree.`);
+    }
+
+    return allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 // --- Run Build ---

@@ -3,6 +3,7 @@
         "nav_home": "Home",
         "nav_tools": "Tools",
         "nav_games": "Games",
+        "nav_blog": "블로그",
         "lang_en": "English",
         "lang_ko": "한국어",
         "footer_terms": "이용약관",
@@ -18,11 +19,23 @@
         "home_title": "Home",
         "tools_title": "Tools",
         "games_title": "Games",
+        "blog_title": "블로그",
         "licenses_title": "라이선스",
         "privacy_title": "개인정보처리방침",
         "terms_title": "이용약관",
-        "home_wip_header": "개발 중...",
-        "home_wip_text": "이 페이지는 현재 개발 중입니다."
+        "home_meta_description": "사용하기 쉬운 다양한 무료 온라인 도구와 재미있는 게임 모음. 단위 변환, QR 코드 생성, 고전 게임 플레이 등을 즐겨보세요.",
+        "home_hero_title": "당신을 위한 무료 온라인 도구와 게임의 모든 것",
+        "home_hero_subtitle": "일상의 문제를 해결하고, 생산성을 높이고, 잠시의 즐거움을 만끽하세요.",
+        "home_search_placeholder": "도구 및 게임 검색...",
+        "home_featured_tools_title": "주요 도구",
+        "home_blog_title": "최신 블로그",
+        "home_view_all_posts": "모든 포스트 보기",
+        "home_all_tools_title": "모든 도구",
+        "home_all_tools_intro": "색상 코드 변환부터 QR 코드 생성까지, 당신의 디지털 라이프를 한 단계 업그레이드할 다양한 무료 온라인 유틸리티를 만나보세요.",
+        "home_view_all_tools": "모든 도구 보기",
+        "home_all_games_title": "모든 게임",
+        "home_all_games_intro": "휴식이 필요하신가요? 중독성 있는 고전 웹 게임들을 즐기며 두뇌를 단련하고 스트레스를 해소하세요.",
+        "home_view_all_games": "모든 게임 보기"
     },
     "pages": {
         "licenses": {

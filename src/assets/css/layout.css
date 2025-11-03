@@ -129,3 +129,85 @@ main {
     background-color: var(--primary-color);
     color: #fff;
 }
+
+/* Homepage Layout */
+.hero {
+    text-align: center;
+    padding: 4rem 1rem;
+    background-color: var(--background-secondary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--text-secondary-color);
+    margin-bottom: 2rem;
+}
+
+.featured-section, .blog-section, .item-grid-section {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.featured-section h2, .blog-section h2, .item-grid-section h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-intro {
+    text-align: center;
+    color: var(--text-secondary-color);
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+}
+
+.view-all-link {
+    display: block;
+    text-align: right;
+    margin-top: 1.5rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+/* Blog Page Layout */
+main.has-sidebar {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar {
+    flex: 0 0 280px; /* Do not grow, do not shrink, base width 280px */
+    position: sticky;
+    top: 100px; /* Match header height + some padding */
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+#blog-list.page-section {
+    flex: 1;
+    min-width: 0; /* Prevent flexbox overflow */
+}

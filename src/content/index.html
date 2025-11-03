@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{__i18n.global.home_title__}} | ctrlcat</title>
+    <meta name="description" content="{{__i18n.global.home_meta_description__}}">
     <link rel="icon" href="/assets/images/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -12,12 +13,55 @@
     {{__header__}}
 
     <main>
-        <section id="home" class="page-section active">
-            <div class="content-container">
-                <h2>{{__i18n.global.home_wip_header__}}</h2>
-                <p>{{__i18n.global.home_wip_text__}}</p>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>{{__i18n.global.home_hero_title__}}</h1>
+                <p>{{__i18n.global.home_hero_subtitle__}}</p>
+                <div class="hero-search">
+                    <input type="text" id="home-search-input" placeholder="{{__i18n.global.home_search_placeholder__}}">
+                    <i class="fa-solid fa-search"></i>
+                </div>
             </div>
         </section>
+
+        <!-- Featured Tools Section -->
+        <section class="featured-section">
+            <h2>{{__i18n.global.home_featured_tools_title__}}</h2>
+            <div class="featured-container" id="featured-tools-container">
+                <!-- Featured tools will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- From the Blog Section -->
+        <section class="blog-section">
+            <h2>{{__i18n.global.home_blog_title__}}</h2>
+            <div class="blog-container" id="blog-posts-container">
+                <!-- Blog posts will be injected here by JavaScript -->
+            </div>
+            <a href="/blog" class="view-all-link">{{__i18n.global.home_view_all_posts__}} &rarr;</a>
+        </section>
+
+        <!-- All Tools Section -->
+        <section class="item-grid-section">
+            <h2>{{__i18n.global.home_all_tools_title__}}</h2>
+            <p class="section-intro">{{__i18n.global.home_all_tools_intro__}}</p>
+            <div class="item-grid-container" id="all-tools-container">
+                <!-- All tools will be loaded here -->
+            </div>
+            <a href="/tool" class="view-all-link">{{__i18n.global.home_view_all_tools__}} &rarr;</a>
+        </section>
+
+        <!-- All Games Section -->
+        <section class="item-grid-section">
+            <h2>{{__i18n.global.home_all_games_title__}}</h2>
+            <p class="section-intro">{{__i18n.global.home_all_games_intro__}}</p>
+            <div class="item-grid-container" id="all-games-container">
+                <!-- All games will be loaded here -->
+            </div>
+            <a href="/game" class="view-all-link">{{__i18n.global.home_view_all_games__}} &rarr;</a>
+        </section>
+
     </main>
 
     {{__footer__}}
@@ -25,10 +69,12 @@
     <script type="module">
         import { initializeHeader, initializeFooter } from '/assets/js/common-components.js';
         import { initTheme } from '/assets/js/modules/theme.js';
+        import { initHomepage } from '/assets/js/homepage-loader.js';
 
         initializeHeader();
         initializeFooter();
         initTheme();
+        initHomepage(); 
     </script>
 
 </body>
