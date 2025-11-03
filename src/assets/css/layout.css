@@ -66,3 +66,49 @@ main {
 .footer-nav a:hover {
     color: var(--text-color);
 }
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.language-switcher {
+    position: relative;
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.lang-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--header-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    min-width: 100px;
+}
+
+.language-switcher:hover .lang-dropdown {
+    display: block;
+}
+
+.lang-dropdown a {
+    display: block;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.lang-dropdown a:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}

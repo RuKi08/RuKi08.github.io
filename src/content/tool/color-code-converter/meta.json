@@ -1,6 +1,6 @@
 {
-  "name": "색상 코드 변환기",
-  "description": "디자이너와 개발자 간의 협업 시 HEX, RGB, HSL 코드를 빠르게 상호 변환합니다.",
+  "name": "Color Code Converter",
+  "description": "Quickly convert between HEX, RGB, and HSL codes for collaboration between designers and developers.",
   "icon": "fa-solid fa-palette",
   "tags": ["converter", "color", "css"],
   "script": "script.js"

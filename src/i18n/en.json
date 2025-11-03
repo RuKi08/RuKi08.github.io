@@ -1,0 +1,47 @@
+
+{
+    "global": {
+        "nav_home": "Home",
+        "nav_tools": "Tools",
+        "nav_games": "Games",
+        "lang_en": "English",
+        "lang_ko": "한국어",
+        "footer_terms": "Terms of Service",
+        "footer_privacy": "Privacy Policy",
+        "footer_licenses": "Licenses",
+        "footer_copyright": "© 2025 ctrlcat. All rights reserved.",
+        "list_search_tools_placeholder": "Search tools...",
+        "list_search_games_placeholder": "Search games...",
+        "list_all_tags": "All",
+        "list_error": "Error loading list. Please try again later.",
+        "home_title": "Home",
+        "tools_title": "Tools",
+        "games_title": "Games",
+        "licenses_title": "Licenses",
+        "privacy_title": "Privacy Policy",
+        "terms_title": "Terms of Service",
+        "home_wip_header": "Under Construction",
+        "home_wip_text": "This page is currently under construction."
+    },
+    "ascii-unicode-converter": {
+        "name": "ASCII/Unicode Converter",
+        "description": "Converts between characters and ASCII/Unicode code values.",
+        "content": {
+            "char_input_label": "Character",
+            "char_input_placeholder": "Enter characters...",
+            "to_code_btn": "▼ Character to Code",
+            "code_output_label": "Code",
+            "code_output_placeholder": "Code result (comma-separated) - e.g., 72,101,108,108,111",
+            "to_char_btn": "▲ Code to Character"
+        },
+        "desc": {
+            "title": "### Key Features",
+            "feature1": "- **Character ↔ Code Conversion**: You can convert entered letters or symbols into Unicode numerical values, or vice versa.",
+            "feature2": "- **Encoding Problem Solving**: When text appears broken during web development, it helps diagnose the problem by checking the exact code value of the character.",
+            "tip_title": "### Usage Tips",
+            "tip1": "- **Simultaneous Conversion of Multiple Characters**: You can get a comma-separated list of the code values for each character by entering multiple characters at once.",
+            "tip2": "- **Entering Code Values**: When entering code values to convert to characters, each number must be separated by a comma (,), like `72, 101, 108, 108, 111`.",
+            "tip3": "- **Checking Emojis**: You can also convert emojis like 💻, ✨ into code values."
+        }
+    }
+}

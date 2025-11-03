@@ -1,13 +1,28 @@
-import { createHeader, createFooter } from './common-components.js';
-import { initTheme } from './modules/theme.js';
+const siteConfig = {
+    defaultLang: 'en',
+    languages: ['en', 'ko']
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.prepend(createHeader());
-    document.body.append(createFooter());
-    initTheme();
-});
+function getPathContext() {
+    const path = window.location.pathname;
+    const pathParts = path.split('/');
+    const langCode = pathParts[1];
+
+    if (siteConfig.languages.includes(langCode) && langCode !== siteConfig.defaultLang) {
+        return {
+            lang: langCode,
+            langPrefix: `/${langCode}`,
+        };
+    }
+
+    return {
+        lang: siteConfig.defaultLang,
+        langPrefix: '',
+    };
+}
 
 export async function loadItemList(itemType) {
+    const { langPrefix } = getPathContext();
     const listContainer = document.getElementById(`${itemType}-list-container`);
     const tagContainer = document.getElementById('tag-list');
     const searchInput = document.getElementById('search-input');
@@ -15,7 +30,7 @@ export async function loadItemList(itemType) {
     if (!listContainer || !tagContainer || !searchInput || !expandBtn) return;
 
     try {
-        const response = await fetch('../assets/data/items.json');
+        const response = await fetch(`${langPrefix}/assets/data/items.json`);
         if (!response.ok) {
             throw new Error(`Failed to fetch items.json: ${response.statusText}`);
         }
@@ -33,7 +48,6 @@ export async function loadItemList(itemType) {
         renderItems(itemsData, listContainer, itemType);
         renderTags(allTags, tagContainer);
 
-        // Event Listeners
         searchInput.addEventListener('input', filterItems);
         expandBtn.addEventListener('click', () => {
             const isCollapsed = tagContainer.classList.toggle('collapsed');
@@ -48,11 +62,12 @@ export async function loadItemList(itemType) {
 }
 
 function renderItems(items, container, itemType) {
+    const { langPrefix } = getPathContext();
     container.innerHTML = '';
     items.forEach(item => {
         const card = document.createElement('a');
-        card.href = `/${itemType}/${item.dir}/`;
-        card.className = 'tool-list-card'; // Reusing tool-list-card class for both
+        card.href = `${langPrefix}/${itemType}/${item.dir}/`;
+        card.className = 'tool-list-card';
         card.dataset.tags = item.tags ? item.tags.join(' ') : '';
 
         const tagsHTML = item.tags ? `<div class="card-tags">${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}</div>` : '';

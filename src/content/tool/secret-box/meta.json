@@ -1,6 +1,6 @@
 {
   "name": "Secret Box",
-  "description": "전 세계 사람들과 익명으로 데이터를 공유하는 비밀 상자입니다.",
+  "description": "A secret box to share data anonymously with people around the world.",
   "icon": "fa-solid fa-box-archive",
   "tags": ["firebase", "database", "secret"],
   "script": "script.js"

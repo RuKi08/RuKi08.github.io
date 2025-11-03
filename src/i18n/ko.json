@@ -1,0 +1,79 @@
+
+{
+    "global": {
+        "nav_home": "Home",
+        "nav_tools": "Tools",
+        "nav_games": "Games",
+        "lang_en": "English",
+        "lang_ko": "한국어",
+        "footer_terms": "Terms of Service",
+        "footer_privacy": "Privacy Policy",
+        "footer_licenses": "Licenses",
+        "footer_copyright": "© 2025 ctrlcat. 모든 권리 보유.",
+        "list_search_tools_placeholder": "Search tools...",
+        "list_search_games_placeholder": "Search games...",
+        "list_all_tags": "All",
+        "list_error": "목록을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.",
+        "home_title": "홈",
+        "tools_title": "Tools",
+        "games_title": "Games",
+        "licenses_title": "라이선스",
+        "privacy_title": "개인정보처리방침",
+        "terms_title": "이용약관",
+        "home_wip_header": "개발 중...",
+        "home_wip_text": "이 페이지는 현재 개발 중입니다."
+    },
+    "2048": {
+        "name": "2048",
+        "description": "방향키로 타일을 합쳐 2048 타일을 만드는 중독성 있는 퍼즐 게임입니다."
+    },
+    "gomoku": {
+        "name": "오목 (Gomoku)",
+        "description": "다섯 개의 돌을 먼저 나란히 놓아 승리하는 클래식 보드 게임입니다."
+    },
+    "tic-tac-toe": {
+        "name": "틱택토 (Tic-Tac-Toe)",
+        "description": "두 플레이어가 번갈아가며 O와 X를 놓아 한 줄을 만드는 클래식 게임입니다."
+    },
+    "color-code-converter": {
+        "name": "색상 코드 변환기",
+        "description": "디자이너와 개발자 간의 협업 시 HEX, RGB, HSL 코드를 빠르게 상호 변환합니다."
+    },
+    "image-format-converter": {
+        "name": "이미지 형식 변환기",
+        "description": "JPG, PNG, WebP 등 다양한 이미지 포맷을 필요에 따라 변환합니다."
+    },
+    "qr-code-generator": {
+        "name": "QR 코드 생성기",
+        "description": "마케팅이나 정보 공유 목적으로 URL이나 텍스트를 즉시 QR 코드로 변환합니다."
+    },
+    "secret-box": {
+        "name": "Secret Box",
+        "description": "전 세계 사람들과 익명으로 데이터를 공유하는 비밀 상자입니다."
+    },
+    "unit-converter": {
+        "name": "단위 변환기",
+        "description": "길이, 무게, 부피, 온도 등 일상 및 전문 분야의 모든 측정 단위를 상호 변환합니다."
+    },
+    "ascii-unicode-converter": {
+        "name": "아스키/유니코드 변환기",
+        "description": "문자와 아스키/유니코드 코드 값을 상호 변환합니다.",
+        "content": {
+            "char_input_label": "문자 (Character)",
+            "char_input_placeholder": "문자를 입력하세요...",
+            "to_code_btn": "▼ 문자를 코드로",
+            "code_output_label": "코드 (Code)",
+            "code_output_placeholder": "코드 결과 (쉼표로 구분) - 예: 72,101,108,108,111",
+            "to_char_btn": "▲ 코드를 문자로"
+        },
+        "desc": {
+            "title": "### 주요 기능",
+            "feature1": "- **문자 ↔ 코드 변환**: 입력한 글자나 기호를 유니코드 숫자 값으로 바꾸거나, 반대로 숫자 코드 값을 글자로 바꿀 수 있습니다.",
+            "feature2": "- **인코딩 문제 해결**: 웹 개발 중 글자가 깨져 보일 때, 해당 문자의 정확한 코드 값을 확인하여 문제를 진단하는 데 도움을 줍니다.",
+            "tip_title": "### 사용 팁",
+            "tip1": "- **여러 문자 동시 변환**: 여러 글자를 한 번에 입력하여 각 글자의 코드 값을 쉼표로 구분된 목록으로 얻을 수 있습니다.",
+            "tip2": "- **코드 값 입력**: 코드 값을 입력하여 문자로 변환할 때는 `72, 101, 108, 108, 111` 와 같이 각 숫자를 쉼표(,)로 구분해야 합니다.",
+            "tip3": "- **이모지(Emoji) 확인**: 💻, ✨ 같은 이모지도 코드 값으로 변환해볼 수 있습니다."
+        }
+    }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "이미지 형식 변환기",
-  "description": "JPG, PNG, WebP 등 다양한 이미지 포맷을 필요에 따라 변환합니다.",
+  "name": "Image Format Converter",
+  "description": "Convert various image formats like JPG, PNG, WebP as needed.",
   "icon": "fa-solid fa-file-image",
   "tags": ["converter", "image"],
   "script": "script.js"

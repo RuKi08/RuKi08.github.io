@@ -1,21 +1,41 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{{lang}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Games</title>
+    <title>{{__i18n.global.games_title__}}</title>
     <link rel="icon" href="/assets/images/logo.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-    <!-- Common header/footer will be injected by script -->
+    <header>
+        <div class="logo"><a href="/"><span class="logo-ctrl">ctrl</span><span class="logo-cat">cat</span></a></div>
+        <nav>
+            <ul>
+                <li><a href="/">{{__i18n.global.nav_home__}}</a></li>
+                <li><a href="/tool">{{__i18n.global.nav_tools__}}</a></li>
+                <li><a href="/game">{{__i18n.global.nav_games__}}</a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            <div class="language-switcher">
+                <button class="lang-btn" aria-label="Language">🌐</button>
+                <div class="lang-dropdown">
+                    <a href="#" data-lang="en">{{__i18n.global.lang_en__}}</a>
+                    <a href="#" data-lang="ko">{{__i18n.global.lang_ko__}}</a>
+                </div>
+            </div>
+            <button id="theme-toggle" aria-label="Toggle theme">☀️</button>
+        </div>
+    </header>
+
     <main>
         <section id="game-list" class="page-section active">
             <div class="content-container">
-                <h2>Games</h2>
+                <h2>{{__i18n.global.games_title__}}</h2>
                 <div class="tag-search-container">
-                    <input type="text" id="search-input" placeholder="Search games...">
+                    <input type="text" id="search-input" placeholder="{{__i18n.global.list_search_games_placeholder__}}">
                     <div id="tag-list" class="tag-list collapsed"></div>
                     <button id="expand-tags-btn" class="expand-tags-btn" aria-label="Show more tags">▼</button>
                 </div>
@@ -24,10 +44,24 @@
         </section>
     </main>
 
+    <footer class="site-footer">
+        <nav class="footer-nav">
+            <a href="/terms.html">{{__i18n.global.footer_terms__}}</a>
+            <a href="/privacy.html">{{__i18n.global.footer_privacy__}}</a>
+            <a href="/licenses.html">{{__i18n.global.footer_licenses__}}</a>
+        </nav>
+        <p class="copyright">{{__i18n.global.footer_copyright__}}</p>
+    </footer>
+
     <script type="module">
-        import { loadItemList } from '../assets/js/item-list-loader.js';
+        import { initializeHeader, initializeFooter } from '/assets/js/common-components.js';
+        import { initTheme } from '/assets/js/modules/theme.js';
+        import { loadItemList } from '/assets/js/item-list-loader.js';
 
         document.addEventListener('DOMContentLoaded', () => {
+            initializeHeader();
+            initializeFooter();
+            initTheme();
             loadItemList('game');
         });
     </script>

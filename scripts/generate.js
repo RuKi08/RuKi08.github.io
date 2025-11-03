@@ -3,7 +3,8 @@ const path = require('path');
 const { exec } = require('child_process');
 
 // --- Configuration ---
-const rootDir = path.join(__dirname, '..');
+const rootDir = path.join(__dirname, '..', 'src');
+const i18nDir = path.join(rootDir, 'i18n');
 
 // --- Helper Functions ---
 function toSlug(name) {
@@ -11,12 +12,12 @@ function toSlug(name) {
 }
 
 // --- File Content Templates ---
-const metaTemplate = (name, itemType) => {
+const metaTemplate = (itemType) => {
     const styleLine = itemType === 'game' ? `,
   "style": "style.css"` : '';
     return `{ 
-  "name": "${name}",
-  "description": "A brief description of this item.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-star",
   "tags": [],
   "script": "script.js"${styleLine}
@@ -25,7 +26,7 @@ const metaTemplate = (name, itemType) => {
 
 const contentTemplate = (slug) => `<!-- The main HTML content for ${slug} goes here -->
 <div id="${slug}-container">
-    <h2>Welcome to ${slug}!</h2>
+    <h2>{{__i18n.content.title__}}</h2>
 </div>
 `;
 
@@ -42,42 +43,17 @@ const styleTemplate = (slug) => `/* Add styles for ${slug} here */
 }
 `;
 
-const descriptionTemplate = (name) => `## About ${name}
-
-More detailed information about this item.
-`;
-
-const indexTemplate = () => `<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
-    <script>
-        (async () => {
-            try {
-                const response = await fetch('../template.html');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch template: ' + response.statusText);
-                }
-                const templateHtml = await response.text();
-                document.open();
-                document.write(templateHtml);
-                document.close();
-            } catch (error) {
-                console.error('Error loading template:', error);
-                document.body.innerHTML = '<h2>Error</h2><p>Could not load page content. Please check the console for details.</p>';
-            }
-        })();
-    </script>
-</head>
-<body>
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
-        <p>Loading...</p>
-    </div>
-</body>
-</html>`;
-
+const i18nEntryTemplate = (name) => ({
+    name: name,
+    description: `A brief description of ${name}.`,
+    content: {
+        title: `Welcome to ${name}!`
+    },
+    desc: {
+        title: `### About ${name}`,
+        main: `More detailed information about this item.`
+    }
+});
 
 // --- Main Scaffolding Logic ---
 function generate() {
@@ -95,7 +71,7 @@ function generate() {
     }
 
     const itemSlug = toSlug(itemName);
-    const targetDir = path.join(rootDir, itemType, itemSlug);
+    const targetDir = path.join(rootDir, 'content', itemType, itemSlug);
 
     console.log(`Generating new ${itemType}: "${itemName}"`);
     console.log(`Directory: ${targetDir}`);
@@ -106,14 +82,13 @@ function generate() {
     }
 
     try {
+        // 1. Create item directory and files
         fs.mkdirSync(targetDir, { recursive: true });
 
         const files = {
-            'index.html': indexTemplate(),
-            'meta.json': metaTemplate(itemName, itemType),
+            'meta.json': metaTemplate(itemType),
             'content.html': contentTemplate(itemSlug),
             'script.js': scriptTemplate(),
-            'description.md': descriptionTemplate(itemName)
         };
 
         if (itemType === 'game') {
@@ -126,11 +101,25 @@ function generate() {
             console.log(`  -> Created ${filePath}`);
         }
 
+        // 2. Update i18n files
+        console.log('Updating i18n files...');
+        const languages = ['en', 'ko'];
+        languages.forEach(lang => {
+            const langPath = path.join(i18nDir, `${lang}.json`);
+            if (fs.existsSync(langPath)) {
+                const translations = JSON.parse(fs.readFileSync(langPath, 'utf-8'));
+                translations[itemSlug] = i18nEntryTemplate(itemName);
+                fs.writeFileSync(langPath, JSON.stringify(translations, null, 4));
+                console.log(`  -> Updated ${lang}.json with entry for '${itemSlug}'`);
+            }
+        });
+
         console.log(`
 Successfully created all files for "${itemName}".`);
 
+        // 3. Run build script
         console.log('\nRunning build script to update item list...');
-        exec('node scripts/build.js', (error, stdout, stderr) => {
+        exec('npm run build', (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error running build script: ${error}`);
                 return;
