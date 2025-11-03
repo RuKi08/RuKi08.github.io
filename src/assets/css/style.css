@@ -25,16 +25,19 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.2s, color 0.2s;
+    line-height: 1.6;
 }
 
 h2 {
     font-size: 2rem; /* Increased font size for h2 */
     font-weight: 600;
+    margin-bottom: 1.5rem;
 }
 
 h3 {
     font-size: 1.5rem; /* Set font size for h3 */
     font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 h4, h5, h6 {
@@ -71,7 +74,7 @@ Shared List Page Styles (Tools & Games)
 
 /* --- Tag Search --- */
 .tag-search-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto 2rem;
     padding: 1rem;
     background-color: var(--background-secondary-color);

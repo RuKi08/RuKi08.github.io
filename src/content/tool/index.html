@@ -13,15 +13,18 @@
 
     <main>
         <section id="tool-list" class="page-section active">
-            <div class="content-container">
+            <div class="page-header">
                 <h2>{{__i18n.global.tools_title__}}</h2>
+                <p>{{__i18n.global.home_all_tools_intro__}}</p>
+            </div>
+            <div class="content-container">
                 <div class="tag-search-container">
                     <input type="text" id="search-input" class="c-input" placeholder="{{__i18n.global.list_search_tools_placeholder__}}">
                     <div id="tag-list" class="tag-list collapsed"></div>
                     <button id="expand-tags-btn" class="c-btn c-btn--secondary c-btn--block" aria-label="Show more tags">▼</button>
                 </div>
             </div>
-            <div id="tool-list-container" class="item-list-container"></div>
+            <div id="tool-list-container" class="item-list-container content-container"></div>
 
             <div id="i18n-data" style="display: none;"
                 data-list-expand="{{__i18n.global.list_expand__}}"

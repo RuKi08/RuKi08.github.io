@@ -175,6 +175,7 @@ function buildLegalPages(outDir, lang, translations, headerHtml, footerHtml) {
 
         outputHtml = outputHtml.replace(/{{lang}}/g, lang);
         outputHtml = outputHtml.replace(/{{title}}/g, `${pageData.title} | ctrlcat`);
+        outputHtml = outputHtml.replace(/{{page_heading}}/g, pageData.title);
         outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
 
         // Translate global placeholders in the template itself
@@ -237,6 +238,23 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             const translatedDescription = itemTranslations.description || meta.description;
             const translatedContentHtml = translate(contentHtml, lang, translations, itemName);
 
+            // Generate breadcrumbs
+            const langPrefix = lang === defaultLang ? '' : `/${lang}`;
+            const homeUrl = langPrefix || '/';
+            const typeUrl = `${langPrefix}/${type}/`;
+
+            const breadcrumbsHtml = `
+                <a href="${homeUrl}">Home</a> / 
+                <a href="${typeUrl}">${type.charAt(0).toUpperCase() + type.slice(1)}</a> / 
+                <span>${translatedName}</span>
+            `;
+
+            // Generate tags HTML
+            let tagsHtml = '';
+            if (meta.tags && meta.tags.length > 0) {
+                tagsHtml = meta.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            }
+
             let descriptionHtml = '';
             if (itemTranslations.desc) {
                 const descContent = Object.values(itemTranslations.desc).join('\n\n');
@@ -261,6 +279,9 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             outputHtml = outputHtml.replace(/{{lang}}/g, lang);
             outputHtml = outputHtml.replace(/{{title}}/g, `${translatedName} | ctrlcat`);
             outputHtml = outputHtml.replace(/{{name}}/g, translatedName);
+            outputHtml = outputHtml.replace(/{{breadcrumbs}}/g, breadcrumbsHtml);
+            outputHtml = outputHtml.replace(/{{description}}/g, translatedDescription);
+            outputHtml = outputHtml.replace(/{{tags}}/g, tagsHtml);
             outputHtml = outputHtml.replace(/{{content_html}}/g, translatedContentHtml);
             outputHtml = outputHtml.replace(/{{description_html}}/g, descriptionHtml);
 
@@ -437,6 +458,20 @@ function buildBlogPages(sourceDir, outDir, lang, translations, headerHtml, foote
 
                     outputHtml = outputHtml.replace(/{{lang}}/g, lang);
                     outputHtml = outputHtml.replace(/{{title}}/g, `${meta.title} | ctrlcat`);
+
+                    // Generate breadcrumbs, description, and tags for blog posts
+                    const langPrefix = lang === defaultLang ? '' : `/${lang}`;
+                    const homeUrl = langPrefix || '/';
+                    const breadcrumbsHtml = `<a href="${homeUrl}">Home</a> / <a href="${langPrefix}/blog/">Blog</a> / <span>${meta.title}</span>`;
+                    const description = meta.description || '';
+                    const tagsHtml = (meta.tags && meta.tags.length > 0) 
+                        ? meta.tags.map(tag => `<span class="tag">${tag}</span>`).join('') 
+                        : '';
+
+                    outputHtml = outputHtml.replace(/{{breadcrumbs}}/g, breadcrumbsHtml);
+                    outputHtml = outputHtml.replace(/{{description}}/g, description);
+                    outputHtml = outputHtml.replace(/{{tags}}/g, tagsHtml);
+
                     outputHtml = outputHtml.replace(/{{name}}/g, meta.title);
                     outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
                     outputHtml = outputHtml.replace(/{{description_html}}/g, ''); // No separate desc for blogs

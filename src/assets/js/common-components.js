@@ -27,12 +27,30 @@ function initializeHeader() {
     const header = document.querySelector('header');
     if (!header) return;
 
+    // --- Hide header on scroll ---
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > lastScrollY) {
+            // Scrolling down
+            header.classList.add('header-hidden');
+        } else {
+            // Scrolling up
+            header.classList.remove('header-hidden');
+        }
+        lastScrollY = window.scrollY;
+    });
+
     const { lang, langPrefix, basePath } = getPathContext();
 
     // Update nav links
     const navLinks = header.querySelectorAll('nav a');
     navLinks.forEach(link => {
-        const originalHref = link.getAttribute('href');
+        let originalHref = link.dataset.originalHref;
+        if (!originalHref) {
+            originalHref = link.getAttribute('href');
+            link.dataset.originalHref = originalHref;
+        }
+
         if (originalHref === '/') {
             link.href = langPrefix || '/';
         } else {
@@ -59,13 +77,15 @@ function initializeFooter() {
     if (!footer) return;
 
     const { langPrefix } = getPathContext();
-    if (langPrefix) {
-        const footerLinks = footer.querySelectorAll('.footer-nav a');
-        footerLinks.forEach(link => {
-            const originalHref = link.getAttribute('href');
-            link.href = `${langPrefix}${originalHref}`;
-        });
-    }
+    const footerLinks = footer.querySelectorAll('.footer-nav a');
+    footerLinks.forEach(link => {
+        let originalHref = link.dataset.originalHref;
+        if (!originalHref) {
+            originalHref = link.getAttribute('href');
+            link.dataset.originalHref = originalHref;
+        }
+        link.href = `${langPrefix}${originalHref}`;
+    });
 }
 
 export { initializeHeader, initializeFooter };

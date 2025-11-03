@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-<body>
+<body class="page-type-blog">
     {{__header__}}
 
-    <div class="page-title-bar">
+    <div class="page-header">
         <button id="sidebar-open-btn" class="c-btn c-btn--ghost" aria-label="Open sidebar"><i class="fa-solid fa-bars"></i></button>
         <h1>{{__i18n.global.blog_title__}}</h1>
     </div>
@@ -28,6 +28,8 @@
             </div>
         </div>
     </main>
+
+    <div class="sidebar-overlay"></div>
 
     {{__footer__}}
 

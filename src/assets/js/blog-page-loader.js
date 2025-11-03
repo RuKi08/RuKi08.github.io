@@ -146,15 +146,20 @@ export async function initBlogPage() {
     // --- Collapsible Sidebar Logic ---
     const openBtn = document.getElementById('sidebar-open-btn');
     const closeBtn = document.getElementById('sidebar-close-btn');
-    const sidebarContainer = document.querySelector('.has-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const body = document.body;
 
-    if (openBtn && closeBtn && sidebarContainer) {
+    if (openBtn && closeBtn && overlay) {
         openBtn.addEventListener('click', () => {
-            sidebarContainer.classList.remove('sidebar-is-collapsed');
+            body.classList.add('sidebar-is-open');
         });
 
         closeBtn.addEventListener('click', () => {
-            sidebarContainer.classList.add('sidebar-is-collapsed');
+            body.classList.remove('sidebar-is-open');
+        });
+
+        overlay.addEventListener('click', () => {
+            body.classList.remove('sidebar-is-open');
         });
     }
 

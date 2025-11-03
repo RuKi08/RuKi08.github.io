@@ -14,8 +14,13 @@
 
     <main>
         <section class="page-section active">
-            <div id="item-container" class="content-container">
+            <div class="page-header">
+                <div class="breadcrumbs">{{breadcrumbs}}</div>
                 <h2>{{name}}</h2>
+                <p class="item-description">{{description}}</p>
+                <div class="item-tags">{{tags}}</div>
+            </div>
+            <div id="item-container" class="content-container">
                 <div class="tool-card">
                     {{content_html}}
                 </div>
