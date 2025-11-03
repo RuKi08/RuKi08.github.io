@@ -1,6 +1,6 @@
 {
-  "name": "Image Format Converter",
-  "description": "Convert various image formats like JPG, PNG, WebP as needed.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-file-image",
   "tags": ["converter", "image"],
   "script": "script.js"

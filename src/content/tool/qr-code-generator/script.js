@@ -15,6 +15,7 @@ function loadScript(src) {
 }
 
 export function init() {
+    const i18nData = document.getElementById('i18n-data');
     loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js')
         .then(() => {
             setupQrCodeGenerator();
@@ -23,7 +24,7 @@ export function init() {
             console.error("Error loading qrcode.js library:", error);
             const qrDisplay = document.getElementById('qrcode-display');
             if (qrDisplay) {
-                qrDisplay.innerHTML = '<p>QR 코드 라이브러리를 로드하는 중 오류가 발생했습니다.</p>';
+                qrDisplay.innerHTML = `<p>${i18nData.dataset.errorLoadingLibrary}</p>`;
             }
         });
 }
@@ -33,6 +34,7 @@ function setupQrCodeGenerator() {
     const form = document.getElementById('qr-form');
     const qrInput = document.getElementById('qr-input');
     const qrDisplay = document.getElementById('qrcode-display');
+    const i18nData = document.getElementById('i18n-data');
 
     // 2. Event Listeners
     form.addEventListener('submit', (e) => {
@@ -44,13 +46,13 @@ function setupQrCodeGenerator() {
     function generateQrCode() {
         const inputText = qrInput.value.trim();
         if (!inputText) {
-            alert('텍스트나 URL을 입력해주세요.');
+            alert(i18nData.dataset.alertEnterText);
             return;
         }
 
         // Check if the qrcode function is available
         if (typeof qrcode !== 'function') {
-            qrDisplay.innerHTML = `<p>QR 코드 라이브러리를 로드할 수 없습니다. 인터넷 연결을 확인하세요.</p>`;
+            qrDisplay.innerHTML = `<p>${i18nData.dataset.errorLoadingLibrary}</p>`;
             return;
         }
 
@@ -63,7 +65,7 @@ function setupQrCodeGenerator() {
             qrDisplay.innerHTML = imgTag;
 
         } catch (e) {
-            qrDisplay.innerHTML = `<p>QR 코드 생성 중 오류 발생: ${e.message}</p>`;
+            qrDisplay.innerHTML = `<p>${i18nData.dataset.errorCreatingQr.replace('{error}', e.message)}</p>`;
         }
     }
 }

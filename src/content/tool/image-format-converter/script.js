@@ -7,6 +7,7 @@ export function init() {
     const preview = document.getElementById('preview');
     const downloadLink = document.getElementById('download-link');
     const fileNameDisplay = document.getElementById('file-name');
+    const i18nData = document.getElementById('i18n-data');
     
     // 2. State
     let originalFile = null;
@@ -32,7 +33,7 @@ export function init() {
 
     function convertImage() {
         if (!originalFile) {
-            alert('먼저 이미지 파일을 선택해주세요.');
+            alert(i18nData.dataset.alertSelectFile);
             return;
         }
 
@@ -52,7 +53,7 @@ export function init() {
             downloadLink.href = dataUrl;
             downloadLink.download = `${originalFileName}.${targetFormat}`;
             downloadLink.style.display = 'inline-block';
-            downloadLink.textContent = `변환된 이미지 다운로드 (${targetFormat.toUpperCase()})`;
+            downloadLink.textContent = i18nData.dataset.downloadConvertedImage.replace('{format}', targetFormat.toUpperCase());
         };
     }
 }

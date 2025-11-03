@@ -55,14 +55,23 @@ This command first builds the site into the `dist` folder and then starts a loca
 
 ## Project Structure (`src` folder)
 
-- `src/_includes/`: Contains HTML templates used by the build script.
-  - `item-template.html`: The main template for individual game and tool pages.
-- `src/assets/`: Contains all static assets like CSS, JavaScript, and images.
-- `src/content/`: Contains all website content.
-  - `game/` & `tool/`: Each subdirectory here is a specific game or tool.
-    - `meta.json`: Contains metadata (name, description, icon, tags).
-    - `content.html`: The main HTML content for the item.
-    - `description.md`: A detailed description (in Markdown) shown on the item's page.
-    - `script.js`: The specific JavaScript logic for the item. Must export an `init()` function.
-    - `style.css`: (For games only) Specific CSS for the game.
-  - `index.html`, `home/`, etc.: Static pages and content folders.
+The `src` directory is organized to separate content, logic, and localization.
+
+- **`src/content/<type>/<item-slug>/`**
+  This is where the files for a specific tool or game are located.
+  - `<type>` can be `game` or `tool`.
+  - `<item-slug>` is the unique identifier for the item (e.g., `tic-tac-toe`).
+  - **`meta.json`**: Contains metadata for the item, such as `icon`, `tags`, and references to script/style files. The `name` and `description` fields are placeholders that are populated from the i18n files.
+  - **`content.html`**: The main HTML structure for the item.
+  - **`script.js`**: The item-specific JavaScript logic. It must export an `init()` function.
+  - **`style.css`**: (Optional, for games) Item-specific styles.
+
+- **`src/i18n/`**
+  This directory holds the localization files.
+  - **`en.json`** and **`ko.json`**: These JSON files contain all the text content for the site. Each item's text (name, description, UI elements) is stored in an object keyed by its `<item-slug>`. When adding a new item, you must add corresponding entries to these files.
+
+- **`src/assets/`**
+  Contains all global static assets like CSS, JavaScript, and images.
+
+- **`src/_includes/`**
+  Contains HTML templates used by the build script to assemble the final pages.

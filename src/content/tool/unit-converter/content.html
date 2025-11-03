@@ -1,16 +1,16 @@
 
 <form id="converter-form">
     <div class="form-section">
-        <label for="category-select">변환 종류</label>
+        <label for="category-select">{{__i18n.content.category_label__}}</label>
         <select id="category-select">
-            <option value="length">길이</option>
-            <option value="weight">무게</option>
-            <option value="temperature">온도</option>
-            <option value="volume">부피</option>
+            <option value="length">{{__i18n.content.categories.length__}}</option>
+            <option value="weight">{{__i18n.content.categories.weight__}}</option>
+            <option value="temperature">{{__i18n.content.categories.temperature__}}</option>
+            <option value="volume">{{__i18n.content.categories.volume__}}</option>
         </select>
     </div>
     <fieldset>
-        <legend>From</legend>
+        <legend>{{__i18n.content.from_label__}}</legend>
         <div class="input-group">
             <input type="text" id="from-value" value="1">
             <select id="from-unit"></select>
@@ -18,10 +18,11 @@
     </fieldset>
     <div class="unit-separator"></div>
     <fieldset>
-        <legend>To</legend>
+        <legend>{{__i18n.content.to_label__}}</legend>
         <div class="input-group">
             <input type="text" id="to-value" readonly>
             <select id="to-unit"></select>
         </div>
     </fieldset>
 </form>
+<div id="i18n-data" style="display: none;" data-units='{{__i18n.content.units__}}'></div>

@@ -145,7 +145,8 @@ export function init() {
             if (isGameOver()) {
                 gameActive = false;
                 setTimeout(() => {
-                    overlayMessage.textContent = 'Game Over!';
+                    const i18nData = document.getElementById('i18n-data');
+                    overlayMessage.textContent = i18nData.dataset.gameOver;
                     overlay.classList.add('visible');
                 }, 200);
             }

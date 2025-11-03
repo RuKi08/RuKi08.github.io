@@ -45,6 +45,7 @@ function build() {
             fs.mkdirSync(langDistDir, { recursive: true });
         }
         const allItems = buildContentPages(contentDir, langDistDir, lang, translations);
+        buildLegalPages(langDistDir, lang, translations);
 
         // Build data file for list pages
         const dataOutputDir = path.join(langDistDir, 'assets', 'data');
@@ -86,7 +87,81 @@ function translate(content, lang, translations, itemSlug = null) {
             result = current;
         }
 
+        if (typeof result === 'object' && result !== null) {
+            return JSON.stringify(result);
+        }
+
         return result || match;
+    });
+}
+
+function renderPageContent(contentData) {
+    let html = '';
+    if (Array.isArray(contentData)) {
+        contentData.forEach(block => {
+            if (typeof block === 'string') {
+                html += `<p>${block}</p>`;
+            } else if (typeof block === 'object' && block.type === 'list' && Array.isArray(block.items)) {
+                html += '<ul>';
+                block.items.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += '</ul>';
+            }
+        });
+    } else if (typeof contentData === 'string') {
+        html += `<p>${contentData}</p>`;
+    }
+    return html;
+}
+
+function buildLegalPages(outDir, lang, translations) {
+    const pageTemplate = fs.readFileSync(path.join(includesDir, 'page-template.html'), 'utf-8');
+    const pageSlugs = ['licenses', 'privacy', 'terms'];
+
+    pageSlugs.forEach(slug => {
+        const pageData = translations[lang]?.pages?.[slug];
+        if (!pageData) {
+            console.warn(`  -> No page data found for ${slug} in ${lang}`);
+            return;
+        }
+
+        let contentHtml = '';
+        if (pageData.intro) {
+            contentHtml += `<p>${pageData.intro}</p>`;
+        }
+        if (pageData.last_updated) {
+            contentHtml += `<p><strong>Last updated: ${pageData.last_updated}</strong></p>`;
+        }
+
+        if (pageData.items) {
+            pageData.items.forEach(item => {
+                contentHtml += '<hr>';
+                contentHtml += '<div class="license-item">';
+                contentHtml += `<h3>${item.name}</h3>`;
+                contentHtml += `<p><strong>License:</strong> ${item.license}</p>`;
+                contentHtml += `<p>${item.description}</p>`;
+                contentHtml += `<p><a href="${item.url}" target="_blank">View License</a></p>`;
+                contentHtml += '</div>';
+            });
+        } else if (pageData.sections) {
+            pageData.sections.forEach(section => {
+                contentHtml += `<h3>${section.title}</h3>`;
+                contentHtml += renderPageContent(section.content);
+            });
+        }
+
+        let outputHtml = pageTemplate;
+        outputHtml = outputHtml.replace(/{{lang}}/g, lang);
+        outputHtml = outputHtml.replace(/{{title}}/g, pageData.title);
+        outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
+
+        // Translate global placeholders in the template itself
+        outputHtml = translate(outputHtml, lang, translations);
+
+        const destPath = path.join(outDir, `${slug}.html`);
+        fs.writeFileSync(destPath, outputHtml);
+        console.log(`  -> Built legal page: /${slug}.html for ${lang}`);
     });
 }
 

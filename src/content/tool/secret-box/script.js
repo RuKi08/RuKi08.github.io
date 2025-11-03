@@ -9,6 +9,7 @@ export function init() {
     const secretKeyInput = document.getElementById('secret-key');
     const loadSecretsBtn = document.getElementById('load-secrets');
     const secretList = document.getElementById('secret-list');
+    const i18nData = document.getElementById('i18n-data');
 
     // 2. Firebase Check
     if (!db) {
@@ -31,7 +32,7 @@ export function init() {
         const key = secretKeyInput.value;
 
         if (!data || !key) {
-            alert('데이터와 비밀키를 모두 입력해주세요.');
+            alert(i18nData.dataset.alertEnterAll);
             return;
         }
 
@@ -41,18 +42,18 @@ export function init() {
                 key: key,
                 timestamp: serverTimestamp()
             });
-            alert('데이터가 성공적으로 저장되었습니다!');
+            alert(i18nData.dataset.alertSaved);
             secretDataInput.value = '';
             secretKeyInput.value = '';
             loadSecrets(); // Refresh the list
         } catch (e) {
             console.error("데이터 저장 중 오류 발생: ", e);
-            alert('데이터 저장에 실패했습니다. 콘솔을 확인하세요.');
+            alert(i18nData.dataset.alertSaveFailed);
         }
     }
 
     async function loadSecrets() {
-        secretList.innerHTML = '<li>로딩 중...</li>';
+        secretList.innerHTML = `<li>${i18nData.dataset.loading}</li>`;
 
         try {
             const q = query(collection(db, 'secrets'), orderBy('timestamp', 'desc'));
@@ -60,7 +61,7 @@ export function init() {
 
             secretList.innerHTML = '';
             if (querySnapshot.empty) {
-                secretList.innerHTML = '<li>아직 저장된 비밀 데이터가 없습니다.</li>';
+                secretList.innerHTML = `<li>${i18nData.dataset.noData}</li>`;
                 return;
             }
 
@@ -72,7 +73,7 @@ export function init() {
             });
         } catch (e) {
             console.error("데이터 로드 중 오류 발생: ", e);
-            secretList.innerHTML = '<li>데이터를 불러오는 데 실패했습니다.</li>';
+            secretList.innerHTML = `<li>${i18nData.dataset.alertLoadFailed}</li>`;
         }
     }
 }

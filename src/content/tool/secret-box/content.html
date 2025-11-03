@@ -1,13 +1,21 @@
 
 <div class="text-center">
-    <p>전 세계 누구나 데이터와 '비밀키'를 남기고, 다른 사람들의 데이터를 볼 수 있는 공간입니다.</p>
+    <p>{{__i18n.content.info__}}</p>
     <form id="secret-form">
-        <textarea id="secret-data" placeholder="여기에 데이터를 입력하세요..." rows="4"></textarea>
-        <input type="password" id="secret-key" placeholder="해독암호 (비밀키)">
-        <button type="submit" id="save-secret" class="w-100">저장하기</button>
+        <textarea id="secret-data" placeholder="{{__i18n.content.data_placeholder__}}" rows="4"></textarea>
+        <input type="password" id="secret-key" placeholder="{{__i18n.content.key_placeholder__}}">
+        <button type="submit" id="save-secret" class="w-100">{{__i18n.content.save__}}</button>
     </form>
     <div class="secret-display mt-2">
-        <button id="load-secrets" class="w-100">모든 데이터 보기</button>
+        <button id="load-secrets" class="w-100">{{__i18n.content.view_all__}}</button>
         <ul id="secret-list" class="preview-box"></ul>
     </div>
+</div>
+<div id="i18n-data" style="display: none;" 
+    data-alert-enter-all="{{__i18n.content.alert_enter_all__}}" 
+    data-alert-saved="{{__i18n.content.alert_saved__}}" 
+    data-alert-save-failed="{{__i18n.content.alert_save_failed__}}" 
+    data-loading="{{__i18n.content.loading__}}" 
+    data-no-data="{{__i18n.content.no_data__}}" 
+    data-alert-load-failed="{{__i18n.content.alert_load_failed__}}">
 </div>

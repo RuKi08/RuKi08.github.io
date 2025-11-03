@@ -1,6 +1,6 @@
 {
-  "name": "2048",
-  "description": "An addictive puzzle game where you combine tiles with arrow keys to create the 2048 tile.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-grip",
   "tags": ["puzzle", "classic", "number"],
   "script": "script.js",

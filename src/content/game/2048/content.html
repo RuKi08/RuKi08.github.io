@@ -1,15 +1,16 @@
 <div class="game-info">
     <div class="score-box-container">
-        <div class="score-box">SCORE<br><span id="score">0</span></div>
-        <div class="score-box">BEST<br><span id="best-score">0</span></div>
+        <div class="score-box">{{__i18n.content.score__}}<br><span id="score">0</span></div>
+        <div class="score-box">{{__i18n.content.best__}}<br><span id="best-score">0</span></div>
     </div>
-    <button id="new-game-btn">New Game</button>
+    <button id="new-game-btn">{{__i18n.content.new_game__}}</button>
 </div>
 <div class="game-wrapper mx-auto" style="max-width: 400px;">
     <div id="grid-container"></div>
     <div id="tile-container"></div>
     <div id="game-overlay" class="game-overlay">
         <div id="game-overlay-message" class="game-overlay-message"></div>
-        <button class="button">다시하기</button>
+        <button class="button">{{__i18n.content.retry__}}</button>
     </div>
+    <div id="i18n-data" style="display: none;" data-game-over="{{__i18n.content.game_over__}}"></div>
 </div>

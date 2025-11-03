@@ -3,6 +3,13 @@
     <div id="game-board" class="game-board mx-auto" style="aspect-ratio: 1; cursor: pointer;"></div>
     <div id="game-overlay" class="game-overlay">
         <div id="game-overlay-message" class="game-overlay-message"></div>
-        <button id="reset-game-btn" class="button">다시하기</button>
+        <button id="reset-game-btn" class="button">{{__i18n.content.retry__}}</button>
+    </div>
+    <div id="i18n-data" style="display: none;" 
+        data-black-turn="{{__i18n.content.black_turn__}}" 
+        data-white-turn="{{__i18n.content.white_turn__}}" 
+        data-black-wins="{{__i18n.content.black_wins__}}" 
+        data-white-wins="{{__i18n.content.white_wins__}}" 
+        data-draw="{{__i18n.content.draw__}}">
     </div>
 </div>

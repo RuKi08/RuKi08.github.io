@@ -1,6 +1,6 @@
 {
-  "name": "Gomoku",
-  "description": "A classic board game where you win by placing five stones in a row first.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-circle-dot",
   "tags": ["board game", "classic", "2-player", "strategy"],
   "script": "script.js",

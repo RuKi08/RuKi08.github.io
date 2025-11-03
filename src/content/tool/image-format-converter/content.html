@@ -2,30 +2,34 @@
 <form id="converter-form">
     <div class="converter-layout">
         <div class="controls">
-            <h4>1. 이미지 선택</h4>
-            <label for="image-input" class="file-upload-label">파일 찾기</label>
+            <h4>{{__i18n.content.select_image_title__}}</h4>
+            <label for="image-input" class="file-upload-label">{{__i18n.content.find_file__}}</label>
             <input type="file" id="image-input" accept="image/*" class="hidden-input">
-            <p id="file-name">선택된 파일 없음</p>
+            <p id="file-name">{{__i18n.content.no_file_selected__}}</p>
             
-            <h4 class="mt-2">2. 변환할 형식 선택</h4>
+            <h4 class="mt-2">{{__i18n.content.select_format_title__}}</h4>
             <div class="input-group">
                 <select id="format-select" class="w-100">
-                    <option value="jpeg">JPG</option>
-                    <option value="png">PNG</option>
-                    <option value="webp">WebP</option>
-                    <option value="bmp">BMP</option>
-                    <option value="gif">GIF (첫 프레임만)</option>
+                    <option value="jpeg">{{__i18n.content.format_jpg__}}</option>
+                    <option value="png">{{__i18n.content.format_png__}}</option>
+                    <option value="webp">{{__i18n.content.format_webp__}}</option>
+                    <option value="bmp">{{__i18n.content.format_bmp__}}</option>
+                    <option value="gif">{{__i18n.content.format_gif__}}</option>
                 </select>
             </div>
-            <button type="button" id="convert-btn" class="w-100">변환하기</button>
+            <button type="button" id="convert-btn" class="w-100">{{__i18n.content.convert__}}</button>
         </div>
         <div class="preview-area">
-            <h4>미리보기</h4>
+            <h4>{{__i18n.content.preview__}}</h4>
             <div class="preview-box">
-                <img id="preview" src="" alt="이미지 미리보기">
+                <img id="preview" src="" alt="{{__i18n.content.image_preview__}}">
             </div>
-            <a id="download-link" class="button" style="display: none;">다운로드</a>
+            <a id="download-link" class="button" style="display: none;">{{__i18n.content.download__}}</a>
         </div>
     </div>
-    <p class="notice">참고: GIF 형식은 애니메이션의 첫 번째 프레임만 변환됩니다. 브라우저에 따라 일부 형식(예: BMP) 지원이 다를 수 있습니다.</p>
+    <p class="notice">{{__i18n.content.notice__}}</p>
 </form>
+<div id="i18n-data" style="display: none;" 
+    data-alert-select-file="{{__i18n.content.alert_select_file__}}" 
+    data-download-converted-image="{{__i18n.content.download_converted_image__}}">
+</div>

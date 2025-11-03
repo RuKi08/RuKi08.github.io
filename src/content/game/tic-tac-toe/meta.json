@@ -1,6 +1,6 @@
 {
-  "name": "Tic-Tac-Toe",
-  "description": "A classic game where two players take turns placing O's and X's to make a line.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-border-all",
   "tags": ["board game", "classic", "2-player"],
   "script": "script.js",

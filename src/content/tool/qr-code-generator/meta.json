@@ -1,6 +1,6 @@
 {
-  "name": "QR Code Generator",
-  "description": "Instantly convert a URL or text into a QR code for marketing or information sharing.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-qrcode",
   "tags": ["generator", "image", "qr"],
   "script": "script.js"

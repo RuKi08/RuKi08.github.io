@@ -5,6 +5,7 @@ export function init() {
     const codeOutput = document.getElementById('code-output');
     const toCodeBtn = document.getElementById('to-code-btn');
     const toCharBtn = document.getElementById('to-char-btn');
+    const i18nData = document.getElementById('i18n-data');
 
     // 2. Event Listeners
     toCodeBtn.addEventListener('click', convertToCode);
@@ -22,7 +23,7 @@ export function init() {
             }
             codeOutput.value = codes.join(', ');
         } catch (e) {
-            codeOutput.value = `에러: ${e.message}`;
+            codeOutput.value = i18nData.dataset.errorMessage.replace('{error}', e.message);
         }
     }
 
@@ -34,12 +35,12 @@ export function init() {
             const codes = inputCodes.split(',').map(s => parseInt(s.trim()));
             let chars = '';
             for(const code of codes) {
-                if(isNaN(code)) throw new Error ('숫자가 아닌 값이 포함되어 있습니다.');
+                if(isNaN(code)) throw new Error (i18nData.dataset.errorNan);
                 chars += String.fromCharCode(code);
             }
             charInput.value = chars;
         } catch (e) {
-            charInput.value = `에러: ${e.message}`;
+            charInput.value = i18nData.dataset.errorMessage.replace('{error}', e.message);
         }
     }
 }

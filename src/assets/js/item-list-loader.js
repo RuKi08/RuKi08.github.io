@@ -27,7 +27,8 @@ export async function loadItemList(itemType) {
     const tagContainer = document.getElementById('tag-list');
     const searchInput = document.getElementById('search-input');
     const expandBtn = document.getElementById('expand-tags-btn');
-    if (!listContainer || !tagContainer || !searchInput || !expandBtn) return;
+    const i18nData = document.getElementById('i18n-data');
+    if (!listContainer || !tagContainer || !searchInput || !expandBtn || !i18nData) return;
 
     try {
         const response = await fetch(`${langPrefix}/assets/data/items.json`);
@@ -51,13 +52,13 @@ export async function loadItemList(itemType) {
         searchInput.addEventListener('input', filterItems);
         expandBtn.addEventListener('click', () => {
             const isCollapsed = tagContainer.classList.toggle('collapsed');
-            expandBtn.textContent = isCollapsed ? '▼' : '▲';
+            expandBtn.textContent = isCollapsed ? i18nData.dataset.listExpand : i18nData.dataset.listCollapse;
         });
-        expandBtn.textContent = '▼';
+        expandBtn.textContent = i18nData.dataset.listExpand;
 
     } catch (error) {
         console.error(`Error loading ${itemType} list:`, error);
-        listContainer.innerHTML = `<p>Error loading list. Please try again later.</p>`;
+        listContainer.innerHTML = `<p>${i18nData.dataset.listError}</p>`;
     }
 }
 
@@ -93,10 +94,11 @@ function renderItems(items, container, itemType) {
 }
 
 function renderTags(tags, container) {
+    const i18nData = document.getElementById('i18n-data');
     container.innerHTML = '';
     const sortedTags = [...tags].sort();
 
-    const allBtn = createTagButton('All', true);
+    const allBtn = createTagButton(i18nData.dataset.listAllTags, true);
     container.appendChild(allBtn);
 
     sortedTags.forEach(tag => {
@@ -115,10 +117,11 @@ function createTagButton(tag, isActive = false) {
 }
 
 function handleTagClick(tagName) {
+    const i18nData = document.getElementById('i18n-data');
     const allBtn = document.querySelector('.tag-list .tag-btn:first-child');
     const clickedBtn = Array.from(document.querySelectorAll('.tag-list .tag-btn')).find(btn => btn.textContent === tagName);
 
-    if (tagName === 'All') {
+    if (tagName === i18nData.dataset.listAllTags) {
         document.querySelectorAll('.tag-list .tag-btn').forEach(btn => btn.classList.remove('active'));
         allBtn.classList.add('active');
     } else {
@@ -136,11 +139,12 @@ function handleTagClick(tagName) {
 }
 
 function filterItems() {
+    const i18nData = document.getElementById('i18n-data');
     const searchInput = document.getElementById('search-input');
     const searchLower = searchInput.value.toLowerCase();
     const activeTagButtons = document.querySelectorAll('.tag-list .tag-btn.active');
     const activeTags = Array.from(activeTagButtons).map(btn => btn.textContent.toLowerCase());
-    const showAll = activeTags.includes('all');
+    const showAll = activeTags.includes(i18nData.dataset.listAllTags.toLowerCase());
 
     document.querySelectorAll('.tool-list-card').forEach(card => {
         const cardTags = card.dataset.tags.toLowerCase().split(' ');

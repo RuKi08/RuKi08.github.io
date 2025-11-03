@@ -1,6 +1,6 @@
 {
-  "name": "Unit Converter",
-  "description": "Inter-convert all measurement units for daily and professional fields such as length, weight, volume, and temperature.",
+  "name": "{{__i18n.name__}}",
+  "description": "{{__i18n.description__}}",
   "icon": "fa-solid fa-ruler-combined",
   "tags": ["converter", "unit"],
   "script": "script.js"

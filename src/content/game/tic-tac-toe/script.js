@@ -6,6 +6,7 @@ export function init() {
     const overlay = document.getElementById('game-overlay');
     const overlayMessage = document.getElementById('game-overlay-message');
     const resetButton = document.getElementById('reset-game-btn');
+    const i18nData = document.getElementById('i18n-data');
 
     const size = 3;
     let board = Array(size * size).fill(null);
@@ -17,7 +18,7 @@ export function init() {
         board.fill(null);
         gameActive = true;
         currentPlayer = 'X';
-        statusElement.textContent = `${currentPlayer}'s Turn`;
+        statusElement.textContent = i18nData.dataset.xTurn;
         overlay.classList.remove('visible');
         
         // Create grid cells if they don't exist
@@ -50,17 +51,17 @@ export function init() {
         
         const winnerInfo = checkWinner();
         if (winnerInfo) {
-            endGame(`${currentPlayer} Wins!`, winnerInfo.pattern);
+            endGame(`${currentPlayer === 'X' ? i18nData.dataset.xWins : i18nData.dataset.oWins}`, winnerInfo.pattern);
             return;
         }
 
         if (board.every(cell => cell !== null)) {
-            endGame('Draw!');
+            endGame(i18nData.dataset.draw);
             return;
         }
 
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        statusElement.textContent = `${currentPlayer}'s Turn`;
+        statusElement.textContent = `${currentPlayer === 'X' ? i18nData.dataset.xTurn : i18nData.dataset.oTurn}`;
     }
 
     function updateCell(index) {

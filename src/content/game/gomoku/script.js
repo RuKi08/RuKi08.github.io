@@ -6,6 +6,7 @@ export function init() {
     const overlay = document.getElementById('game-overlay');
     const overlayMessage = document.getElementById('game-overlay-message');
     const resetButton = document.getElementById('reset-game-btn');
+    const i18nData = document.getElementById('i18n-data');
 
     const size = 15;
     let board = [];
@@ -16,7 +17,7 @@ export function init() {
         board = Array.from({ length: size }, () => Array(size).fill(0));
         gameActive = true;
         currentPlayer = 1;
-        statusElement.textContent = "Black's Turn";
+        statusElement.textContent = i18nData.dataset.blackTurn;
         overlay.classList.remove('visible');
         createBoard();
         updateForbiddenMarkers();
@@ -27,7 +28,7 @@ export function init() {
     }
 
     function updateTurn() {
-        statusElement.textContent = `${currentPlayer === 1 ? 'Black' : 'White'}'s Turn`;
+        statusElement.textContent = `${currentPlayer === 1 ? i18nData.dataset.blackTurn : i18nData.dataset.whiteTurn}`;
         updateForbiddenMarkers();
     }
 
@@ -57,12 +58,12 @@ export function init() {
         placeStone(row, col);
 
         if (checkWin(row, col)) {
-            endGame(`${currentPlayer === 1 ? 'Black' : 'White'} Wins!`);
+            endGame(`${currentPlayer === 1 ? i18nData.dataset.blackWins : i18nData.dataset.whiteWins}`);
             return;
         }
 
         if (board.flat().every(cell => cell !== 0)) {
-            endGame('Draw!');
+            endGame(i18nData.dataset.draw);
             return;
         }
 
