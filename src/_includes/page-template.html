@@ -5,29 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
     <link rel="icon" href="/assets/images/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-    <header>
-        <div class="logo"><a href="/"><span class="logo-ctrl">ctrl</span><span class="logo-cat">cat</span></a></div>
-        <nav>
-            <ul>
-                <li><a href="/">{{__i18n.global.nav_home__}}</a></li>
-                <li><a href="/tool">{{__i18n.global.nav_tools__}}</a></li>
-                <li><a href="/game">{{__i18n.global.nav_games__}}</a></li>
-            </ul>
-        </nav>
-        <div class="header-right">
-            <div class="language-switcher">
-                <button class="lang-btn" aria-label="Language">🌐</button>
-                <div class="lang-dropdown">
-                    <a href="#" data-lang="en">{{__i18n.global.lang_en__}}</a>
-                    <a href="#" data-lang="ko">{{__i18n.global.lang_ko__}}</a>
-                </div>
-            </div>
-            <button id="theme-toggle" aria-label="Toggle theme">☀️</button>
-        </div>
-    </header>
+    {{__header__}}
 
     <main>
         <div class="content-container" style="padding-top: 2rem;">
@@ -36,14 +18,7 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <nav class="footer-nav">
-            <a href="/terms.html">{{__i18n.global.footer_terms__}}</a>
-            <a href="/privacy.html">{{__i18n.global.footer_privacy__}}</a>
-            <a href="/licenses.html">{{__i18n.global.footer_licenses__}}</a>
-        </nav>
-        <p class="copyright">{{__i18n.global.footer_copyright__}}</p>
-    </footer>
+    {{__footer__}}
 
     <script type="module">
         import { initializeHeader, initializeFooter } from '/assets/js/common-components.js';

@@ -5,10 +5,10 @@ export function initTheme() {
     const applyTheme = (theme) => {
         if (theme === 'dark') {
             document.body.classList.add('dark-mode');
-            themeToggle.textContent = '🌙';
+            themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
         } else {
             document.body.classList.remove('dark-mode');
-            themeToggle.textContent = '☀️';
+            themeToggle.innerHTML = '<i class="fa-regular fa-sun"></i>';
         }
     };
 

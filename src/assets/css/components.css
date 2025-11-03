@@ -3,10 +3,19 @@
     font-weight: bold;
 }
 
+nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 2rem; /* Add horizontal margin */
+}
+
 nav ul {
     list-style: none;
     display: flex;
-    gap: 1.5rem;
+    justify-content: space-evenly;
+    width: 100%;
+    align-items: center;
 }
 
 nav a {
@@ -14,6 +23,7 @@ nav a {
     color: var(--text-color);
     font-weight: 500;
     transition: color 0.2s;
+    padding: 0 1rem;
 }
 
 nav a:hover, nav a.active {

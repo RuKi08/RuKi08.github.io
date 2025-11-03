@@ -1,8 +1,8 @@
 {
     "global": {
-        "nav_home": "홈",
-        "nav_tools": "도구",
-        "nav_games": "게임",
+        "nav_home": "Home",
+        "nav_tools": "Tools",
+        "nav_games": "Games",
         "lang_en": "English",
         "lang_ko": "한국어",
         "footer_terms": "이용약관",
@@ -15,9 +15,9 @@
         "list_error": "목록을 불러오는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.",
         "list_expand": "▼",
         "list_collapse": "▲",
-        "home_title": "홈",
-        "tools_title": "도구",
-        "games_title": "게임",
+        "home_title": "Home",
+        "tools_title": "Tools",
+        "games_title": "Games",
         "licenses_title": "라이선스",
         "privacy_title": "개인정보처리방침",
         "terms_title": "이용약관",
@@ -135,11 +135,11 @@
         "name": "2048",
         "description": "방향키로 타일을 합쳐 2048 타일을 만드는 중독성 있는 퍼즐 게임입니다.",
         "content": {
-            "score": "점수",
-            "best": "최고 점수",
-            "new_game": "새 게임",
-            "retry": "다시하기",
-            "game_over": "게임 오버!"
+            "score": "SCORE",
+            "best": "BEST",
+            "new_game": "New Game",
+            "retry": "Retry",
+            "game_over": "Game Over!"
         },
         "desc": {
             "title": "### 주요 기능",
@@ -163,8 +163,8 @@
             "white_turn": "백돌 차례",
             "black_wins": "흑돌 승리!",
             "white_wins": "백돌 승리!",
-            "draw": "무승부!",
-            "retry": "다시하기"
+            "draw": "Draw!",
+            "retry": "Retry"
         },
         "desc": {
             "title": "### 주요 기능",
@@ -183,12 +183,12 @@
         "name": "틱택토",
         "description": "두 플레이어가 번갈아가며 O와 X를 놓아 한 줄을 만드는 클래식 게임입니다.",
         "content": {
-            "x_turn": "X 차례",
-            "o_turn": "O 차례",
-            "x_wins": "X 승리!",
-            "o_wins": "O 승리!",
-            "draw": "무승부!",
-            "retry": "다시하기"
+            "x_turn": "X Turn",
+            "o_turn": "O Turn",
+            "x_wins": "X Wins!",
+            "o_wins": "O Wins!",
+            "draw": "Draw!",
+            "retry": "Retry"
         },
         "desc": {
             "title": "### 주요 기능",

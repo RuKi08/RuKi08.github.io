@@ -16,6 +16,10 @@ const defaultLang = 'en';
 function build() {
     console.log('[BUILD] Starting build...');
 
+    // Pre-load reusable snippets
+    const headerHtml = fs.readFileSync(path.join(includesDir, 'header.html'), 'utf-8');
+    const footerHtml = fs.readFileSync(path.join(includesDir, 'footer.html'), 'utf-8');
+
     // 1. Clean destination directory
     console.log('[BUILD] Cleaning dist directory...');
     if (fs.existsSync(distDir)) {
@@ -44,8 +48,8 @@ function build() {
         if (!fs.existsSync(langDistDir)) {
             fs.mkdirSync(langDistDir, { recursive: true });
         }
-        const allItems = buildContentPages(contentDir, langDistDir, lang, translations);
-        buildLegalPages(langDistDir, lang, translations);
+        const allItems = buildContentPages(contentDir, langDistDir, lang, translations, headerHtml, footerHtml);
+        buildLegalPages(langDistDir, lang, translations, headerHtml, footerHtml);
 
         // Build data file for list pages
         const dataOutputDir = path.join(langDistDir, 'assets', 'data');
@@ -115,7 +119,7 @@ function renderPageContent(contentData) {
     return html;
 }
 
-function buildLegalPages(outDir, lang, translations) {
+function buildLegalPages(outDir, lang, translations, headerHtml, footerHtml) {
     const pageTemplate = fs.readFileSync(path.join(includesDir, 'page-template.html'), 'utf-8');
     const pageSlugs = ['licenses', 'privacy', 'terms'];
 
@@ -152,6 +156,9 @@ function buildLegalPages(outDir, lang, translations) {
         }
 
         let outputHtml = pageTemplate;
+        outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
+        outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
+
         outputHtml = outputHtml.replace(/{{lang}}/g, lang);
         outputHtml = outputHtml.replace(/{{title}}/g, pageData.title);
         outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
@@ -165,7 +172,7 @@ function buildLegalPages(outDir, lang, translations) {
     });
 }
 
-function buildContentPages(sourceDir, outDir, lang, translations) {
+function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, footerHtml) {
     const template = fs.readFileSync(path.join(includesDir, 'item-template.html'), 'utf-8');
     const allItems = { games: [], tools: [] };
 
@@ -176,7 +183,10 @@ function buildContentPages(sourceDir, outDir, lang, translations) {
 
         const listPageIndexSource = path.join(typeDir, 'index.html');
         if (fs.existsSync(listPageIndexSource)) {
-            const listPageContent = fs.readFileSync(listPageIndexSource, 'utf-8');
+            let listPageContent = fs.readFileSync(listPageIndexSource, 'utf-8');
+            listPageContent = listPageContent.replace('{{__header__}}', headerHtml);
+            listPageContent = listPageContent.replace('{{__footer__}}', footerHtml);
+
             let processedContent = listPageContent.replace(/{{lang}}/g, lang);
             processedContent = translate(processedContent, lang, translations); // Global translations
 
@@ -217,6 +227,9 @@ function buildContentPages(sourceDir, outDir, lang, translations) {
             });
 
             let outputHtml = template;
+            outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
+            outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
+
             outputHtml = outputHtml.replace(/{{lang}}/g, lang);
             outputHtml = outputHtml.replace(/{{title}}/g, `${translatedName} | My Web`);
             outputHtml = outputHtml.replace(/{{name}}/g, translatedName);
@@ -280,7 +293,10 @@ function buildContentPages(sourceDir, outDir, lang, translations) {
     const staticRootFiles = fs.readdirSync(sourceDir).filter(file => file.endsWith('.html') && !fs.statSync(path.join(sourceDir, file)).isDirectory());
     staticRootFiles.forEach(page => {
         const pagePath = path.join(sourceDir, page);
-        const pageContent = fs.readFileSync(pagePath, 'utf-8');
+        let pageContent = fs.readFileSync(pagePath, 'utf-8');
+        pageContent = pageContent.replace('{{__header__}}', headerHtml);
+        pageContent = pageContent.replace('{{__footer__}}', footerHtml);
+
         let processedContent = pageContent.replace(/{{lang}}/g, lang);
         processedContent = translate(processedContent, lang, translations);
 
