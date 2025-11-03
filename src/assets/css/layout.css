@@ -43,10 +43,6 @@ header {
     user-select: none;
 }
 
-main {
-    padding: 6rem 2rem 2rem;
-}
-
 .page-section {
     display: none;
     animation: fadeIn 0.5s;
@@ -133,15 +129,15 @@ main {
 /* Homepage Layout */
 .hero {
     text-align: center;
-    padding: 4rem 1rem;
+    padding: 6rem 1rem; /* Increased padding */
     background-color: var(--background-secondary-color);
     border-bottom: 1px solid var(--border-color);
 }
 
 .hero h1 {
-    font-size: 2.5rem;
+    font-size: 3rem; /* Increased font size */
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .hero p {
@@ -152,14 +148,14 @@ main {
 
 .featured-section, .blog-section, .item-grid-section {
     max-width: 1200px;
-    margin: 4rem auto;
+    margin: 5rem auto; /* Increased margin */
     padding: 0 1rem;
 }
 
 .featured-section h2, .blog-section h2, .item-grid-section h2 {
-    font-size: 2rem;
+    font-size: 2.2rem; /* Increased font size */
     font-weight: 600;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem; /* Increased margin */
     text-align: center;
 }
 
@@ -184,19 +180,76 @@ main {
 }
 
 /* Blog Page Layout */
+#sidebar-toggle {
+    display: none; /* Old, unused */
+}
+
+.page-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the content */
+    padding: 1.5rem 2rem;
+    background-color: var(--background-secondary-color);
+    border-bottom: 1px solid var(--border-color);
+    position: relative; /* For absolute positioning of button if needed */
+}
+
+.page-title-bar h1 {
+    font-size: 1.75rem;
+    margin: 0;
+}
+
 main.has-sidebar {
     display: flex;
-    gap: 2rem;
-    align-items: flex-start;
-    max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
+    align-items: stretch; 
+    height: calc(100vh - 65px - 89px); /* Full height - header - title bar */
+    overflow: hidden; 
 }
 
 .sidebar {
-    flex: 0 0 280px; /* Do not grow, do not shrink, base width 280px */
-    position: sticky;
-    top: 100px; /* Match header height + some padding */
+    width: 280px;
+    flex-shrink: 0;
+    padding: 2rem;
+    background-color: var(--background-secondary-color);
+    transition: margin-left 0.3s ease-in-out;
+    position: relative; /* For close button positioning */
+    margin-left: 0;
+    border-right: 1px solid var(--border-color);
+    z-index: 100;
+}
+
+.sidebar-is-collapsed .sidebar {
+    margin-left: -280px;
+}
+
+#sidebar-close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary-color);
+    padding: 0.5rem;
+    line-height: 1;
+    transition: color 0.2s;
+}
+#sidebar-close-btn:hover { color: var(--text-color); }
+
+#sidebar-open-btn {
+    display: none; /* Hidden by default */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+    margin-right: 1rem; /* Add some space to the title */
+}
+#sidebar-open-btn:hover { color: var(--primary-color); }
+
+.sidebar-is-collapsed #sidebar-open-btn {
+    display: block; /* Show when sidebar is collapsed */
 }
 
 .sidebar h2 {
@@ -205,6 +258,12 @@ main.has-sidebar {
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 1rem;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 2rem 4rem;
+    overflow-y: auto; /* Allow main content to scroll independently */
 }
 
 #blog-list.page-section {

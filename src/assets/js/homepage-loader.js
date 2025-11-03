@@ -1,18 +1,46 @@
-// This script will contain the logic to load featured tools, blog posts, and item grids onto the homepage.
+const siteConfig = {
+    defaultLang: 'en',
+    languages: ['en', 'ko']
+};
 
-async function fetchJson(url) {
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+function getPathContext() {
+    const path = window.location.pathname;
+    const pathParts = path.split('/');
+    const langCode = pathParts[1];
+
+    if (siteConfig.languages.includes(langCode) && langCode !== siteConfig.defaultLang) {
+        return {
+            lang: langCode,
+            langPrefix: `/${langCode}`,
+        };
     }
-    return response.json();
+
+    return {
+        lang: siteConfig.defaultLang,
+        langPrefix: '',
+    };
 }
 
-function createItemCard(item, lang) {
-    const itemUrl = `/${lang !== 'en' ? lang + '/' : ''}${item.type}/${item.slug}`;
+async function fetchJson(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (e) {
+        console.error(`Failed to fetch ${url}:`, e);
+        return null;
+    }
+}
+
+function createItemCard(item, itemType, langPrefix) {
+    const itemUrl = `${langPrefix}/${itemType}/${item.dir}/`;
+    const iconHtml = item.icon.startsWith('<') ? item.icon : `<i class="${item.icon}"></i>`;
+
     return `
         <a href="${itemUrl}" class="item-card">
-            <div class="item-icon">${item.icon || '<i class="fa-solid fa-question"></i>'}</div>
+            <div class="item-icon">${iconHtml}</div>
             <div class="item-info">
                 <h3>${item.name}</h3>
                 <p>${item.description}</p>
@@ -21,40 +49,41 @@ function createItemCard(item, lang) {
     `;
 }
 
-// More functions to load sections will be added here...
+async function loadItemGrid(containerId, itemType, allItems, count) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-export function initHomepage() {
-    console.log("Homepage Initialized");
-    // We will call functions to load each section here.
-    loadFeatured();
-    loadLatestBlogPosts();
-}
+    const { langPrefix } = getPathContext();
+    const items = allItems[itemType + 's'] || [];
 
-async function loadFeatured() {
-    // Placeholder for featured tools logic
-    const container = document.getElementById('featured-tools-container');
-    if (container) {
-        container.innerHTML = "<p>Featured tools coming soon.</p>";
+    if (items.length === 0) {
+        container.innerHTML = `<p>No ${itemType}s found.</p>`;
+        return;
     }
+
+    const itemsToShow = items.slice(0, count);
+    container.innerHTML = itemsToShow.map(item => createItemCard(item, itemType, langPrefix)).join('');
 }
 
-async function loadLatestBlogPosts() {
+async function loadLatestBlogPosts(allItems) {
     const container = document.getElementById('blog-posts-container');
     if (!container) return;
 
-    const allItems = await fetchJson('/assets/data/items.json');
-    if (!allItems || !allItems.blogs || allItems.blogs.length === 0) {
+    const { langPrefix } = getPathContext();
+    const posts = allItems.blogs || [];
+
+    if (posts.length === 0) {
         container.innerHTML = '<p>No posts found.</p>';
         return;
     }
 
-    // Take the 3 most recent posts
-    const latestPosts = allItems.blogs.slice(0, 3);
-
-    let postsHtml = latestPosts.map(post => {
+    const latestPosts = posts.slice(0, 3);
+    container.innerHTML = latestPosts.map(post => {
+        const postUrl = `${langPrefix}/blog/${post.dir}/`;
+        const iconHtml = post.icon.startsWith('<') ? post.icon : `<i class="${post.icon}"></i>`;
         return `
-            <a href="/blog/${post.slug}" class="blog-post-card-mini">
-                <div class="blog-post-card-mini-icon">${post.icon || '<i class="fa-solid fa-question"></i>'}</div>
+            <a href="${postUrl}" class="blog-post-card-mini">
+                <div class="blog-post-card-mini-icon">${iconHtml}</div>
                 <div class="blog-post-card-mini-info">
                     <h4>${post.title}</h4>
                     <span class="blog-post-card-meta">${post.date}</span>
@@ -62,6 +91,24 @@ async function loadLatestBlogPosts() {
             </a>
         `;
     }).join('');
+}
 
-    container.innerHTML = postsHtml;
+export async function initHomepage() {
+    console.log("Homepage Initialized");
+    const { langPrefix } = getPathContext();
+    const allItems = await fetchJson(`${langPrefix}/assets/data/items.json`);
+
+    if (!allItems) {
+        // Display error message on all sections
+        document.getElementById('featured-tools-container').innerHTML = '<p>Error loading content.</p>';
+        document.getElementById('blog-posts-container').innerHTML = '<p>Error loading content.</p>';
+        document.getElementById('all-tools-container').innerHTML = '<p>Error loading content.</p>';
+        document.getElementById('all-games-container').innerHTML = '<p>Error loading content.</p>';
+        return;
+    }
+
+    loadItemGrid('featured-tools-container', 'tool', allItems, 3);
+    loadLatestBlogPosts(allItems);
+    loadItemGrid('all-tools-container', 'tool', allItems, 6);
+    loadItemGrid('all-games-container', 'game', allItems, 6);
 }

@@ -37,6 +37,9 @@
         "home_all_games_intro": "Need a break? Challenge yourself with our collection of classic and addictive web-based games.",
         "home_view_all_games": "View all games"
     },
+    "blog_categories": {
+        "guides": "Guides"
+    },
     "pages": {
         "licenses": {
             "title": "Licenses",

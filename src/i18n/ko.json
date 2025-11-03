@@ -3,7 +3,7 @@
         "nav_home": "Home",
         "nav_tools": "Tools",
         "nav_games": "Games",
-        "nav_blog": "블로그",
+        "nav_blog": "Blog",
         "lang_en": "English",
         "lang_ko": "한국어",
         "footer_terms": "이용약관",
@@ -36,6 +36,9 @@
         "home_all_games_title": "모든 게임",
         "home_all_games_intro": "휴식이 필요하신가요? 중독성 있는 고전 웹 게임들을 즐기며 두뇌를 단련하고 스트레스를 해소하세요.",
         "home_view_all_games": "모든 게임 보기"
+    },
+    "blog_categories": {
+        "guides": "가이드"
     },
     "pages": {
         "licenses": {

@@ -93,6 +93,30 @@ function renderItems(items, container, itemType) {
     });
 }
 
+function filterItems() {
+    const i18nData = document.getElementById('i18n-data');
+    const searchInput = document.getElementById('search-input');
+    const searchLower = searchInput.value.toLowerCase();
+    const activeTagButtons = document.querySelectorAll('.tag-list .tag-btn.active');
+    const activeTags = Array.from(activeTagButtons).map(btn => btn.textContent.toLowerCase());
+    const showAll = activeTags.includes(i18nData.dataset.listAllTags.toLowerCase());
+
+    document.querySelectorAll('.tool-list-card').forEach(card => {
+        const cardTags = card.dataset.tags.toLowerCase().split(' ');
+        const cardName = card.querySelector('h3').textContent.toLowerCase();
+        const cardDesc = card.querySelector('p').textContent.toLowerCase();
+
+        const matchesSearch = cardName.includes(searchLower) || cardDesc.includes(searchLower);
+        const matchesTags = showAll || activeTags.every(t => cardTags.includes(t));
+
+        if (matchesSearch && matchesTags) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 function renderTags(tags, container) {
     const i18nData = document.getElementById('i18n-data');
     container.innerHTML = '';
@@ -136,28 +160,4 @@ function handleTagClick(tagName) {
     }
 
     filterItems();
-}
-
-function filterItems() {
-    const i18nData = document.getElementById('i18n-data');
-    const searchInput = document.getElementById('search-input');
-    const searchLower = searchInput.value.toLowerCase();
-    const activeTagButtons = document.querySelectorAll('.tag-list .tag-btn.active');
-    const activeTags = Array.from(activeTagButtons).map(btn => btn.textContent.toLowerCase());
-    const showAll = activeTags.includes(i18nData.dataset.listAllTags.toLowerCase());
-
-    document.querySelectorAll('.tool-list-card').forEach(card => {
-        const cardTags = card.dataset.tags.toLowerCase().split(' ');
-        const cardName = card.querySelector('h3').textContent.toLowerCase();
-        const cardDesc = card.querySelector('p').textContent.toLowerCase();
-
-        const matchesSearch = cardName.includes(searchLower) || cardDesc.includes(searchLower);
-        const matchesTags = showAll || activeTags.every(t => cardTags.includes(t));
-
-        if (matchesSearch && matchesTags) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
 }

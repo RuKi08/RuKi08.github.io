@@ -246,7 +246,7 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             // Add item to the corresponding list
             if (allItems[type + 's']) {
                 allItems[type + 's'].push({
-                    slug: itemName,
+                    dir: itemName,
                     type: type,
                     ...meta,
                     name: translatedName,
@@ -350,7 +350,7 @@ function copyRecursive(src, dest) {
 
 // --- New Blog Build Functions ---
 
-function generateBlogTree(dir, fullPath) {
+function generateBlogTree(dir, fullPath, lang, langTranslations) {
     const stats = fs.statSync(fullPath);
     const name = path.basename(dir);
 
@@ -358,29 +358,28 @@ function generateBlogTree(dir, fullPath) {
         return null;
     }
 
-    // It's a post directory if it contains language subdirectories (en, ko)
     const children = fs.readdirSync(fullPath);
-    if (children.includes('en') || children.includes('ko')) {
-        const enMetaPath = path.join(fullPath, 'en', 'meta.json');
-        const koMetaPath = path.join(fullPath, 'ko', 'meta.json');
+    // It's a post directory if it contains language subdirectories (en, ko)
+    if (children.includes(lang)) {
+        const langPath = path.join(fullPath, lang);
+        const metaPath = path.join(langPath, 'meta.json');
         let meta = {};
-        if (fs.existsSync(enMetaPath)) {
-            meta = JSON.parse(fs.readFileSync(enMetaPath, 'utf-8'));
-        } else if (fs.existsSync(koMetaPath)) {
-            meta = JSON.parse(fs.readFileSync(koMetaPath, 'utf-8'));
+        if (fs.existsSync(metaPath)) {
+            meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
         }
 
         return {
             type: 'post',
             name: meta.title || name,
-            slug: name,
+            dir: name,
             date: meta.date
         };
     }
 
     // It's a category directory
+    const translatedName = langTranslations?.blog_categories?.[name] || name;
     const items = children
-        .map(child => generateBlogTree(path.join(dir, child), path.join(fullPath, child)))
+        .map(child => generateBlogTree(path.join(dir, child), path.join(fullPath, child), lang, langTranslations))
         .filter(item => item !== null)
         .sort((a, b) => {
             if (a.type === 'category' && b.type === 'post') return -1;
@@ -394,7 +393,7 @@ function generateBlogTree(dir, fullPath) {
 
     return {
         type: 'category',
-        name: name,
+        name: translatedName,
         children: items
     };
 }
@@ -426,9 +425,10 @@ function buildBlogPages(sourceDir, outDir, lang, translations, headerHtml, foote
                     const contentHtml = marked.parse(mdContent);
 
                     allPosts.push({
-                        slug: slug,
+                        ...meta,
+                        dir: slug,
                         type: 'blog',
-                        ...meta
+                        description: meta.description || '' // Ensure description exists
                     });
 
                     let outputHtml = template;
@@ -475,16 +475,14 @@ function buildBlogPages(sourceDir, outDir, lang, translations, headerHtml, foote
         console.log(`  -> Built blog list page: /blog/ for ${lang}`);
     }
 
-    // For the main build process, only generate the tree for the default language to avoid duplication
-    if (lang === defaultLang) {
-        const blogTree = generateBlogTree('blog', blogSourceDir);
-        const dataOutputDir = path.join(distDir, 'assets', 'data');
-        if (!fs.existsSync(dataOutputDir)) {
-            fs.mkdirSync(dataOutputDir, { recursive: true });
-        }
-        fs.writeFileSync(path.join(dataOutputDir, 'blog-tree.json'), JSON.stringify(blogTree ? blogTree.children : [], null, 2));
-        console.log(`[BUILD] Generated blog category tree.`);
+    // Generate and write the blog category tree for the current language
+    const blogTree = generateBlogTree('blog', blogSourceDir, lang, translations[lang]);
+    const dataOutputDir = path.join(outDir, 'assets', 'data');
+    if (!fs.existsSync(dataOutputDir)) {
+        fs.mkdirSync(dataOutputDir, { recursive: true });
     }
+    fs.writeFileSync(path.join(dataOutputDir, 'blog-tree.json'), JSON.stringify(blogTree ? blogTree.children : [], null, 2));
+    console.log(`[BUILD] Generated blog category tree for ${lang}.`);
 
     return allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
 }

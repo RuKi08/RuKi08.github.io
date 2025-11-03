@@ -11,19 +11,22 @@
 <body>
     {{__header__}}
 
+    <div class="page-title-bar">
+        <button id="sidebar-open-btn" aria-label="Open sidebar"><i class="fa-solid fa-bars"></i></button>
+        <h1>{{__i18n.global.blog_title__}}</h1>
+    </div>
+
     <main class="has-sidebar">
-        <aside class="sidebar">
+        <aside class="sidebar" id="blog-sidebar">
+            <button id="sidebar-close-btn" aria-label="Close sidebar"><i class="fa-solid fa-times"></i></button>
             <h2>Categories</h2>
             <div id="blog-category-tree"></div>
         </aside>
-        <section id="blog-list" class="page-section active">
-            <div class="content-container">
-                <h1>{{__i18n.global.blog_title__}}</h1>
-                <div id="blog-posts-container">
-                    <!-- All blog posts will be loaded here -->
-                </div>
+        <div class="main-content">
+            <div id="blog-posts-list">
+                <!-- Blog posts will be loaded here by blog-page-loader.js -->
             </div>
-        </section>
+        </div>
     </main>
 
     {{__footer__}}

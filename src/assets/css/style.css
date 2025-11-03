@@ -48,8 +48,9 @@ hr {
 }
 
 .content-container {
-    max-width: 800px;
+    max-width: 1200px; /* Increased max-width for better layout */
     margin: 0 auto;
+    padding: 0 2rem; /* Added horizontal padding */
 }
 
 .content-container > h2 {
