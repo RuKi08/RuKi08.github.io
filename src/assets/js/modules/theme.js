@@ -19,7 +19,10 @@ export function initTheme() {
         applyTheme(newTheme);
     });
 
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(savedTheme);
+    // Load saved theme or detect system preference
+    let initialTheme = localStorage.getItem('theme');
+    if (!initialTheme) {
+        initialTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(initialTheme);
 }

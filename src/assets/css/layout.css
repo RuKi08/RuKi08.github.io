@@ -15,7 +15,7 @@ header {
 
 .logo a {
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem; /* Increased font size */
     font-weight: bold;
 }
 
@@ -25,6 +25,22 @@ header {
 
 .logo-cat {
     color: var(--primary-color);
+}
+
+.logo-ctrl,
+.logo-cat {
+    position: relative;
+}
+
+.logo-ctrl::before,
+.logo-cat::before {
+    content: '•';
+    position: absolute;
+    top: -0.4em;
+    left: 0.08em;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    user-select: none;
 }
 
 main {

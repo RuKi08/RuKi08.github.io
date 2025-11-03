@@ -160,7 +160,7 @@ function buildLegalPages(outDir, lang, translations, headerHtml, footerHtml) {
         outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
 
         outputHtml = outputHtml.replace(/{{lang}}/g, lang);
-        outputHtml = outputHtml.replace(/{{title}}/g, pageData.title);
+        outputHtml = outputHtml.replace(/{{title}}/g, `${pageData.title} | ctrlcat`);
         outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
 
         // Translate global placeholders in the template itself
@@ -231,7 +231,7 @@ function buildContentPages(sourceDir, outDir, lang, translations, headerHtml, fo
             outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
 
             outputHtml = outputHtml.replace(/{{lang}}/g, lang);
-            outputHtml = outputHtml.replace(/{{title}}/g, `${translatedName} | My Web`);
+            outputHtml = outputHtml.replace(/{{title}}/g, `${translatedName} | ctrlcat`);
             outputHtml = outputHtml.replace(/{{name}}/g, translatedName);
             outputHtml = outputHtml.replace(/{{content_html}}/g, translatedContentHtml);
             outputHtml = outputHtml.replace(/{{description_html}}/g, descriptionHtml);
