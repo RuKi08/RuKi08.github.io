@@ -34,15 +34,15 @@ async function fetchJson(url) {
     }
 }
 
-function createItemCard(item, itemType, langPrefix) {
+function createItemCard(item, itemType, lang, langPrefix) {
     const itemUrl = `${langPrefix}/${itemType}/${item.dir}/`;
     const iconHtml = item.icon.startsWith('<') ? item.icon : `<i class="${item.icon}"></i>`;
 
     return `
         <a href="${itemUrl}" class="c-card">
             <div class="c-card__icon">${iconHtml}</div>
-            <h3 class="c-card__title">${item.name}</h3>
-            <p class="c-card__text">${item.description}</p>
+            <h3 class="c-card__title">${item.name[lang]}</h3>
+            <p class="c-card__text">${item.description[lang]}</p>
         </a>
     `;
 }
@@ -51,7 +51,7 @@ async function loadItemGrid(containerId, itemType, allItems, count) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const { langPrefix } = getPathContext();
+    const { lang, langPrefix } = getPathContext();
     const items = allItems[itemType + 's'] || [];
 
     if (items.length === 0) {
@@ -60,7 +60,7 @@ async function loadItemGrid(containerId, itemType, allItems, count) {
     }
 
     const itemsToShow = items.slice(0, count);
-    container.innerHTML = itemsToShow.map(item => createItemCard(item, itemType, langPrefix)).join('');
+    container.innerHTML = itemsToShow.map(item => createItemCard(item, itemType, lang, langPrefix)).join('');
 }
 
 async function loadLatestBlogPosts(allItems) {

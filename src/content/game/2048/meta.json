@@ -1,8 +1,0 @@
-{
-  "name": "{{__i18n.name__}}",
-  "description": "{{__i18n.description__}}",
-  "icon": "fa-solid fa-grip",
-  "tags": ["puzzle", "classic", "number"],
-  "script": "script.js",
-  "style": "style.css"
-}

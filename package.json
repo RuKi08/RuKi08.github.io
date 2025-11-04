@@ -4,9 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node scripts/build.js",
+    "build": "node scripts/build-from-firebase.js",
     "start": "serve dist",
     "dev": "npm run build && npm start",
+    "backup": "node scripts/backup.js",
     "generate": "node scripts/generate.js"
   },
   "repository": {
@@ -24,5 +25,9 @@
   "devDependencies": {
     "marked": "^16.4.1",
     "serve": "^14.2.5"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.5.0",
+    "gray-matter": "^4.0.3"
   }
 }

@@ -63,7 +63,7 @@ export async function loadItemList(itemType) {
 }
 
 function renderItems(items, container, itemType) {
-    const { langPrefix } = getPathContext();
+    const { lang, langPrefix } = getPathContext();
     container.innerHTML = '';
     items.forEach(item => {
         const card = document.createElement('a');
@@ -76,8 +76,8 @@ function renderItems(items, container, itemType) {
 
         card.innerHTML = `
             <div class="c-card__icon">${iconHtml}</div>
-            <h3 class="c-card__title">${item.name}</h3>
-            <p class="c-card__text">${item.description}</p>
+            <h3 class="c-card__title">${item.name[lang]}</h3>
+            <p class="c-card__text">${item.description[lang]}</p>
             ${tagsHTML}
         `;
 
