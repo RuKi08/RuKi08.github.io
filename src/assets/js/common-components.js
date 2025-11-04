@@ -5,22 +5,20 @@ const siteConfig = {
 
 function getPathContext() {
     const path = window.location.pathname;
-    const pathParts = path.split('/');
-    const langCode = pathParts[1];
+    const pathParts = path.split('/').filter(p => p); // Filter out empty strings
 
-    if (siteConfig.languages.includes(langCode) && langCode !== siteConfig.defaultLang) {
-        return {
-            lang: langCode,
-            langPrefix: `/${langCode}`,
-            basePath: path.replace(`/${langCode}`, '') || '/'
-        };
+    let lang = siteConfig.defaultLang;
+    let langPrefix = '';
+    let basePath = path;
+
+    if (pathParts.length > 0 && siteConfig.languages.includes(pathParts[0]) && pathParts[0] !== siteConfig.defaultLang) {
+        lang = pathParts[0];
+        langPrefix = `/${lang}`;
+        // Reconstruct basePath without the language part
+        basePath = '/' + pathParts.slice(1).join('/');
     }
 
-    return {
-        lang: siteConfig.defaultLang,
-        langPrefix: '',
-        basePath: path
-    };
+    return { lang, langPrefix, basePath };
 }
 
 function initializeHeader() {
@@ -31,10 +29,8 @@ function initializeHeader() {
     let lastScrollY = window.scrollY;
     window.addEventListener('scroll', () => {
         if (window.scrollY > lastScrollY) {
-            // Scrolling down
             header.classList.add('header-hidden');
         } else {
-            // Scrolling up
             header.classList.remove('header-hidden');
         }
         lastScrollY = window.scrollY;
@@ -50,25 +46,25 @@ function initializeHeader() {
             originalHref = link.getAttribute('href');
             link.dataset.originalHref = originalHref;
         }
-
-        if (originalHref === '/') {
-            link.href = langPrefix || '/';
-        } else {
-            link.href = `${langPrefix}${originalHref}`;
-        }
+        // Ensure we don't double-prefix
+        const newHref = originalHref === '/' ? (langPrefix || '/') : `${langPrefix}${originalHref}`;
+        link.href = newHref;
     });
-    // Also update the logo link
     header.querySelector('.logo a').href = langPrefix || '/';
 
     // Update language switcher links
     const enLink = header.querySelector('.lang-dropdown a[data-lang="en"]');
     const koLink = header.querySelector('.lang-dropdown a[data-lang="ko"]');
-    
+
+    // Ensure basePath doesn't have double slashes if it's not just "/"
+    const cleanBasePath = (basePath !== '/' && basePath.endsWith('/')) ? basePath.slice(0, -1) : basePath;
+
     if (enLink) {
-        enLink.href = basePath;
+        enLink.href = cleanBasePath;
     }
     if (koLink) {
-        koLink.href = `/ko${basePath}`;
+        // Prevent /ko//path issues
+        koLink.href = cleanBasePath === '/' ? '/ko' : `/ko${cleanBasePath}`;
     }
 }
 

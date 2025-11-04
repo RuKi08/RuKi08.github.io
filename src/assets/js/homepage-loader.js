@@ -5,20 +5,20 @@ const siteConfig = {
 
 function getPathContext() {
     const path = window.location.pathname;
-    const pathParts = path.split('/');
-    const langCode = pathParts[1];
+    const pathParts = path.split('/').filter(p => p); // Filter out empty strings
 
-    if (siteConfig.languages.includes(langCode) && langCode !== siteConfig.defaultLang) {
-        return {
-            lang: langCode,
-            langPrefix: `/${langCode}`,
-        };
+    let lang = siteConfig.defaultLang;
+    let langPrefix = '';
+    let basePath = path;
+
+    if (pathParts.length > 0 && siteConfig.languages.includes(pathParts[0]) && pathParts[0] !== siteConfig.defaultLang) {
+        lang = pathParts[0];
+        langPrefix = `/${lang}`;
+        // Reconstruct basePath without the language part
+        basePath = '/' + pathParts.slice(1).join('/');
     }
 
-    return {
-        lang: siteConfig.defaultLang,
-        langPrefix: '',
-    };
+    return { lang, langPrefix, basePath };
 }
 
 async function fetchJson(url) {

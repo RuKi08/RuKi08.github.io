@@ -31,7 +31,7 @@ export async function loadItemList(itemType) {
     if (!listContainer || !tagContainer || !searchInput || !expandBtn || !i18nData) return;
 
     try {
-        const response = await fetch(`${langPrefix}/assets/data/items.json`);
+        const response = await fetch(`../assets/data/items.json`);
         if (!response.ok) {
             throw new Error(`Failed to fetch items.json: ${response.statusText}`);
         }

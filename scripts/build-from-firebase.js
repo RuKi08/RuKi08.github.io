@@ -80,7 +80,17 @@ async function build() {
                     name: translatedName,
                     description: translatedDescription,
                     content_html: (item.content && item.content[lang]) 
-                    ? item.contentBody.replace(/{{__content\.(.*?)__}}/g, (match, key) => item.content[lang][key] || match)
+                    ? item.contentBody.replace(/{{__content\.(.*?)__}}/g, (match, key) => {
+                        const keys = key.split('.');
+                        let value = item.content[lang];
+                        for (const k of keys) {
+                            if (value === undefined) break;
+                            value = value[k];
+                        }
+
+                        if (typeof value === 'object') return JSON.stringify(value);
+                        return value || match;
+                    })
                     : item.contentBody,
                     description_html: marked.parse(item.desc[lang] || ''),
                 }, headerHtml, footerHtml, translations);
@@ -347,11 +357,13 @@ function buildStaticPages(outDir, headerHtml, footerHtml, translations) {
         const sourcePath = path.join(pagesDir, sourceFile);
         if (fs.existsSync(sourcePath)) {
             languages.forEach(lang => {
+                const langPrefix = lang === defaultLang ? '' : `/${lang}`;
                 const langDistDir = lang === defaultLang ? outDir : path.join(outDir, lang);
                 let pageContent = fs.readFileSync(sourcePath, 'utf-8');
                 pageContent = pageContent.replace('{{__header__}}', headerHtml);
                 pageContent = pageContent.replace('{{__footer__}}', footerHtml);
                 let processedContent = pageContent.replace(/{{lang}}/g, lang);
+                processedContent = processedContent.replace(/{{langPrefix}}/g, langPrefix);
                 processedContent = translate(processedContent, lang, translations);
                 
                 const finalDestDir = path.join(langDistDir, destDirName);
