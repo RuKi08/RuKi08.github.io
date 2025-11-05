@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "firebase-admin": "^13.5.0",
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "@google/generative-ai": "^0.14.1"
   }
 }

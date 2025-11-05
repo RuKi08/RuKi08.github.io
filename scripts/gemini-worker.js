@@ -1,8 +1,8 @@
 const admin = require('firebase-admin');
 const fs = require('fs');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // --- Configuration ---
-// This will be populated by the GitHub Action
 const serviceAccount = require('../serviceAccountKey.json');
 
 // --- Initialize Firebase Admin ---
@@ -17,16 +17,25 @@ const db = admin.firestore();
 async function generateContent() {
     console.log('--- Running Gemini Worker ---');
 
-    // 1. Get data from environment variables (passed by GitHub Action)
+    // 1. Get data from environment variables
     const {
         CONTENT_TYPE, 
         CONTENT_SLUG, 
-        ISSUE_TITLE, 
-        ISSUE_BODY 
+        ISSUE_BODY, 
+        GEMINI_API_KEY, 
+        GEMINI_PROMPT 
     } = process.env;
 
     if (!CONTENT_TYPE || !CONTENT_SLUG) {
-        console.error('Error: Missing CONTENT_TYPE or CONTENT_SLUG environment variables.');
+        console.error('Error: Missing CONTENT_TYPE or CONTENT_SLUG.');
+        process.exit(1);
+    }
+    if (!GEMINI_API_KEY) {
+        console.error('Error: Missing GEMINI_API_KEY.');
+        process.exit(1);
+    }
+    if (!GEMINI_PROMPT) {
+        console.error('Error: Missing GEMINI_PROMPT. Check workflow secrets and logic.');
         process.exit(1);
     }
 
@@ -34,68 +43,66 @@ async function generateContent() {
     console.log(`  - Type: ${CONTENT_TYPE}`);
     console.log(`  - Slug: ${CONTENT_SLUG}`);
 
-    // 2. Generate boilerplate content (placeholder for actual Gemini API call)
-    // TODO: In the future, call Gemini API with ISSUE_BODY as prompt
-    console.log('\nGenerating boilerplate content (Gemini API placeholder)...');
-    const boilerplateData = getBoilerplate(CONTENT_TYPE, CONTENT_SLUG, ISSUE_BODY || '');
+    // 2. Call Gemini API to generate content
+    let generatedData;
+    try {
+        console.log('\nInitializing Gemini API...');
+        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
-    // 3. Save the generated content to the appropriate 'draft' collection
-    const draftCollectionName = `draft-${CONTENT_TYPE === 'post' ? 'post_en' : CONTENT_TYPE}`;
+        const finalPrompt = GEMINI_PROMPT.replace('{{USER_PROMPT}}', ISSUE_BODY || 'Please create something interesting.');
+        console.log('Generating content with Gemini...');
+
+        const result = await model.generateContent(finalPrompt);
+        const response = await result.response;
+        const text = response.text();
+        
+        const jsonString = text.replace(/```json\n|```/g, '').trim();
+        generatedData = JSON.parse(jsonString);
+
+        console.log('Successfully received and parsed data from Gemini.');
+
+    } catch (error) {
+        console.error('\nError during Gemini API call:', error);
+        process.exit(1);
+    }
+
+    // 3. Prepare data for Firestore
+    const firestoreData = {
+        ...generatedData,
+        type: CONTENT_TYPE.startsWith('post_') ? 'blog' : CONTENT_TYPE,
+        slug: CONTENT_SLUG,
+        date: new Date().toISOString().split('T')[0],
+        icon: 'fa-solid fa-robot',
+        tags: ['autogen', ... (generatedData.tags || [])]
+    };
+
+    // 4. Save the generated content to the appropriate 'draft' collection
+    const typeForCollection = CONTENT_TYPE.startsWith('post_') ? CONTENT_TYPE : CONTENT_TYPE.replace(/_\w+$/, '');
+    const lang = CONTENT_TYPE.startsWith('post_') ? CONTENT_TYPE.split('_')[1] : 'en';
+    const draftCollectionName = `draft-${typeForCollection}`;
     const docRef = db.collection(draftCollectionName).doc(CONTENT_SLUG);
 
     console.log(`Saving to Firestore path: ${docRef.path}`);
     try {
-        await docRef.set(boilerplateData);
+        await docRef.set(firestoreData);
         console.log('Successfully saved to draft collection in Firestore.');
     } catch (error) {
         console.error('Error saving to Firestore:', error);
         process.exit(1);
     }
 
-    // 4. Output the preview URL for the GitHub Action to use
-    const type = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE;
-    const lang = CONTENT_TYPE.startsWith('post_') ? CONTENT_TYPE.split('_')[1] : 'en';
+    // 5. Output the preview URL for the GitHub Action to use
+    const typeForURL = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE;
     const langPrefix = lang === 'en' ? '' : `/${lang}`;
-
-    const previewUrl = `https://ctrlcat.dev${langPrefix}/preview/?type=${type}&slug=${CONTENT_SLUG}`;
+    const previewUrl = `https://ctrlcat.dev${langPrefix}/preview/?type=${typeForURL}&slug=${CONTENT_SLUG}`;
     console.log(`\nPreview URL: ${previewUrl}`);
 
-    // Use fs to append to the GITHUB_OUTPUT file
     const outputFile = process.env.GITHUB_OUTPUT;
     if (outputFile) {
         fs.appendFileSync(outputFile, `preview_url=${previewUrl}\n`);
         console.log('Successfully wrote preview_url to GITHUB_OUTPUT.');
-    }}
-
-function getBoilerplate(type, slug, body) {
-    const data = {
-        type: type === 'post' ? 'blog' : type,
-        slug: slug,
-        name: { en: `AutoGen Content #${slug}`, ko: `자동 생성 콘텐츠 #${slug}` },
-        description: { en: (body || '').substring(0, 100), ko: (body || '').substring(0, 100) },
-        desc: { en: `Content generated from issue body:\n\n${body}`, ko: `이슈 내용으로부터 생성된 콘텐츠:\n\n${body}` },
-        icon: 'fa-solid fa-robot',
-        tags: ['autogen']
-    };
-
-    if (type === 'tool') {
-        data.script = 'script.js';
-        data.scriptContent = `// Autogenerated script for ${slug}\nexport function init() {\n  console.log('Init ${slug}');\n}`;
-        data.content = { en: { title: `AutoGen Tool #${slug}` }, ko: { title: `자동 생성 도구 #${slug}` } };
-    } else if (type === 'game') {
-        data.script = 'script.js';
-        data.style = 'style.css';
-        data.scriptContent = `// Autogenerated script for ${slug}\nexport function init() {\n  console.log('Init ${slug}');\n}`;
-        data.styleContent = `/* Autogenerated style for ${slug} */`;
-        data.content = { en: { title: `AutoGen Game #${slug}` }, ko: { title: `자동 생성 게임 #${slug}` } };
-    } else if (type === 'post') {
-        data.title = `AutoGen Post #${slug}`;
-        data.date = new Date().toISOString().split('T')[0];
-        data.summary = { en: (body || '').substring(0, 100), ko: (body || '').substring(0, 100) };
-        data.contentBody = body;
     }
-
-    return data;
 }
 
 // --- Run the worker ---
