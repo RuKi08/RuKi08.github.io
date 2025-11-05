@@ -1,6 +1,6 @@
 
 import { db } from './firebase-config.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
 
 // Dynamically import marked.js for Markdown parsing
 let marked;
