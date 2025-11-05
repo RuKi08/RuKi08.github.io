@@ -48,7 +48,7 @@ async function generateContent() {
     try {
         console.log('\nInitializing Gemini API...');
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         let finalPrompt = GEMINI_PROMPT.replace('{{USER_PROMPT}}', ISSUE_BODY || 'Please create something interesting.');
         if (TARGET_LANGUAGE) {
