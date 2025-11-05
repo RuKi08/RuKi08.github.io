@@ -84,9 +84,7 @@ async function generateContent() {
     };
 
     // 4. Save the generated content to the appropriate 'draft' collection
-    const typeForCollection = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE.replace(/_\w+$/, '');
-    const lang = TARGET_LANGUAGE || 'en';
-    const draftCollectionName = `draft-${typeForCollection}`;
+    const draftCollectionName = `draft-${CONTENT_TYPE}`;
     const docRef = db.collection(draftCollectionName).doc(CONTENT_SLUG);
 
     console.log(`Saving to Firestore path: ${docRef.path}`);

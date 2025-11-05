@@ -81,9 +81,25 @@ function renderPreview(data, lang) {
 
     // Inject script content
     if (data.scriptContent) {
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.innerHTML = data.scriptContent;
-        document.body.appendChild(script);
+        try {
+            const scriptBlob = new Blob([data.scriptContent], { type: 'text/javascript' });
+            const scriptUrl = URL.createObjectURL(scriptBlob);
+            
+            const loaderScript = document.createElement('script');
+            loaderScript.type = 'module';
+            loaderScript.innerHTML = `
+                import { init } from '${scriptUrl}';
+                if (init) {
+                    console.log('Calling init() from dynamically loaded script...');
+                    init();
+                } else {
+                    console.warn('Script loaded, but no exported init() function found.');
+                }
+                URL.revokeObjectURL('${scriptUrl}'); // Clean up the object URL
+            `;
+            document.body.appendChild(loaderScript);
+        } catch (e) {
+            console.error('Error creating or loading dynamic script:', e);
+        }
     }
 }

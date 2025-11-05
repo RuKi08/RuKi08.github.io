@@ -14,8 +14,7 @@ export function processItemData(data, lang, marked) {
     const description = data.description?.[lang] || data.summary?.[lang] || '';
     const tagsHtml = (data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
 
-    // Process nested placeholders in contentBody, similar to the build script
-    const contentHtml = (data.content && data.content[lang] && data.contentBody)
+    let contentHtml = (data.content && data.content[lang] && data.contentBody)
         ? data.contentBody.replace(/{{__content\.(.*?)__}}/g, (match, key) => {
             const keys = key.split('.');
             let value = data.content[lang];
@@ -27,6 +26,11 @@ export function processItemData(data, lang, marked) {
             return value !== undefined ? value : match;
         })
         : (data.contentBody || '');
+
+    // For blog posts, the contentBody is Markdown and needs to be parsed.
+    if (data.type === 'blog') {
+        contentHtml = marked.parse(contentHtml);
+    }
 
     const descriptionHtml = data.desc?.[lang] ? marked.parse(data.desc[lang]) : '';
 
