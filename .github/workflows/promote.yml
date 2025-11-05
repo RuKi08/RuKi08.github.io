@@ -40,8 +40,8 @@ jobs:
           fi
           echo "type=$TYPE" >> $GITHUB_OUTPUT
 
-          # Use issue title as slug
-          SLUG=$(echo "${{ github.event.issue.title }}" | iconv -t ascii//TRANSLIT | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+          # Use the unique issue number as the slug
+          SLUG=${{ github.event.issue.number }}
           echo "slug=$SLUG" >> $GITHUB_OUTPUT
 
       - name: Create Firebase Service Account Key
