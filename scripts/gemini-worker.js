@@ -98,6 +98,7 @@ async function generateContent() {
 
     // 5. Output the preview URL for the GitHub Action to use
     const typeForURL = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE;
+    const lang = TARGET_LANGUAGE || 'en';
     const langPrefix = lang === 'en' ? '' : `/${lang}`;
     const previewUrl = `https://ctrlcat.dev${langPrefix}/preview/?type=${typeForURL}&slug=${CONTENT_SLUG}`;
     console.log(`\nPreview URL: ${previewUrl}`);
