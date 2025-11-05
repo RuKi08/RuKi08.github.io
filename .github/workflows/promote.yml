@@ -29,20 +29,44 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Get Issue Data
+      - name: Get Type and Slug
         id: issue_data
-        run: |
-          # Extract type from the first 'autogen:' label found on the issue
-          TYPE=$(jq -r '.issue.labels[] | select(.name | startswith("autogen:")) | .name' ${{ github.event_path }} | head -n 1 | cut -d ':' -f 2)
-          if [ -z "$TYPE" ]; then
-            echo "Could not determine content type from issue labels."
-            exit 1
-          fi
-          echo "type=$TYPE" >> $GITHUB_OUTPUT
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // 1. Get Content Type from Label
+            const labels = context.payload.issue.labels;
+            const autogenLabel = labels.find(label => label.name.startsWith('autogen:'));
+            if (!autogenLabel) {
+              core.setFailed('Could not find an "autogen:" label on the issue.');
+              return;
+            }
+            const type = autogenLabel.name.split(':')[1];
+            core.setOutput('type', type);
 
-          # Use the unique issue number as the slug
-          SLUG=${{ github.event.issue.number }}
-          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+            // 2. Get Slug from Bot Comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.reverse().find(
+              comment => comment.user.login === 'github-actions[bot]' && comment.body.includes('<!-- slug:')
+            );
+
+            if (!botComment) {
+              core.setFailed('Could not find a slug from a previous bot comment.');
+              return;
+            }
+
+            const match = botComment.body.match(/<!-- slug:(.*?) -->/);
+            if (!match || !match[1]) {
+              core.setFailed('Could not parse slug from bot comment.');
+              return;
+            }
+            const slug = match[1];
+            core.setOutput('slug', slug);
 
       - name: Create Firebase Service Account Key
         env:

@@ -84,7 +84,7 @@ jobs:
         with:
           script: |
             const previewUrl = `${{ steps.gemini_worker.outputs.preview_url }}`;
-            const body = `✅ Gemini worker finished.\n\n- **Type:** ${{ steps.issue_data.outputs.type }}\n- **Slug:** ${{ steps.gemini_worker.outputs.generated_slug }}\n\n**[➡️ Click here to preview and approve the content](${previewUrl})**`;
+            const body = `✅ Gemini worker finished.\n\n- **Type:** ${{ steps.issue_data.outputs.type }}\n- **Slug:** ${{ steps.gemini_worker.outputs.generated_slug }}\n\n**[➡️ Click here to preview and approve the content](${previewUrl})**\n\n<!-- slug:${{ steps.gemini_worker.outputs.generated_slug }} -->`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
