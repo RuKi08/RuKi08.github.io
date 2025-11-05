@@ -57,7 +57,7 @@ async function generateContent() {
     // This special syntax allows the GitHub Action to pick up the output.
     const previewUrl = `https://ctrlcat.dev/preview.html?type=${CONTENT_TYPE}&slug=${CONTENT_SLUG}`;
     console.log(`\nPreview URL: ${previewUrl}`);
-    console.log(`::set-output name=preview_url::${previewUrl}`);
+    console.log(`preview_url=${previewUrl}` >> process.env.GITHUB_OUTPUT);
 }
 
 function getBoilerplate(type, slug, title, body) {

@@ -167,6 +167,18 @@ async function build() {
     // --- Build Static/List Pages ---
     buildStaticPages(distDir, headerHtml, footerHtml, translations);
 
+    // --- Build Preview Page ---
+    const previewPagePath = path.join(srcDir, 'pages', 'preview.html');
+    if (fs.existsSync(previewPagePath)) {
+        console.log('[BUILD-FIREBASE] Building preview page...');
+        let previewContent = fs.readFileSync(previewPagePath, 'utf-8');
+        previewContent = previewContent.replace('{{__header__}}', headerHtml);
+        previewContent = previewContent.replace('{{__footer__}}', footerHtml);
+        // Preview page does not need translation, so we write it directly.
+        fs.writeFileSync(path.join(distDir, 'preview.html'), previewContent);
+        console.log('  -> Built page: /preview.html');
+    }
+
     // --- Build Legal Pages ---
     languages.forEach(lang => {
         const langDistDir = lang === defaultLang ? distDir : path.join(distDir, lang);
