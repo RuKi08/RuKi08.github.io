@@ -1,5 +1,5 @@
-
 const admin = require('firebase-admin');
+const fs = require('fs');
 
 // --- Configuration ---
 // This will be populated by the GitHub Action
@@ -25,20 +25,19 @@ async function generateContent() {
         ISSUE_BODY 
     } = process.env;
 
-    if (!CONTENT_TYPE || !CONTENT_SLUG || !ISSUE_TITLE) {
-        console.error('Error: Missing required environment variables.');
+    if (!CONTENT_TYPE || !CONTENT_SLUG) {
+        console.error('Error: Missing CONTENT_TYPE or CONTENT_SLUG environment variables.');
         process.exit(1);
     }
 
     console.log(`Received request to generate:`);
     console.log(`  - Type: ${CONTENT_TYPE}`);
     console.log(`  - Slug: ${CONTENT_SLUG}`);
-    console.log(`  - Title: ${ISSUE_TITLE}`);
 
     // 2. Generate boilerplate content (placeholder for actual Gemini API call)
     // TODO: In the future, call Gemini API with ISSUE_BODY as prompt
     console.log('\nGenerating boilerplate content (Gemini API placeholder)...');
-    const boilerplateData = getBoilerplate(CONTENT_TYPE, CONTENT_SLUG, ISSUE_TITLE, ISSUE_BODY);
+    const boilerplateData = getBoilerplate(CONTENT_TYPE, CONTENT_SLUG, ISSUE_BODY || '');
 
     // 3. Save the generated content to the appropriate 'draft' collection
     const draftCollectionName = `draft-${CONTENT_TYPE === 'post' ? 'post_en' : CONTENT_TYPE}`;
@@ -54,18 +53,26 @@ async function generateContent() {
     }
 
     // 4. Output the preview URL for the GitHub Action to use
-    // This special syntax allows the GitHub Action to pick up the output.
-    const previewUrl = `https://ctrlcat.dev/preview.html?type=${CONTENT_TYPE}&slug=${CONTENT_SLUG}`;
-    console.log(`\nPreview URL: ${previewUrl}`);
-    console.log(`preview_url=${previewUrl}` >> process.env.GITHUB_OUTPUT);
-}
+    const type = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE;
+    const lang = CONTENT_TYPE.startsWith('post_') ? CONTENT_TYPE.split('_')[1] : 'en';
+    const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
-function getBoilerplate(type, slug, title, body) {
+    const previewUrl = `https://ctrlcat.dev${langPrefix}/preview/?type=${type}&slug=${CONTENT_SLUG}`;
+    console.log(`\nPreview URL: ${previewUrl}`);
+
+    // Use fs to append to the GITHUB_OUTPUT file
+    const outputFile = process.env.GITHUB_OUTPUT;
+    if (outputFile) {
+        fs.appendFileSync(outputFile, `preview_url=${previewUrl}\n`);
+        console.log('Successfully wrote preview_url to GITHUB_OUTPUT.');
+    }}
+
+function getBoilerplate(type, slug, body) {
     const data = {
         type: type === 'post' ? 'blog' : type,
         slug: slug,
         name: { en: `AutoGen Content #${slug}`, ko: `자동 생성 콘텐츠 #${slug}` },
-        description: { en: body.substring(0, 100), ko: body.substring(0, 100) },
+        description: { en: (body || '').substring(0, 100), ko: (body || '').substring(0, 100) },
         desc: { en: `Content generated from issue body:\n\n${body}`, ko: `이슈 내용으로부터 생성된 콘텐츠:\n\n${body}` },
         icon: 'fa-solid fa-robot',
         tags: ['autogen']
@@ -84,7 +91,7 @@ function getBoilerplate(type, slug, title, body) {
     } else if (type === 'post') {
         data.title = `AutoGen Post #${slug}`;
         data.date = new Date().toISOString().split('T')[0];
-        data.summary = { en: body.substring(0, 100), ko: body.substring(0, 100) };
+        data.summary = { en: (body || '').substring(0, 100), ko: (body || '').substring(0, 100) };
         data.contentBody = body;
     }
 

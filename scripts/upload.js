@@ -53,7 +53,7 @@ async function upload() {
         const [, slug] = args;
         itemSlug = slug;
         docRef = getDocReference(itemType, null, itemSlug);
-        itemDir = path.join(migrationDir, `${itemType}s`, itemSlug);
+        itemDir = path.join(migrationDir, itemType, itemSlug);
     } else {
         console.error('Usage: node scripts/upload.js <game|tool|post> ...');
         return;

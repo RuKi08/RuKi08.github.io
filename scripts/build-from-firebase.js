@@ -3,6 +3,14 @@ const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
 
+// Dynamically import the shared content processor
+let processItemDataModule;
+async function loadContentProcessor() {
+    if (!processItemDataModule) {
+        processItemDataModule = await import('../shared/content-processor.js');
+    }
+}
+
 // --- Configuration ---
 const serviceAccount = require('../serviceAccountKey.json');
 const distDir = path.join(__dirname, '..', 'dist');
@@ -21,6 +29,7 @@ const db = admin.firestore();
 
 // --- Main Build Function ---
 async function build() {
+    await loadContentProcessor();
     console.log('[BUILD-FIREBASE] Starting build from Firestore...');
 
     const headerHtml = fs.readFileSync(path.join(includesDir, 'header.html'), 'utf-8');
@@ -43,11 +52,23 @@ async function build() {
 
     console.log('[BUILD-FIREBASE] Copying global assets...');
     copyRecursive(assetsDir, path.join(distDir, 'assets'));
+    copyRecursive(path.join(__dirname, '..', 'shared'), path.join(distDir, 'shared'));
 
     const allItems = { game: {}, tool: {} };
     const allPosts = [];
 
-    // --- Fetch and Build Tools and Games ---
+    await buildItems(db, allItems, headerHtml, footerHtml, translations);
+    await buildBlog(db, allPosts, headerHtml, footerHtml, translations);
+    await generateDataFiles(db, allItems, allPosts, distDir, translations);
+
+    buildStaticPages(distDir, headerHtml, footerHtml, translations);
+    buildPreviewPages(distDir, headerHtml, footerHtml, translations);
+    buildLegalPages(distDir, headerHtml, footerHtml, translations);
+
+    console.log('[BUILD-FIREBASE] Build from Firestore complete! Your site is ready in the /dist directory.');
+}
+
+async function buildItems(db, allItems, headerHtml, footerHtml, translations) {
     const itemTypes = ['tool', 'game'];
     for (const type of itemTypes) {
         console.log(`[BUILD-FIREBASE] Fetching '${type}' from Firestore...`);
@@ -56,7 +77,6 @@ async function build() {
 
         for (const doc of snapshot.docs) {
             const item = doc.data();
-
             const listData = { dir: item.slug, type: item.type, icon: item.icon, tags: item.tags };
 
             for (const lang of languages) {
@@ -66,47 +86,30 @@ async function build() {
                 const itemOutDir = path.join(langDistDir, item.type, item.slug);
                 if (!fs.existsSync(itemOutDir)) fs.mkdirSync(itemOutDir, { recursive: true });
 
-                const translatedName = item.name[lang];
-                const translatedDescription = item.description[lang];
+                const processed = processItemDataModule.processItemData(item, lang, marked);
 
                 if (!allItems[type][item.slug]) {
                     allItems[type][item.slug] = { ...listData, name: {}, description: {} };
                 }
-                allItems[type][item.slug].name[lang] = translatedName;
-                allItems[type][item.slug].description[lang] = translatedDescription;
+                allItems[type][item.slug].name[lang] = processed.name;
+                allItems[type][item.slug].description[lang] = processed.description;
 
                 buildItemPage(lang, langDistDir, {
                     ...item,
-                    name: translatedName,
-                    description: translatedDescription,
-                    content_html: (item.content && item.content[lang]) 
-                    ? item.contentBody.replace(/{{__content\.(.*?)__}}/g, (match, key) => {
-                        const keys = key.split('.');
-                        let value = item.content[lang];
-                        for (const k of keys) {
-                            if (value === undefined) break;
-                            value = value[k];
-                        }
-
-                        if (typeof value === 'object') return JSON.stringify(value);
-                        return value || match;
-                    })
-                    : item.contentBody,
-                    description_html: marked.parse(item.desc[lang] || ''),
+                    name: processed.name,
+                    description: processed.description,
+                    content_html: processed.contentHtml,
+                    description_html: processed.descriptionHtml,
                 }, headerHtml, footerHtml, translations);
 
-                // Create script/style files from content
-                if (item.scriptContent) {
-                    fs.writeFileSync(path.join(itemOutDir, item.script), item.scriptContent);
-                }
-                if (item.styleContent) {
-                    fs.writeFileSync(path.join(itemOutDir, item.style), item.styleContent);
-                }
+                if (item.scriptContent) fs.writeFileSync(path.join(itemOutDir, item.script), item.scriptContent);
+                if (item.styleContent) fs.writeFileSync(path.join(itemOutDir, item.style), item.styleContent);
             }
         }
     }
+}
 
-    // --- Fetch and Build Blog Posts ---
+async function buildBlog(db, allPosts, headerHtml, footerHtml, translations) {
     console.log(`[BUILD-FIREBASE] Fetching 'posts' from Firestore...`);
     for (const lang of languages) {
         const collectionName = `post_${lang}`;
@@ -115,7 +118,6 @@ async function build() {
 
         for (const doc of snapshot.docs) {
             const item = doc.data();
-
             const langDistDir = lang === defaultLang ? distDir : path.join(distDir, lang);
             if (!fs.existsSync(langDistDir)) fs.mkdirSync(langDistDir, { recursive: true });
 
@@ -131,8 +133,9 @@ async function build() {
             }, headerHtml, footerHtml, translations);
         }
     }
+}
 
-    // --- Finalize Data Files ---
+async function generateDataFiles(db, allItems, allPosts, outDir, translations) {
     const allPostsByLang = {};
     for (const lang of languages) {
         const snapshot = await db.collection(`post_${lang}`).get();
@@ -141,7 +144,7 @@ async function build() {
     }
 
     languages.forEach(lang => {
-        const langDistDir = lang === defaultLang ? distDir : path.join(distDir, lang);
+        const langDistDir = lang === defaultLang ? outDir : path.join(outDir, lang);
         const dataOutputDir = path.join(langDistDir, 'assets', 'data');
         if (!fs.existsSync(dataOutputDir)) fs.mkdirSync(dataOutputDir, { recursive: true });
 
@@ -151,41 +154,82 @@ async function build() {
             blogs: allPostsByLang[lang]
         };
         fs.writeFileSync(path.join(dataOutputDir, 'items.json'), JSON.stringify(finalItems, null, 2));
-
-        // Note: generateBlogTree relies on the old file structure. This needs to be adapted or re-enabled if needed.
-        // For now, we will create an empty tree.
-        const blogTree = []; // Simplified for now
-        fs.writeFileSync(path.join(dataOutputDir, 'blog-tree.json'), JSON.stringify(blogTree, null, 2));
+        fs.writeFileSync(path.join(dataOutputDir, 'blog-tree.json'), JSON.stringify([], null, 2)); // Simplified
     });
 
-    // For the root homepage, create a combined, sorted list of default language blog posts.
-    const rootDataDir = path.join(distDir, 'assets', 'data');
+    const rootDataDir = path.join(outDir, 'assets', 'data');
     fs.writeFileSync(path.join(rootDataDir, 'blog-posts.json'), JSON.stringify(allPostsByLang[defaultLang], null, 2));
+    console.log('[BUILD-FIREBASE] Created data files.');
+}
 
-    console.log('[BUILD-FIREBASE] Created data files (items.json, blog-tree.json, blog-posts.json).');
+function buildPreviewPages(outDir, headerHtml, footerHtml, translations) {
+    console.log('[BUILD-FIREBASE] Building preview pages...');
+    const template = fs.readFileSync(path.join(includesDir, 'item-template.html'), 'utf-8');
 
-    // --- Build Static/List Pages ---
-    buildStaticPages(distDir, headerHtml, footerHtml, translations);
-
-    // --- Build Preview Page ---
-    const previewPagePath = path.join(srcDir, 'pages', 'preview.html');
-    if (fs.existsSync(previewPagePath)) {
-        console.log('[BUILD-FIREBASE] Building preview page...');
-        let previewContent = fs.readFileSync(previewPagePath, 'utf-8');
-        previewContent = previewContent.replace('{{__header__}}', headerHtml);
-        previewContent = previewContent.replace('{{__footer__}}', footerHtml);
-        // Preview page does not need translation, so we write it directly.
-        fs.writeFileSync(path.join(distDir, 'preview.html'), previewContent);
-        console.log('  -> Built page: /preview.html');
-    }
-
-    // --- Build Legal Pages ---
     languages.forEach(lang => {
-        const langDistDir = lang === defaultLang ? distDir : path.join(distDir, lang);
-        buildLegalPages(langDistDir, lang, translations, headerHtml, footerHtml);
-    });
+        const langDistDir = lang === defaultLang ? outDir : path.join(outDir, lang);
+        let outputHtml = template;
 
-    console.log('[BUILD-FIREBASE] Build from Firestore complete! Your site is ready in the /dist directory.');
+        outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
+        outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
+        outputHtml = translate(outputHtml, lang, translations);
+        outputHtml = outputHtml.replace(/{{lang}}/g, lang);
+
+        outputHtml = outputHtml.replace('{{style_block}}', '<style id="preview-style-block"></style>');
+        const previewScript = `
+            import { initPreview } from '/assets/js/preview-loader.js';
+            initPreview();
+        `;
+        outputHtml = outputHtml.replace('{{script_loader}}', previewScript);
+
+        const destDir = path.join(langDistDir, 'preview');
+        fs.mkdirSync(destDir, { recursive: true });
+        fs.writeFileSync(path.join(destDir, 'index.html'), outputHtml);
+        console.log(`  -> Built preview page: ${path.relative(outDir, path.join(destDir, 'index.html'))}`);
+    });
+}
+
+function buildLegalPages(outDir, headerHtml, footerHtml, translations) {
+    languages.forEach(lang => {
+        const langDistDir = lang === defaultLang ? outDir : path.join(outDir, lang);
+        const pageTemplate = fs.readFileSync(path.join(includesDir, 'page-template.html'), 'utf-8');
+        const pageSlugs = ['licenses', 'privacy', 'terms'];
+
+        pageSlugs.forEach(slug => {
+            const pageData = translations[lang]?.pages?.[slug];
+            if (!pageData) return;
+
+            let contentHtml = '';
+            if (pageData.intro) contentHtml += `<p>${pageData.intro}</p>`;
+            if (pageData.last_updated) contentHtml += `<p><strong>Last updated: ${pageData.last_updated}</strong></p>`;
+
+            if (pageData.items) {
+                pageData.items.forEach(item => {
+                    contentHtml += '<hr>';
+                    contentHtml += `<div class="license-item"><h3>${item.name}</h3><p><strong>License:</strong> ${item.license}</p><p>${item.description}</p><p><a href="${item.url}" target="_blank">View License</a></p></div>`;
+                });
+            } else if (pageData.sections) {
+                pageData.sections.forEach(section => {
+                    contentHtml += `<h3>${section.title}</h3>`;
+                    contentHtml += renderPageContent(section.content);
+                });
+            }
+
+            let outputHtml = pageTemplate;
+            outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
+            outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
+            outputHtml = outputHtml.replace(/{{lang}}/g, lang);
+            outputHtml = outputHtml.replace(/{{title}}/g, `${pageData.title} | ctrlcat`);
+            outputHtml = outputHtml.replace(/{{page_heading}}/g, pageData.title);
+            outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
+            outputHtml = translate(outputHtml, lang, translations);
+
+            const destDir = path.join(langDistDir, slug);
+            fs.mkdirSync(destDir, { recursive: true });
+            fs.writeFileSync(path.join(destDir, 'index.html'), outputHtml);
+            console.log(`  -> Built legal page: /${slug}/ for ${lang}`);
+        });
+    });
 }
 
 function renderPageContent(contentData) {
@@ -206,108 +250,6 @@ function renderPageContent(contentData) {
         html += `<p>${contentData}</p>`;
     }
     return html;
-}
-
-function buildLegalPages(outDir, lang, translations, headerHtml, footerHtml) {
-    const pageTemplate = fs.readFileSync(path.join(includesDir, 'page-template.html'), 'utf-8');
-    const pageSlugs = ['licenses', 'privacy', 'terms'];
-
-    pageSlugs.forEach(slug => {
-        const pageData = translations[lang]?.pages?.[slug];
-        if (!pageData) {
-            console.warn(`  -> No page data found for ${slug} in ${lang}`);
-            return;
-        }
-
-        let contentHtml = '';
-        if (pageData.intro) {
-            contentHtml += `<p>${pageData.intro}</p>`;
-        }
-        if (pageData.last_updated) {
-            contentHtml += `<p><strong>Last updated: ${pageData.last_updated}</strong></p>`;
-        }
-
-        if (pageData.items) {
-            pageData.items.forEach(item => {
-                contentHtml += '<hr>';
-                contentHtml += '<div class="license-item">';
-                contentHtml += `<h3>${item.name}</h3>`;
-                contentHtml += `<p><strong>License:</strong> ${item.license}</p>`;
-                contentHtml += `<p>${item.description}</p>`;
-                contentHtml += `<p><a href="${item.url}" target="_blank">View License</a></p>`;
-                contentHtml += '</div>';
-            });
-        } else if (pageData.sections) {
-            pageData.sections.forEach(section => {
-                contentHtml += `<h3>${section.title}</h3>`;
-                contentHtml += renderPageContent(section.content);
-            });
-        }
-
-        let outputHtml = pageTemplate;
-        outputHtml = outputHtml.replace('{{__header__}}', headerHtml);
-        outputHtml = outputHtml.replace('{{__footer__}}', footerHtml);
-
-        outputHtml = outputHtml.replace(/{{lang}}/g, lang);
-        outputHtml = outputHtml.replace(/{{title}}/g, `${pageData.title} | ctrlcat`);
-        outputHtml = outputHtml.replace(/{{page_heading}}/g, pageData.title);
-        outputHtml = outputHtml.replace(/{{content_html}}/g, contentHtml);
-
-        outputHtml = translate(outputHtml, lang, translations);
-
-        const destDir = path.join(outDir, slug);
-        fs.mkdirSync(destDir, { recursive: true });
-        fs.writeFileSync(path.join(destDir, 'index.html'), outputHtml);
-        console.log(`  -> Built legal page: /${slug}/ for ${lang}`);
-    });
-}
-
-function generateBlogTree(dir, fullPath, lang, langTranslations) {
-    const stats = fs.statSync(fullPath);
-    const name = path.basename(dir);
-
-    if (!stats.isDirectory()) {
-        return null;
-    }
-
-    const children = fs.readdirSync(fullPath);
-    // It's a post directory if it contains language subdirectories (en, ko)
-    if (children.includes(lang)) {
-        const langPath = path.join(fullPath, lang);
-        const metaPath = path.join(langPath, 'meta.json');
-        let meta = {};
-        if (fs.existsSync(metaPath)) {
-            meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
-        }
-
-        return {
-            type: 'post',
-            name: meta.title || name,
-            dir: name,
-            date: meta.date
-        };
-    }
-
-    // It's a category directory
-    const translatedName = langTranslations?.blog_categories?.[name] || name;
-    const items = children
-        .map(child => generateBlogTree(path.join(dir, child), path.join(fullPath, child), lang, langTranslations))
-        .filter(item => item !== null)
-        .sort((a, b) => {
-            if (a.type === 'category' && b.type === 'post') return -1;
-            if (a.type === 'post' && b.type === 'category') return 1;
-            return a.name.localeCompare(b.name);
-        });
-
-    if (items.length === 0) {
-        return null;
-    }
-
-    return {
-        type: 'category',
-        name: translatedName,
-        children: items
-    };
 }
 
 // --- Page Building Helper ---

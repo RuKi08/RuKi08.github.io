@@ -86,7 +86,7 @@ async function fetch() {
         const [, slug] = args;
         itemSlug = slug;
         docRef = getDocReference(itemType, null, itemSlug);
-        targetDir = path.join(migrationDir, `${itemType}s`, itemSlug);
+        targetDir = path.join(migrationDir, itemType, itemSlug);
     } else {
         console.error('Usage: node scripts/fetch.js <game|tool|post> ...');
         rl.close();

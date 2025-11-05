@@ -1,29 +1,36 @@
+import { db, doc, getDoc } from './firebase-config.js';
+import { processItemData } from '/shared/content-processor.js';
 
-import { db } from './firebase-config.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
-
-// Dynamically import marked.js for Markdown parsing
 let marked;
-import('https://cdn.jsdelivr.net/npm/marked@13.0.0/lib/marked.esm.js').then(module => {
-    marked = module.marked;
-});
+
+// Dynamically loads the marked.js library from a CDN.
+async function loadMarked() {
+    if (!marked) {
+        try {
+            const module = await import('https://cdn.jsdelivr.net/npm/marked@13.0.0/lib/marked.esm.js');
+            marked = module.marked;
+        } catch (error) {
+            console.error("Failed to load Marked.js:", error);
+            document.body.innerHTML = 'Error: Could not load Markdown parser.';
+        }
+    }
+}
 
 export async function initPreview() {
+    await loadMarked(); // Ensure marked is loaded before proceeding
+
     const params = new URLSearchParams(window.location.search);
     const type = params.get('type');
     const slug = params.get('slug');
 
     if (!type || !slug) {
-        document.getElementById('item-name').innerText = 'Error: Missing type or slug in URL.';
+        document.body.innerHTML = 'Error: Missing type or slug in URL.';
         return;
     }
 
-    document.getElementById('item-type').innerText = type;
-    document.getElementById('item-slug').innerText = slug;
-
-    // Determine the correct collection name (e.g., draft-tool, draft-post_en)
-    // For now, assuming posts are in English for preview.
-    const collectionName = `draft-${type === 'post' ? 'post_en' : type}`;
+    const pathParts = window.location.pathname.split('/').filter(p => p);
+    const lang = (pathParts.length > 1 && pathParts[1] === 'preview') ? pathParts[0] : 'en';
+    const collectionName = `draft-${type === 'post' ? `post_${lang}` : type}`;
     
     try {
         const docRef = doc(db, collectionName, slug);
@@ -32,45 +39,51 @@ export async function initPreview() {
         if (docSnap.exists()) {
             const data = docSnap.data();
             console.log("Fetched draft data:", data);
-            renderPreview(data);
+            renderPreview(data, lang);
         } else {
-            document.getElementById('item-name').innerText = `Error: Document not found in ${collectionName}`;
+            document.body.innerHTML = `Error: Document not found in ${collectionName}`;
             console.error("No such document!");
         }
     } catch (error) {
-        document.getElementById('item-name').innerText = 'Error fetching document.';
+        document.body.innerHTML = 'Error fetching document. Check console for details (likely Firestore permissions).';
         console.error("Error fetching document:", error);
     }
 }
 
-function renderPreview(data) {
-    document.getElementById('item-name').innerText = data.name?.en || data.title || 'No Title';
+function renderPreview(data, lang) {
+    // Use the shared processor to get computed HTML fields
+    const processed = processItemData(data, lang, marked);
 
-    const contentHtmlContainer = document.getElementById('content-html-container');
-    if (data.contentBody) {
-        contentHtmlContainer.innerHTML = data.contentBody;
-    } else {
-        contentHtmlContainer.innerHTML = '<em>(No content body)</em>';
-    }
+    let html = document.body.innerHTML;
 
-    const descHtmlContainer = document.getElementById('desc-html-container');
-    if (data.desc?.en && marked) {
-        descHtmlContainer.innerHTML = marked.parse(data.desc.en);
-    } else {
-        descHtmlContainer.innerHTML = '<em>(No description)</em>';
-    }
+    // Replace content placeholders with processed data
+    html = html.replace(/{{title}}/g, `${processed.name} (Preview) | ctrlcat`);
+    html = html.replace('{{name}}', processed.name);
+    html = html.replace('{{description}}', processed.description);
+    html = html.replace('{{tags}}', processed.tagsHtml);
+    html = html.replace('{{content_html}}', processed.contentHtml);
+    html = html.replace('{{description_html}}', processed.descriptionHtml);
 
-    const scriptContentCode = document.querySelector('#script-content code');
-    if (data.scriptContent) {
-        scriptContentCode.textContent = data.scriptContent;
-    } else {
-        scriptContentCode.textContent = '// No script content';
-    }
+    // A simple breadcrumb for preview
+    const breadcrumbs = `<a href="/">Home</a> / <span>Preview</span>`;
+    html = html.replace('{{breadcrumbs}}', breadcrumbs);
 
-    const styleContentCode = document.querySelector('#style-content code');
+    // Apply the new HTML
+    document.body.innerHTML = html;
+
+    // Inject style content
     if (data.styleContent) {
-        styleContentCode.textContent = data.styleContent;
-    } else {
-        styleContentCode.textContent = '/* No style content */';
+        const styleBlock = document.getElementById('preview-style-block');
+        if (styleBlock) {
+            styleBlock.textContent = data.styleContent;
+        }
+    }
+
+    // Inject script content
+    if (data.scriptContent) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.innerHTML = data.scriptContent;
+        document.body.appendChild(script);
     }
 }

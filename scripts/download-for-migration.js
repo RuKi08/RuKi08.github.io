@@ -30,7 +30,7 @@ async function downloadForMigration() {
         // 2. Download tools and games
         const itemCollections = ['tool', 'game'];
         for (const collectionName of itemCollections) {
-            const targetDir = path.join(migrationDir, `${collectionName}s`); // tool -> tools
+            const targetDir = path.join(migrationDir, `${collectionName}`);
             fs.mkdirSync(targetDir, { recursive: true });
 
             const snapshot = await db.collection(collectionName).get();

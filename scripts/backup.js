@@ -30,7 +30,7 @@ async function backupFromFirebase() {
         // 2. Backup tools and games
         const itemCollections = ['tool', 'game'];
         for (const collectionName of itemCollections) {
-            const targetDir = path.join(backupDir, `${collectionName}s`); // tool -> tools
+            const targetDir = path.join(backupDir, `${collectionName}`);
             fs.mkdirSync(targetDir, { recursive: true });
 
             const snapshot = await db.collection(collectionName).get();
