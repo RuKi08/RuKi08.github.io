@@ -1,0 +1,67 @@
+
+name: Auto-Generate Content
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  generate-content:
+    # Run only if the label starts with 'autogen:'
+    if: startsWith(github.event.label.name, 'autogen:')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Get Issue Data
+        id: issue_data
+        run: |
+          echo "Issue Title: ${{ github.event.issue.title }}"
+          echo "Issue Body: ${{ github.event.issue.body }}"
+          echo "Issue Label: ${{ github.event.label.name }}"
+          
+          # Extract type from label (e.g., 'autogen:game' -> 'game')
+          TYPE=$(echo "${{ github.event.label.name }}" | cut -d ':' -f 2)
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
+
+          # Use issue title as slug
+          SLUG=$(echo "${{ github.event.issue.title }}" | iconv -t ascii//TRANSLIT | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+
+      - name: Create Firebase Service Account Key
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+        run: echo "$FIREBASE_KEY" > serviceAccountKey.json
+
+      - name: Run Gemini Worker
+        id: gemini_worker
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          CONTENT_TYPE: ${{ steps.issue_data.outputs.type }}
+          CONTENT_SLUG: ${{ steps.issue_data.outputs.slug }}
+          # GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Will be used in the future
+        run: node scripts/gemini-worker.js
+
+      - name: Comment on Issue with Preview Link
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = `${{ steps.gemini_worker.outputs.preview_url }}`;
+            const body = `✅ Gemini worker finished.\n\n- **Type:** ${{ steps.issue_data.outputs.type }}\n- **Slug:** ${{ steps.issue_data.outputs.slug }}\n\n**[➡️ Click here to preview and approve the content](${previewUrl})**`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
