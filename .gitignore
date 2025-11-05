@@ -19,3 +19,6 @@ serviceAccountKey.json
 
 # migrate directory
 /content-to-migrate/
+
+# Prompt templates (source for secrets)
+/prompt-templates/

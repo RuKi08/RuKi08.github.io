@@ -20,15 +20,14 @@ async function generateContent() {
     // 1. Get data from environment variables
     const {
         CONTENT_TYPE, 
-        CONTENT_SLUG, 
         ISSUE_BODY, 
         GEMINI_API_KEY, 
         GEMINI_PROMPT, 
         TARGET_LANGUAGE
     } = process.env;
 
-    if (!CONTENT_TYPE || !CONTENT_SLUG) {
-        console.error('Error: Missing CONTENT_TYPE or CONTENT_SLUG.');
+    if (!CONTENT_TYPE) {
+        console.error('Error: Missing CONTENT_TYPE.');
         process.exit(1);
     }
     if (!GEMINI_API_KEY) {
@@ -42,7 +41,6 @@ async function generateContent() {
 
     console.log(`Received request to generate:`);
     console.log(`  - Type: ${CONTENT_TYPE}`);
-    console.log(`  - Slug: ${CONTENT_SLUG}`);
     console.log(`  - Target Language: ${TARGET_LANGUAGE || 'default'}`);
 
     // 2. Call Gemini API to generate content
@@ -50,7 +48,7 @@ async function generateContent() {
     try {
         console.log('\nInitializing Gemini API...');
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash"});
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
         let finalPrompt = GEMINI_PROMPT.replace('{{USER_PROMPT}}', ISSUE_BODY || 'Please create something interesting.');
         if (TARGET_LANGUAGE) {
@@ -66,6 +64,11 @@ async function generateContent() {
         const jsonString = text.replace(/```json\n|```/g, '').trim();
         generatedData = JSON.parse(jsonString);
 
+        if (!generatedData.slug) {
+            console.error('Error: Gemini did not generate a slug. Please update the prompt.');
+            process.exit(1);
+        }
+
         console.log('Successfully received and parsed data from Gemini.');
 
     } catch (error) {
@@ -77,15 +80,16 @@ async function generateContent() {
     const firestoreData = {
         ...generatedData,
         type: CONTENT_TYPE.startsWith('post_') ? 'blog' : CONTENT_TYPE,
-        slug: CONTENT_SLUG,
         date: new Date().toISOString().split('T')[0],
         icon: 'fa-solid fa-robot',
         tags: ['autogen', ... (generatedData.tags || [])]
     };
 
     // 4. Save the generated content to the appropriate 'draft' collection
+    const typeForCollection = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE.replace(/_\w+$/, '');
+    const lang = TARGET_LANGUAGE || 'en';
     const draftCollectionName = `draft-${CONTENT_TYPE}`;
-    const docRef = db.collection(draftCollectionName).doc(CONTENT_SLUG);
+    const docRef = db.collection(draftCollectionName).doc(generatedData.slug);
 
     console.log(`Saving to Firestore path: ${docRef.path}`);
     try {
@@ -98,15 +102,15 @@ async function generateContent() {
 
     // 5. Output the preview URL for the GitHub Action to use
     const typeForURL = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE;
-    const lang = TARGET_LANGUAGE || 'en';
     const langPrefix = lang === 'en' ? '' : `/${lang}`;
-    const previewUrl = `https://ctrlcat.dev${langPrefix}/preview/?type=${typeForURL}&slug=${CONTENT_SLUG}`;
+    const previewUrl = `https://ctrlcat.dev${langPrefix}/preview/?type=${typeForURL}&slug=${generatedData.slug}`;
     console.log(`\nPreview URL: ${previewUrl}`);
 
     const outputFile = process.env.GITHUB_OUTPUT;
     if (outputFile) {
         fs.appendFileSync(outputFile, `preview_url=${previewUrl}\n`);
-        console.log('Successfully wrote preview_url to GITHUB_OUTPUT.');
+        fs.appendFileSync(outputFile, `generated_slug=${generatedData.slug}\n`);
+        console.log('Successfully wrote preview_url and generated_slug to GITHUB_OUTPUT.');
     }
 }
 

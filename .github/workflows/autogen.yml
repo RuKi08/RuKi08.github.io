@@ -37,10 +37,6 @@ jobs:
           TYPE=$(echo "${{ github.event.label.name }}" | cut -d ':' -f 2)
           echo "type=$TYPE" >> $GITHUB_OUTPUT
 
-          # Use the unique issue number as the slug
-          SLUG=${{ github.event.issue.number }}
-          echo "slug=$SLUG" >> $GITHUB_OUTPUT
-
       - name: Create Firebase Service Account Key
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
@@ -78,7 +74,6 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           CONTENT_TYPE: ${{ steps.issue_data.outputs.type }}
-          CONTENT_SLUG: ${{ steps.issue_data.outputs.slug }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_PROMPT: ${{ steps.set_prompt.outputs.prompt }}
           TARGET_LANGUAGE: ${{ steps.set_prompt.outputs.target_lang }}
@@ -89,7 +84,7 @@ jobs:
         with:
           script: |
             const previewUrl = `${{ steps.gemini_worker.outputs.preview_url }}`;
-            const body = `✅ Gemini worker finished.\n\n- **Type:** ${{ steps.issue_data.outputs.type }}\n- **Slug:** ${{ steps.issue_data.outputs.slug }}\n\n**[➡️ Click here to preview and approve the content](${previewUrl})**`;
+            const body = `✅ Gemini worker finished.\n\n- **Type:** ${{ steps.issue_data.outputs.type }}\n- **Slug:** ${{ steps.gemini_worker.outputs.generated_slug }}\n\n**[➡️ Click here to preview and approve the content](${previewUrl})**`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
