@@ -48,15 +48,19 @@ jobs:
 
       - name: Set Prompt from Secrets
         id: set_prompt
+        env:
+          TYPE: ${{ steps.issue_data.outputs.type }}
+          PROMPT_GAME: ${{ secrets.GEMINI_PROMPT_GAME }}
+          PROMPT_TOOL: ${{ secrets.GEMINI_PROMPT_TOOL }}
+          PROMPT_POST: ${{ secrets.GEMINI_PROMPT_POST }}
         run: |
-          TYPE=${{ steps.issue_data.outputs.type }}
           PROMPT_TEXT=""
           if [[ "$TYPE" == "game" ]]; then
-            PROMPT_TEXT="${{ secrets.GEMINI_PROMPT_GAME }}"
+            PROMPT_TEXT="$PROMPT_GAME"
           elif [[ "$TYPE" == "tool" ]]; then
-            PROMPT_TEXT="${{ secrets.GEMINI_PROMPT_TOOL }}"
+            PROMPT_TEXT="$PROMPT_TOOL"
           elif [[ $TYPE == post* ]]; then
-            PROMPT_TEXT="${{ secrets.GEMINI_PROMPT_POST }}"
+            PROMPT_TEXT="$PROMPT_POST"
           fi
           # Use a delimiter for multi-line output
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
