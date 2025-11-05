@@ -8,7 +8,12 @@
     "start": "serve dist",
     "dev": "npm run build && npm start",
     "backup": "node scripts/backup.js",
-    "generate": "node scripts/generate.js"
+    "generate": "node scripts/generate.js",
+    "fetch": "node scripts/fetch.js",
+    "upload": "node scripts/upload.js",
+    "remove": "node scripts/remove.js",
+    "migrate:download": "npm run backup && node scripts/download-for-migration.js",
+    "migrate:upload": "node scripts/upload-from-migration.js"
   },
   "repository": {
     "type": "git",

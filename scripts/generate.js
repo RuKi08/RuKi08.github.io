@@ -1,139 +1,146 @@
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
 
 // --- Configuration ---
-const rootDir = path.join(__dirname, '..', 'src');
-const i18nDir = path.join(rootDir, 'i18n');
-
-// --- Helper Functions ---
-function toSlug(name) {
-    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-}
+const migrationDir = path.join(__dirname, '..', 'content-to-migrate');
 
 // --- File Content Templates ---
-const metaTemplate = (itemType) => {
-    const styleLine = itemType === 'game' ? `,
-  "style": "style.css"` : '';
-    return `{ 
-  "name": "{{__i18n.name__}}",
-  "description": "{{__i18n.description__}}",
-  "icon": "fa-solid fa-star",
-  "tags": [],
-  "script": "script.js"${styleLine}
-}`;
-};
-
-const contentTemplate = (slug) => `<!-- The main HTML content for ${slug} goes here -->
-<div id="${slug}-container">
-    <h2>{{__i18n.content.title__}}</h2>
-</div>
+const toolTemplate = (slug) => `--- 
+type: tool
+slug: ${slug}
+name:
+  en: New Tool ${slug}
+  ko: 새 도구 ${slug}
+description:
+  en: "A description for the new tool."
+  ko: "새 도구에 대한 설명입니다."
+desc:
+  en: "### About\\n\\nDetailed description in English."
+  ko: "### 소개\\n\\n한국어 상세 설명입니다."
+icon: fa-solid fa-star
+tags:
+  - new
+script: script.js
+content:
+  en:
+    title: "Welcome"
+  ko:
+    title: "환영합니다"
+---
+<!-- HTML content for ${slug} goes here -->
 `;
 
-const scriptTemplate = () => `// Standardized init function
+const gameTemplate = (slug) => `--- 
+type: game
+slug: ${slug}
+name:
+  en: New Game ${slug}
+  ko: 새 게임 ${slug}
+description:
+  en: "A description for the new game."
+  ko: "새 게임에 대한 설명입니다."
+desc:
+  en: "### About\\n\\nDetailed description in English."
+  ko: "### 소개\\n\\n한국어 상세 설명입니다."
+icon: fa-solid fa-star
+tags:
+  - new
+script: script.js
+style: style.css
+content:
+  en:
+    title: "Welcome"
+  ko:
+    title: "환영합니다"
+---
+<!-- HTML content for ${slug} goes here -->
+`;
+
+const postTemplate = (slug) => `--- 
+type: blog
+slug: ${slug}
+date: ${new Date().toISOString().split('T')[0]}
+title: New Post ${slug}
+description: A description for the new post.
+author: Ctrlcat Staff
+tags:
+  - new
+---
+### Title
+content starts here.
+`;
+
+const scriptTemplate = () => `// Script for the new item
 export function init() {
     console.log('Item initialized!');
-    // Add your logic here
 }
 `;
 
-const styleTemplate = (slug) => `/* Add styles for ${slug} here */
-#${slug}-container {
-    /* ... */
-}
+const styleTemplate = () => `/* Styles for the new item */
 `;
-
-const i18nEntryTemplate = (name) => ({
-    name: name,
-    description: `A brief description of ${name}.`,
-    content: {
-        title: `Welcome to ${name}!`
-    },
-    desc: {
-        title: `### About ${name}`,
-        main: `More detailed information about this item.`
-    }
-});
 
 // --- Main Scaffolding Logic ---
 function generate() {
     const args = process.argv.slice(2);
-    if (args.length < 2) {
-        console.error('Usage: node scripts/generate.js <game|tool> "<Item Name>"');
+    const itemType = args[0];
+
+    let targetDir, itemSlug;
+
+    if (itemType === 'post') {
+        if (args.length < 3) {
+            console.error('Usage: node scripts/generate.js post <en|ko> <item-slug>');
+            return;
+        }
+        const [, lang, slug] = args;
+        if (!['en', 'ko'].includes(lang)) {
+            console.error('Error: Invalid language. Must be "en" or "ko".');
+            return;
+        }
+        itemSlug = slug;
+        targetDir = path.join(migrationDir, 'posts', lang, itemSlug);
+    } else if (['game', 'tool'].includes(itemType)) {
+        if (args.length < 2) {
+            console.error(`Usage: node scripts/generate.js ${itemType} <item-slug>`);
+            return;
+        }
+        const [, slug] = args;
+        itemSlug = slug;
+        targetDir = path.join(migrationDir, itemType + 's', itemSlug);
+    } else {
+        console.error('Usage: node scripts/generate.js <game|tool|post> ...');
         return;
     }
 
-    const [itemType, itemName] = args;
-
-    if (itemType !== 'game' && itemType !== 'tool') {
-        console.error('Error: Invalid item type. Must be "game" or "tool".');
-        return;
-    }
-
-    const itemSlug = toSlug(itemName);
-    const targetDir = path.join(rootDir, 'content', itemType, itemSlug);
-
-    console.log(`Generating new ${itemType}: "${itemName}"`);
-    console.log(`Directory: ${targetDir}`);
+    console.log('Generating new ' + itemType + ': "' + itemSlug + '"');
+    console.log('Target Directory: ' + targetDir);
 
     if (fs.existsSync(targetDir)) {
-        console.error(`Error: Directory already exists: ${targetDir}`);
+        console.error('Error: Directory already exists: ' + targetDir);
         return;
     }
 
     try {
-        // 1. Create item directory and files
         fs.mkdirSync(targetDir, { recursive: true });
 
-        const files = {
-            'meta.json': metaTemplate(itemType),
-            'content.html': contentTemplate(itemSlug),
-            'script.js': scriptTemplate(),
+        const templates = {
+            tool: { 'index.md': toolTemplate(itemSlug), 'script.js': scriptTemplate() },
+            game: { 'index.md': gameTemplate(itemSlug), 'script.js': scriptTemplate(), 'style.css': styleTemplate() },
+            post: { 'index.md': postTemplate(itemSlug) }
         };
 
-        if (itemType === 'game') {
-            files['style.css'] = styleTemplate(itemSlug);
+        const filesToCreate = templates[itemType];
+        for (const [fileName, content] of Object.entries(filesToCreate)) {
+            fs.writeFileSync(path.join(targetDir, fileName), content);
+            console.log('  -> Created ' + fileName);
         }
 
-        for (const [fileName, content] of Object.entries(files)) {
-            const filePath = path.join(targetDir, fileName);
-            fs.writeFileSync(filePath, content);
-            console.log(`  -> Created ${filePath}`);
-        }
-
-        // 2. Update i18n files
-        console.log('Updating i18n files...');
-        const languages = ['en', 'ko'];
-        languages.forEach(lang => {
-            const langPath = path.join(i18nDir, `${lang}.json`);
-            if (fs.existsSync(langPath)) {
-                const translations = JSON.parse(fs.readFileSync(langPath, 'utf-8'));
-                translations[itemSlug] = i18nEntryTemplate(itemName);
-                fs.writeFileSync(langPath, JSON.stringify(translations, null, 4));
-                console.log(`  -> Updated ${lang}.json with entry for '${itemSlug}'`);
-            }
-        });
-
-        console.log(`
-Successfully created all files for "${itemName}".`);
-
-        // 3. Run build script
-        console.log('\nRunning build script to update item list...');
-        exec('npm run build', (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error running build script: ${error}`);
-                return;
-            }
-            if (stderr) {
-                console.error(`Build script stderr: ${stderr}`);
-            }
-            console.log(`Build script output: 
-${stdout}`);
-            console.log('✨ All done! Your new ' + itemType + ' is ready. ✨');
-        });
+        console.log('\n✨ Successfully created files for "' + itemSlug + '".');
+        console.log('1. Edit the files in the new directory.');
+        const uploadCommand = itemType === 'post' ? 'npm run upload -- post ' + args[1] + ' ' + itemSlug : 'npm run upload -- ' + itemType + ' ' + itemSlug;
+        console.log('2. Run "' + uploadCommand + '" to upload to Firestore.');
 
     } catch (error) {
-        console.error(`An error occurred during generation:`, error);
+        console.error('\nAn error occurred during generation:', error);
     }
 }
 

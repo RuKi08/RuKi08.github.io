@@ -16,3 +16,6 @@ serviceAccountKey.json
 
 # Backup directory
 /content-backup/
+
+# migrate directory
+/content-to-migrate/
