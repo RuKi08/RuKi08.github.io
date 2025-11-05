@@ -5,6 +5,9 @@ on:
   issues:
     types: [labeled]
 
+permissions:
+  issues: write
+
 jobs:
   generate-content:
     # Run only if the label starts with 'autogen:'
