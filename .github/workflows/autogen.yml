@@ -55,13 +55,17 @@ jobs:
           PROMPT_POST: ${{ secrets.GEMINI_PROMPT_POST }}
         run: |
           PROMPT_TEXT=""
+          TARGET_LANG="en" # Default to English
           if [[ "$TYPE" == "game" ]]; then
             PROMPT_TEXT="$PROMPT_GAME"
           elif [[ "$TYPE" == "tool" ]]; then
             PROMPT_TEXT="$PROMPT_TOOL"
           elif [[ $TYPE == post* ]]; then
             PROMPT_TEXT="$PROMPT_POST"
+            # Extract lang from post_xx
+            TARGET_LANG=${TYPE#post_}
           fi
+          echo "target_lang=$TARGET_LANG" >> $GITHUB_OUTPUT
           # Use a delimiter for multi-line output
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "prompt<<$EOF" >> $GITHUB_OUTPUT
@@ -77,6 +81,7 @@ jobs:
           CONTENT_SLUG: ${{ steps.issue_data.outputs.slug }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_PROMPT: ${{ steps.set_prompt.outputs.prompt }}
+          TARGET_LANGUAGE: ${{ steps.set_prompt.outputs.target_lang }}
         run: node scripts/gemini-worker.js
 
       - name: Comment on Issue with Preview Link

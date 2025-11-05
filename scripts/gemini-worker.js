@@ -23,7 +23,8 @@ async function generateContent() {
         CONTENT_SLUG, 
         ISSUE_BODY, 
         GEMINI_API_KEY, 
-        GEMINI_PROMPT 
+        GEMINI_PROMPT, 
+        TARGET_LANGUAGE
     } = process.env;
 
     if (!CONTENT_TYPE || !CONTENT_SLUG) {
@@ -42,6 +43,7 @@ async function generateContent() {
     console.log(`Received request to generate:`);
     console.log(`  - Type: ${CONTENT_TYPE}`);
     console.log(`  - Slug: ${CONTENT_SLUG}`);
+    console.log(`  - Target Language: ${TARGET_LANGUAGE || 'default'}`);
 
     // 2. Call Gemini API to generate content
     let generatedData;
@@ -50,7 +52,11 @@ async function generateContent() {
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash"});
 
-        const finalPrompt = GEMINI_PROMPT.replace('{{USER_PROMPT}}', ISSUE_BODY || 'Please create something interesting.');
+        let finalPrompt = GEMINI_PROMPT.replace('{{USER_PROMPT}}', ISSUE_BODY || 'Please create something interesting.');
+        if (TARGET_LANGUAGE) {
+            finalPrompt = finalPrompt.replace(/{{TARGET_LANGUAGE}}/g, TARGET_LANGUAGE);
+        }
+
         console.log('Generating content with Gemini...');
 
         const result = await model.generateContent(finalPrompt);
@@ -78,8 +84,8 @@ async function generateContent() {
     };
 
     // 4. Save the generated content to the appropriate 'draft' collection
-    const typeForCollection = CONTENT_TYPE.startsWith('post_') ? CONTENT_TYPE : CONTENT_TYPE.replace(/_\w+$/, '');
-    const lang = CONTENT_TYPE.startsWith('post_') ? CONTENT_TYPE.split('_')[1] : 'en';
+    const typeForCollection = CONTENT_TYPE.startsWith('post_') ? 'post' : CONTENT_TYPE.replace(/_\w+$/, '');
+    const lang = TARGET_LANGUAGE || 'en';
     const draftCollectionName = `draft-${typeForCollection}`;
     const docRef = db.collection(draftCollectionName).doc(CONTENT_SLUG);
 
